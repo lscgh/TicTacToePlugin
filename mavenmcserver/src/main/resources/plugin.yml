@@ -5,4 +5,4 @@ main: mavenmcserver.Plugin
 api-version: 1.20
 
 commands:
-	tictactoe:
+ tictactoe:
