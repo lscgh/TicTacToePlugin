@@ -1,0 +1,8 @@
+name: Tic-Tac-Toe
+description: "Play Tic-Tac-Toe on your server"
+version: 1.0
+main: mavenmcserver.Plugin
+api-version: 1.20
+
+commands:
+	tictactoe:
