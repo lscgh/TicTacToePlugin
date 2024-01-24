@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Build print"
-      - run: "echo Build"
+        run: "echo Build"
   Install:
     runs-on: ubuntu-latest
     steps:
