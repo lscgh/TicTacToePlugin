@@ -1,5 +1,5 @@
 name: "Build & Install action"
-run-name: "Running Build % Install action (triggered by ${{ gibhub.actor }})"
+run-name: "Running Build % Install action (triggered by ${{ github.actor }})"
 on: [push]
 jobs:
   Build:
