@@ -1,5 +1,5 @@
 name: "Build & Install action"
-run-name: "Running Build % Install action (triggered by ${{ github.actor }})"
+run-name: "Running Build & Install action (triggered by ${{ github.actor }})"
 on: [push]
 jobs:
   Build:
@@ -11,4 +11,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Install print"
-        run: "echo Run"
+        run: "echo Install"
