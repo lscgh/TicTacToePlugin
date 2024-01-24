@@ -1,8 +1,14 @@
-name: "Action on push"
-run-name: "${{ github.actor }} is running action after push"
+name: "Build & Install action"
+run-name: "Running Build % Install action (triggered by ${{ gibhub.actor }})"
 on: [push]
 jobs:
-  Main-Job:
+  Build:
     runs-on: ubuntu-latest
     steps:
-      - run: "echo This is my action!"
+      - name: "Build print"
+      - run: "echo Build"
+  Install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Install print"
+        run: "echo Run"
