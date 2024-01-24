@@ -58,8 +58,8 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 			}
 			
 			if(commands.isEmpty()) commands.add("(no available players)");
-		} else {
-			commands.add("3");
+		} else if(args.length <= 5) {
+			commands.add(args.length == 3 ? "1" : "3");
 		}
 		
 		StringUtil.copyPartialMatches(args[args.length - 1], commands, result);
