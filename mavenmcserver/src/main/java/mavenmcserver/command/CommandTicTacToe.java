@@ -11,9 +11,11 @@ public class CommandTicTacToe implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		
-		sender.sendMessage("You just executed /tictactoe");
+		if(args.length > 1) {
+			sender.sendMessage("You just executed /tictactoe correctly");
+		}
 		
-		return true;
+		return args.length > 1;
 	}
 
 	
