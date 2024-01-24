@@ -7,4 +7,4 @@ api-version: 1.20
 commands:
  tictactoe:
   description: "Start a new Tic-Tac-Toe game!"
-  usage: "§4Usage: /<command> <opponent: Player> [sizeX = 3] [sizeY = 1] [sizeZ = 3] [winRequiredAmount = 3]§r"
+  usage: "§cUsage: /<command> <opponent: Player> [sizeX = 3] [sizeY = 1] [sizeZ = 3] [winRequiredAmount = 3]§r"
