@@ -13,7 +13,8 @@ public class Plugin extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
-		this.getCommand(CommandTicTacToe.commandName).setExecutor(new CommandTicTacToe());
+		// Register command /tictactoe
+		new CommandTicTacToe(this);
 	}
 	
 	@Override
