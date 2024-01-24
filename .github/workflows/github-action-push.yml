@@ -1,0 +1,8 @@
+name: "Action on push"
+run-name: "${{ github.actor }} is running action after push"
+on: [push]
+jobs:
+  Main-Job:
+    runs-on: ubuntu-latest
+    steps:
+      - run: "echo This is my action!"
