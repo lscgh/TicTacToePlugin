@@ -2,4 +2,4 @@
 
 
 ## Description
-Plugin for tic tac toe
+A minecraft spigot plugin for "tic tac toe".
