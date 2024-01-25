@@ -9,12 +9,8 @@ jobs:
         run: "echo Build"
       - name: "Check out"
         uses: actions/checkout@v4
-      - name: "Go to workspace directory /mavenmcserver"
-        run: "cd ${{ github.workspace }}/mavenmcserver"
-      - name: "List items here"
-        run: "ls"
-      - name: "Get maven version"
-        run: "mvn --version"
+      - name: "Test maven package"
+        run: "mvn package"
   Install:
     runs-on: ubuntu-latest
     steps:
