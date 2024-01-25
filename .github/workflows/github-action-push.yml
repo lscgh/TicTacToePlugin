@@ -7,10 +7,8 @@ jobs:
     steps:
       - name: "Build print"
         run: "echo Build"
-      - name: "Print working directory"
-        run: "pwd"
-      - name: "Print workspace"
-        run: "echo ${{ github.workspace }}"
+      - name: "List workspace directory"
+        run: "ls ${{ github.workspace }}"
   Install:
     runs-on: ubuntu-latest
     steps:
