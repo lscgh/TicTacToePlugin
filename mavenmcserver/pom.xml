@@ -6,8 +6,8 @@
   <name>mavenmcserver</name>
   <description>Minecraft Server Maven Project</description>
   <properties>
-        <maven.compiler.source>6</maven.compiler.source>
-        <maven.compiler.target>6</maven.compiler.target>
+        <maven.compiler.source>7</maven.compiler.source>
+        <maven.compiler.target>7</maven.compiler.target>
   </properties>
   
   <repositories>
