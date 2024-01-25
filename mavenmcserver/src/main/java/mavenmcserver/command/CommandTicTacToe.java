@@ -33,14 +33,14 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		
 		if(!(sender instanceof Player)) {
-			sender.sendMessage("This command may only be executed by players");
+			sender.sendMessage("This command mayo only be executed by players");
 			return true;
 		}
 		
 		if(args.length > 0) {
 			
 			if(args.length > CommandTicTacToe.maxValidArgCount) {
-				sender.sendMessage(ChatColor.RED + "Too many arguments for command '/tictactoe'!" + ChatColor.RESET);
+				sender.sendMessage(ChatColor.RED + "Too many arguments for command '/" + label + "'!" + ChatColor.RESET);
 				return false;
 			}
 			
