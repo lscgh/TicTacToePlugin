@@ -53,8 +53,6 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				if(args[0].equals(noAvailablePlayersPlaceholder[0]) && args[1].equals(noAvailablePlayersPlaceholder[1]) && args[2].equals(noAvailablePlayersPlaceholder[2])) return true;
 			}
 			
-			sender.sendMessage("You just executed /tictactoe correctly");
-			
 			GameConfig config;
 			
 			try {
@@ -67,6 +65,11 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				sender.sendMessage(ChatColor.RED + "Error: expected number at '" + nonNumberString + "'" + ChatColor.RESET);
 				return true;
 			}
+			
+			sender.sendMessage("You just executed /tictactoe correctly");
+			sender.sendMessage("Opponent player name: '" + config.opponentPlayer.getName() + "'");
+			sender.sendMessage("Game size: " + config.size);
+			sender.sendMessage("WinRequiredAmount: " + config.winRequiredAmount);
 			
 		}
 		
