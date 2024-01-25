@@ -9,6 +9,8 @@ jobs:
         run: "echo Build"
       - name: "Print working directory"
         run: "pwd"
+      - name: "Print workspace"
+        run: "echo ${{ github.workspace }}"
   Install:
     runs-on: ubuntu-latest
     steps:
