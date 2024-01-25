@@ -9,8 +9,8 @@ jobs:
         run: "echo Build"
       - name: "Check out"
         uses: actions/checkout@v4
-      - name: "List workspace directory"
-        run: "ls ${{ github.workspace }}"
+      - name: "List workspace directory /mavenmcserver"
+        run: "ls ${{ github.workspace }}/mavenmcserver"
       - name: "Get maven version"
         run: "mvn --version"
   Install:
