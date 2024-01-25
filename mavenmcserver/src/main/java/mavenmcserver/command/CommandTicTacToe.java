@@ -53,6 +53,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				if(args[0].equals(noAvailablePlayersPlaceholder[0]) && args[1].equals(noAvailablePlayersPlaceholder[1]) && args[2].equals(noAvailablePlayersPlaceholder[2])) return true;
 			}
 			
+			// Create the game's config from the command's args
 			GameConfig config;
 			
 			try {
@@ -66,6 +67,18 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				return true;
 			}
 			
+			// Check for errors in the game's config
+			List<String> configErrors = config.validate();
+			if(!configErrors.isEmpty()) {
+				for(String error: configErrors) {
+					sender.sendMessage(ChatColor.RED + error + ChatColor.RESET);
+				}
+				
+				// Don't continue on error
+				return true;
+			}
+			
+			// Show the config to the player
 			sender.sendMessage("You just executed /tictactoe correctly");
 			sender.sendMessage("Opponent player name: '" + config.opponentPlayer.getName() + "'");
 			sender.sendMessage("Game size: " + config.size);
