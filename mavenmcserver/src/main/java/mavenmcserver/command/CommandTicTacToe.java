@@ -15,6 +15,9 @@ import mavenmcserver.Plugin;
 public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 	
 	public static String commandName = "tictactoe";
+	public static int maxValidArgCount = 5;
+	public static int opponentArgumentIndex = 1;
+	public static int ySizeArgumentIndex = 3;
 	
 	private Plugin plugin;
 	
@@ -30,8 +33,10 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		
 		if(args.length > 0) {
 			
-			if(args.length >= 3) {
-				if(args[0].equals("(no") && args[1].equals("available") && args[2].equals("players)")) return true;
+			int noAvailablePlayersMinArgCount = 3;
+			if(args.length >= noAvailablePlayersMinArgCount) {
+				String noAvailablePlayersPlaceholder[] = {"(no", "available", "players)"};
+				if(args[0].equals(noAvailablePlayersPlaceholder[0]) && args[1].equals(noAvailablePlayersPlaceholder[1]) && args[2].equals(noAvailablePlayersPlaceholder[2])) return true;
 			}
 			
 			sender.sendMessage("You just executed /tictactoe correctly");
@@ -41,30 +46,31 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 			}
 		}
 		
-		return args.length > 0;
+		boolean shouldShowUsage = args.length <= 0;
+		return !shouldShowUsage;
 	}
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
 		
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> completions = new ArrayList<String>();
 		
-		ArrayList<String> commands = new ArrayList<String>();
-		
-		if(args.length == 1) {
+		if(args.length == CommandTicTacToe.opponentArgumentIndex) {
+			
 			for(Player player: this.plugin.getServer().getOnlinePlayers()) {
 				if(player.getName().equals(sender.getName())) continue;
-				commands.add(player.getName());
+				completions.add(player.getName());
 			}
 			
-			if(commands.isEmpty()) commands.add("(no available players)");
-		} else if(args.length <= 5) {
-			commands.add(args.length == 3 ? "1" : "3");
+			if(completions.isEmpty()) completions.add("(no available players)");
+		} else if(args.length <= CommandTicTacToe.maxValidArgCount) {
+			completions.add(args.length == CommandTicTacToe.ySizeArgumentIndex ? "1" : "3");
 		}
 		
-		StringUtil.copyPartialMatches(args[args.length - 1], commands, result);
+		ArrayList<String> filteredCompletions = new ArrayList<String>();
+		StringUtil.copyPartialMatches(args[args.length - 1], completions, filteredCompletions);
 		
-		return result;
+		return filteredCompletions;
 	}
 	
 	
