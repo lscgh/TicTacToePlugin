@@ -20,7 +20,7 @@ jobs:
         with:
           draft: false
           prerelease: true
-          tag_name: "${{ github.ref }}"
+          tag_name: "release"
           release_name: "Release ${{ github.ref }}"
           body: |
             Automatically generated
