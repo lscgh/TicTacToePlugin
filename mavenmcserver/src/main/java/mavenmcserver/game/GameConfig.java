@@ -23,7 +23,7 @@ public class GameConfig {
 	public List<String> validate() {
 		ArrayList<String> errors = new ArrayList<String>();
 		
-		if(this.winRequiredAmount < this.size.maxComponent()) {
+		if(this.winRequiredAmount > this.size.maxComponent()) {
 			errors.add("The required win amount must not be larger than the size's largest dimension");
 		}
 		
