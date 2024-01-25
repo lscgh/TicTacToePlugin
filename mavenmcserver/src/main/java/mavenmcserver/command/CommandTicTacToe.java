@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 import mavenmcserver.Plugin;
+import net.md_5.bungee.api.ChatColor;
 
 public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 	
@@ -31,7 +32,17 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		
+		if(!(sender instanceof Player)) {
+			sender.sendMessage("This command may only be executed by players");
+			return true;
+		}
+		
 		if(args.length > 0) {
+			
+			if(args.length > CommandTicTacToe.maxValidArgCount) {
+				sender.sendMessage(ChatColor.RED + "Too many arguments for command '/tictactoe'!" + ChatColor.RESET);
+				return false;
+			}
 			
 			int noAvailablePlayersMinArgCount = 3;
 			if(args.length >= noAvailablePlayersMinArgCount) {
