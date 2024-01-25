@@ -63,7 +63,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				sender.sendMessage(ChatColor.RED + e.getMessage() + ChatColor.RESET);
 				return true;
 			} catch(NumberFormatException e) {
-				String nonNumberString = e.getMessage().substring(19, e.getMessage().length() - 2);
+				String nonNumberString = e.getMessage().substring(19, e.getMessage().length() - 1);
 				sender.sendMessage(ChatColor.RED + "Error: expected number at '" + nonNumberString + "'" + ChatColor.RESET);
 				return true;
 			}
