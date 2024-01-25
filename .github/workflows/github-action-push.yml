@@ -7,6 +7,8 @@ jobs:
     steps:
       - name: "Build print"
         run: "echo Build"
+      - name: "Check out"
+        uses: actions/checkout@v4
       - name: "List workspace directory"
         run: "ls ${{ github.workspace }}"
   Install:
