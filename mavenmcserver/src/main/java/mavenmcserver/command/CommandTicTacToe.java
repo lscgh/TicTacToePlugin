@@ -9,13 +9,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
+import org.joml.Vector3i;
 
 import mavenmcserver.Plugin;
+import mavenmcserver.game.GameConfig;
 import net.md_5.bungee.api.ChatColor;
 
 public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 	
 	public static String commandName = "tictactoe";
+	public static int minValidArgCount = 1;
 	public static int maxValidArgCount = 5;
 	public static int opponentArgumentIndex = 1;
 	public static int ySizeArgumentIndex = 3;
@@ -52,9 +55,15 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 			
 			sender.sendMessage("You just executed /tictactoe correctly");
 			
-			for(String arg: args) {
-				sender.sendMessage(arg);
+			GameConfig config;
+			
+			try {
+				config = this.createGameConfigFromCommand((Player)sender, args);
+			} catch(InvalidArgCountException | OpponentPlayerNotFoundException | NumberFormatException e) {
+				sender.sendMessage(e.getMessage());
+				return true;
 			}
+			
 		}
 		
 		boolean shouldShowUsage = args.length <= 0;
@@ -84,5 +93,51 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		return filteredCompletions;
 	}
 	
+	
+	public GameConfig createGameConfigFromCommand(Player mainPlayer, String args[]) throws InvalidArgCountException, OpponentPlayerNotFoundException, NumberFormatException {
+		if(args.length < CommandTicTacToe.minValidArgCount && args.length > CommandTicTacToe.maxValidArgCount) {
+			throw new InvalidArgCountException("CommandTicTacToe.createGameConfigFromCommand was called with " + args.length + "arguments! (min = " + CommandTicTacToe.minValidArgCount + "; max = " + CommandTicTacToe.maxValidArgCount + ")");
+		}
+		
+		String opponentPlayerName = args[0];
+		Player opponentPlayer = this.plugin.getServer().getPlayer(opponentPlayerName);
+		
+		if(opponentPlayer == null) {
+			throw new OpponentPlayerNotFoundException("The requested opponent player '" + opponentPlayerName + "' was not found on this server.");
+		}
+		
+		int integerArguments[] = new int[4];
+		int sizeXIndex = 0;
+		int sizeYIndex = 1;
+		int sizeZIndex = 2;
+		int winRequiredAmountIndex = 3;
+		
+		for(int i = 1; i < 5; i++) {
+			try {
+				integerArguments[i - 1] = Integer.parseInt(args[i]);
+			} catch(NumberFormatException e) {
+				throw e;
+			}
+		}
+		
+		return new GameConfig(mainPlayer, opponentPlayer, new Vector3i(integerArguments[sizeXIndex], integerArguments[sizeYIndex], integerArguments[sizeZIndex]), integerArguments[winRequiredAmountIndex]);
+	}
+	
+	
+	class InvalidArgCountException extends Exception {
+		private static final long serialVersionUID = 5946362337911270663L;
+
+		public InvalidArgCountException(String message) {
+			super(message);
+		}
+	}
+	
+	class OpponentPlayerNotFoundException extends Exception {
+		private static final long serialVersionUID = -3046415677251307939L;
+		
+		public OpponentPlayerNotFoundException(String message) {
+			super(message);
+		}
+	}
 	
 }
