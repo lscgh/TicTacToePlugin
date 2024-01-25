@@ -59,8 +59,12 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 			
 			try {
 				config = this.createGameConfigFromCommand((Player)sender, args);
-			} catch(InvalidArgCountException | OpponentPlayerNotFoundException | NumberFormatException e) {
-				sender.sendMessage(e.getMessage());
+			} catch(InvalidArgCountException | OpponentPlayerNotFoundException e) {
+				sender.sendMessage(ChatColor.RED + e.getMessage() + ChatColor.RESET);
+				return true;
+			} catch(NumberFormatException e) {
+				String nonNumberString = e.getMessage().substring(19, e.getMessage().length() - 2);
+				sender.sendMessage(ChatColor.RED + "Error: expected number at '" + nonNumberString + "'" + ChatColor.RESET);
 				return true;
 			}
 			
