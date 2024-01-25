@@ -10,7 +10,7 @@ jobs:
       - name: "Check out"
         uses: actions/checkout@v4
       - name: "Test maven package"
-        run: "mvn package"
+        run: "cd mavenmcserver; mvn package"
   Install:
     runs-on: ubuntu-latest
     steps:
