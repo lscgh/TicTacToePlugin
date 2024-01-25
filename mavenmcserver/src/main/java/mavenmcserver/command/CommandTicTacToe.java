@@ -118,7 +118,11 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		
 		for(int i = 1; i < 5; i++) {
 			try {
-				integerArguments[i - 1] = Integer.parseInt(args[i]);
+				if(args.length <= i) {
+					integerArguments[i - 1] = i == 2 ? 1 : 3;
+				} else {
+					integerArguments[i - 1] = Integer.parseInt(args[i]);
+				}
 			} catch(NumberFormatException e) {
 				throw e;
 			}
