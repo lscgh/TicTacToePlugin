@@ -1,0 +1,106 @@
+@startuml
+
+class FieldPoint {
+    = Vector3i
+}
+
+enum GameEndCause {
+    <b>WIN</b>, // Player won
+    <b>TIE</b>, // Nobody won
+    <b>CANCEL</b> // Player cancelled
+}
+
+class Game {
+    .. Fields ..
+	+GameConfig config
+    +GameListener listener
+    +Location location /' Start block location; stores world '/
+    +GameState state /' Stores the marked fields in a separate positioning system '/
+    +boolean opponentPlayersTurn /' Whose turn it is! '/
+    +CubicBlockArea gameArea /' Set in contructor '/
+    
+    .. Methods ..
+    +Game(GameConfig config)
+    -void inviteOpponent() /' Calls start() when accepted '/
+    +void start() /' Starts the game and places the blocks; activates the listener '/
+    +void end(GameEndCause cause) /' Ends the game and removes the blocks; deactivates the listener '/
+    +void placeAt(FieldPoint position) /' Called when the current player marks a field; checks for win and changes the turn '/
+    +Player getPlayerInTurn()
+}
+
+
+class GameConfig {
+    .. Fields ..
+    +Player mainPlayer
+    +Player opponentPlayer
+    +Vector3i size
+    +int winRequiredAmount
+    
+    .. Methods ..
+    +GameConfig(Player mainPlayer, Player opponentPlayer, Vector3i size, int winRequiredAmount)
+    +List<String> validate() /' Returns a list of errors in the config! Empty means OK '/
+}
+
+
+enum FieldState {
+    <b>NEUTRAL</b>, <b>MAIN</b>, <b>OPPONENT</b>
+}
+
+class GameState {
+    .. Fields ..
+    +Game game
+    -FieldState blockStates[]
+    
+    .. Methods ..
+    +GameState(Game game) /' Sizes the array and fills it with FieldState.NEUTRAL '/
+    +FieldPoint blockLocationToFieldPoint(Location block) /' /!\ CHECK FOR WORLD '/
+    +Location fieldPointToBlockLocation(FieldPoint point) /' /!\ SET WORLD '/
+    +boolean fieldPointIsValid(FieldPoint point) /' Returns true if the given FieldPoint is contained in this game (regarding the size!) '/
+    +FieldState getStateAt(FieldPoint position)
+    +FieldState getStateAt(int x, int y, int z)
+    +void setStateAt(FieldPoint position, FieldState newState)
+    +void setStateAt(int x, int y, int z, FieldState newState)
+    
+    // Returns NEUTRAL if there is no winner yet
+    +FieldState getWinnerIfAny() /' Returns NEUTRAL for no winner yet '/
+    +boolean winIsPossible() /' Whether (false) or not (true) to cancel the game '/
+}
+
+class GameListener {
+    .. Fields ..
+    +Game game
+    
+    .. Methods ..
+    +GameListener(Game game)
+    +void activate()
+    +void deactivate()
+    +@EventHandler void onBlockPlace(...) /' BlockPlaceEvent '/
+    +@EventHandler void onBlockBreak(...) /' BlockBreakEvent '/
+    +@EventHandler void onEntitySummon(...) /' EntitySpawnEvent '/
+    +@EventHandler void onMove(...) /' PlayerMoveEvent '/
+    +@EventHandler void onPlayerDamaged(...) /' EntityDamageByEntityEvent '/
+    +@EventHandler void onBlockMove(...) /' BlockFromToEvent '/
+}
+
+
+class CubicBlockArea {
+    .. Fields ..
+    +Location startBlock
+    +Location endBlock
+
+    .. Methods ..
+    +CubicBlockArea(Location startBlock, Location endBlock)
+    +boolean contains(Location block)
+    +Vector3i size()
+}
+
+Game --- GameConfig
+Game --- GameListener
+Game ..> CubicBlockArea
+Game ..> GameEndCause
+
+FieldPoint ..> GameState
+FieldState ..> GameState
+Game --- GameState
+
+@enduml
