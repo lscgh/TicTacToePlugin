@@ -16,8 +16,8 @@ public class GameConfigTest {
 		assertTrue(errors.contains("Couldn't add you to the game. Please retry!"));
 		assertTrue(errors.contains("Couldn't add the opponent player to the game."));
 		assertTrue(errors.contains("No dimension of the game can be smaller than 1. The smallest possible game is (" + GameConfig.minFlatSize + ", " + GameConfig.minHeight + ", " + GameConfig.minFlatSize + ")."));
-		assertTrue(errors.contains("The X and Z size of the game must not be smaller than " + GameConfig.minFlatSize));
-		assertTrue(errors.contains("The required win amount must not be larger than the size's largest dimension"));
+		assertTrue(errors.contains("The X and Z size of the game must not be smaller than " + GameConfig.minFlatSize + "."));
+		assertTrue(errors.contains("The required win amount must not be larger than the size's largest dimension."));
 		
 		config = new GameConfig(null, null, new Vector3i(2, 1, 2), 2);
 		errors = config.validate();

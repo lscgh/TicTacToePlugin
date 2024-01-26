@@ -66,11 +66,11 @@ public class GameConfig {
 		}
 		
 		if(Math.min(this.size.x, this.size.z) < GameConfig.minFlatSize) {
-			errors.add("The X and Z size of the game must not be smaller than " + GameConfig.minFlatSize);
+			errors.add("The X and Z size of the game must not be smaller than " + GameConfig.minFlatSize + ".");
 		}
 		
 		if(this.winRequiredAmount > Math.max(this.size.x, Math.max(this.size.y, this.size.z))) {
-			errors.add("The required win amount must not be larger than the size's largest dimension");
+			errors.add("The required win amount must not be larger than the size's largest dimension.");
 		}
 		
 		return errors;

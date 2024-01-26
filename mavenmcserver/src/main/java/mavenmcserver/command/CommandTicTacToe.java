@@ -68,7 +68,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				return true;
 			} catch(NumberFormatException e) {
 				String nonNumberString = e.getMessage().substring(19, e.getMessage().length() - 1);
-				sender.sendMessage(ChatColor.RED + "Error: expected number at '" + nonNumberString + "'" + ChatColor.RESET);
+				sender.sendMessage(ChatColor.RED + "Error: expected number at '" + nonNumberString + "'." + ChatColor.RESET);
 				return true;
 			}
 			
@@ -121,7 +121,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 	public GameConfig createGameConfigFromCommand(Player mainPlayer, String args[]) throws InvalidArgCountException, OpponentPlayerNotFoundException, NumberFormatException {
 		
 		if(args.length < CommandTicTacToe.MIN_VALID_ARG_COUNT && args.length > CommandTicTacToe.MAX_VALID_ARG_COUNT) {
-			throw new InvalidArgCountException("CommandTicTacToe.createGameConfigFromCommand was called with " + args.length + "arguments! (min = " + CommandTicTacToe.MIN_VALID_ARG_COUNT + "; max = " + CommandTicTacToe.MAX_VALID_ARG_COUNT + ")");
+			throw new InvalidArgCountException("CommandTicTacToe.createGameConfigFromCommand was called with " + args.length + "arguments (min = " + CommandTicTacToe.MIN_VALID_ARG_COUNT + "; max = " + CommandTicTacToe.MAX_VALID_ARG_COUNT + ")!");
 		}
 		
 		String opponentPlayerName = args[0];
