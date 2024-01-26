@@ -6,8 +6,8 @@
   <name>mavenmcserver</name>
   <description>Minecraft Server Maven Project</description>
   <properties>
-        <maven.compiler.source>7</maven.compiler.source>
-        <maven.compiler.target>7</maven.compiler.target>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
   </properties>
   
   <repositories>
@@ -24,5 +24,45 @@
 		  <version>1.20.4-R0.1-SNAPSHOT</version>
 		  <scope>provided</scope>
 	  </dependency>
+	  
+	  <dependency>
+		  <groupId>org.mockito</groupId>
+		  <artifactId>mockito-all</artifactId>
+		  <version>1.10.19</version>
+		  <scope>test</scope>
+	</dependency>
   </dependencies>
+  
+  <build>
+	  <pluginManagement>
+		  <plugins>
+			  <plugin>
+				  <groupId>org.apache.maven.plugins</groupId>
+				  <artifactId>maven-surefire-plugin</artifactId>
+				  <version>3.1.2</version>
+				  
+				  <configuration>
+					    <argLine>
+						  --add-opens java.base/java.lang=ALL-UNNAMED
+ 						 </argLine>
+				  </configuration>
+				  
+				  <dependencies>
+					  <dependency>
+		 				 <groupId>org.junit.jupiter</groupId>
+		 				 <artifactId>junit-jupiter-engine</artifactId>
+		 				 <version>5.10.0</version>
+	 				 </dependency>
+	  
+	 				 <dependency>
+						  <groupId>org.junit.platform</groupId>
+						  <artifactId>junit-platform-runner</artifactId>
+						  <version>1.10.1</version>
+	  				</dependency>
+				 </dependencies>
+			  </plugin>
+		  </plugins>
+	  </pluginManagement>
+  </build>
+  
 </project>

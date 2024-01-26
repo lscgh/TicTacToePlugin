@@ -17,19 +17,24 @@ import net.md_5.bungee.api.ChatColor;
 
 public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 	
-	public static String commandName = "tictactoe";
-	public static int minValidArgCount = 1;
-	public static int maxValidArgCount = 5;
-	public static int opponentArgumentIndex = 1;
-	public static int ySizeArgumentIndex = 3;
+	public static String COMMAND_NAME = "tictactoe";
+	public static int MIN_VALID_ARG_COUNT = 1;
+	public static int MAX_VALID_ARG_COUNT = 5;
+	public static int OPPONENT_ARG_INDEX = 1;
+	public static int Y_SIZE_ARG_INDEX = 3;
+	
+	public static int SIZE_X_INDEX = 0;
+	public static int SIZE_Y_INDEX = 1;
+	public static int SIZE_Z_INDEX = 2;
+	public static int WIN_REQUIRED_AMOUNT_INDEX = 3;
 	
 	private Plugin plugin;
 	
 	public CommandTicTacToe(Plugin plugin) {
 		this.plugin = plugin;
 		
-		this.plugin.getCommand(CommandTicTacToe.commandName).setExecutor(this);
-		this.plugin.getCommand(CommandTicTacToe.commandName).setTabCompleter(this);
+		this.plugin.getCommand(CommandTicTacToe.COMMAND_NAME).setExecutor(this);
+		this.plugin.getCommand(CommandTicTacToe.COMMAND_NAME).setTabCompleter(this);
 	}
 
 	@Override
@@ -42,7 +47,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		
 		if(args.length > 0) {
 			
-			if(args.length > CommandTicTacToe.maxValidArgCount) {
+			if(args.length > CommandTicTacToe.MAX_VALID_ARG_COUNT) {
 				sender.sendMessage(ChatColor.RED + "Too many arguments for command '/" + label + "'!" + ChatColor.RESET);
 				return false;
 			}
@@ -95,7 +100,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		
 		ArrayList<String> completions = new ArrayList<String>();
 		
-		if(args.length == CommandTicTacToe.opponentArgumentIndex) {
+		if(args.length == CommandTicTacToe.OPPONENT_ARG_INDEX) {
 			
 			for(Player player: this.plugin.getServer().getOnlinePlayers()) {
 				if(player.getName().equals(sender.getName())) continue;
@@ -103,8 +108,8 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 			}
 			
 			if(completions.isEmpty()) completions.add("(no available players)");
-		} else if(args.length <= CommandTicTacToe.maxValidArgCount) {
-			completions.add(args.length == CommandTicTacToe.ySizeArgumentIndex ? "1" : "3");
+		} else if(args.length <= CommandTicTacToe.MAX_VALID_ARG_COUNT) {
+			completions.add(args.length == CommandTicTacToe.Y_SIZE_ARG_INDEX ? "1" : "3");
 		}
 		
 		ArrayList<String> filteredCompletions = new ArrayList<String>();
@@ -114,8 +119,9 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 	}
 	
 	public GameConfig createGameConfigFromCommand(Player mainPlayer, String args[]) throws InvalidArgCountException, OpponentPlayerNotFoundException, NumberFormatException {
-		if(args.length < CommandTicTacToe.minValidArgCount && args.length > CommandTicTacToe.maxValidArgCount) {
-			throw new InvalidArgCountException("CommandTicTacToe.createGameConfigFromCommand was called with " + args.length + "arguments! (min = " + CommandTicTacToe.minValidArgCount + "; max = " + CommandTicTacToe.maxValidArgCount + ")");
+		
+		if(args.length < CommandTicTacToe.MIN_VALID_ARG_COUNT && args.length > CommandTicTacToe.MAX_VALID_ARG_COUNT) {
+			throw new InvalidArgCountException("CommandTicTacToe.createGameConfigFromCommand was called with " + args.length + "arguments! (min = " + CommandTicTacToe.MIN_VALID_ARG_COUNT + "; max = " + CommandTicTacToe.MAX_VALID_ARG_COUNT + ")");
 		}
 		
 		String opponentPlayerName = args[0];
@@ -125,11 +131,14 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 			throw new OpponentPlayerNotFoundException("The requested opponent player '" + opponentPlayerName + "' was not found on this server.");
 		}
 		
+		int integerArguments[] = CommandTicTacToe.extractIntegerArgs(args);
+		
+		return new GameConfig(mainPlayer, opponentPlayer, new Vector3i(integerArguments[CommandTicTacToe.SIZE_X_INDEX], integerArguments[CommandTicTacToe.SIZE_Y_INDEX], integerArguments[CommandTicTacToe.SIZE_Z_INDEX]), integerArguments[CommandTicTacToe.WIN_REQUIRED_AMOUNT_INDEX]);
+	}
+	
+	
+	protected static int[] extractIntegerArgs(String args[]) {
 		int integerArguments[] = new int[4];
-		int sizeXIndex = 0;
-		int sizeYIndex = 1;
-		int sizeZIndex = 2;
-		int winRequiredAmountIndex = 3;
 		
 		for(int i = 1; i < 5; i++) {
 			try {
@@ -143,11 +152,11 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 			}
 		}
 		
-		return new GameConfig(mainPlayer, opponentPlayer, new Vector3i(integerArguments[sizeXIndex], integerArguments[sizeYIndex], integerArguments[sizeZIndex]), integerArguments[winRequiredAmountIndex]);
+		return integerArguments;
 	}
 	
 	
-	class InvalidArgCountException extends Exception {
+	public class InvalidArgCountException extends Exception {
 		private static final long serialVersionUID = 5946362337911270663L;
 
 		public InvalidArgCountException(String message) {
@@ -155,7 +164,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		}
 	}
 	
-	class OpponentPlayerNotFoundException extends Exception {
+	public class OpponentPlayerNotFoundException extends Exception {
 		private static final long serialVersionUID = -3046415677251307939L;
 		
 		public OpponentPlayerNotFoundException(String message) {
