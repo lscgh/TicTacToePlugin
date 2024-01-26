@@ -125,7 +125,13 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		}
 		
 		String opponentPlayerName = args[0];
-		Player opponentPlayer = this.plugin.getServer().getPlayer(opponentPlayerName);
+		Player opponentPlayer = null;
+		for(Player player: this.plugin.getServer().getOnlinePlayers()) {
+			if(opponentPlayerName.equals(player.getName())) {
+				opponentPlayer = player;
+				break;
+			}
+		}
 		
 		if(opponentPlayer == null) {
 			throw new OpponentPlayerNotFoundException("The requested opponent player '" + opponentPlayerName + "' was not found on this server.");
