@@ -8,7 +8,7 @@ jobs:
     steps:
       - name: "Check out"
         uses: actions/checkout@v4
-      - name: "Maven package (including tests)"
+      - name: "Run Maven package (including tests)"
         run: "cd mavenmcserver; mvn package"
       - name: "Create release"
         uses: actions/create-release@v1
