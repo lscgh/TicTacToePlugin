@@ -113,7 +113,6 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		return filteredCompletions;
 	}
 	
-	
 	public GameConfig createGameConfigFromCommand(Player mainPlayer, String args[]) throws InvalidArgCountException, OpponentPlayerNotFoundException, NumberFormatException {
 		if(args.length < CommandTicTacToe.minValidArgCount && args.length > CommandTicTacToe.maxValidArgCount) {
 			throw new InvalidArgCountException("CommandTicTacToe.createGameConfigFromCommand was called with " + args.length + "arguments! (min = " + CommandTicTacToe.minValidArgCount + "; max = " + CommandTicTacToe.maxValidArgCount + ")");

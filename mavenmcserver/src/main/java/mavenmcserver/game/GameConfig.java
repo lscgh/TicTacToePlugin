@@ -8,13 +8,36 @@ import org.joml.Vector3i;
 
 public class GameConfig {
 	
+	/**
+	 *  The minimum X and Z size of a game
+	 */
 	static int minFlatSize = 2;
+	
+	/**
+	 *  The minimum Y size of a game
+	 */
 	static int minHeight = 1;
 	
+	/**
+	 * The player who started the game
+	 */
 	public Player mainPlayer;
+	
+	/**
+	 * The player who was invited to the game
+	 */
 	public Player opponentPlayer;
+	
+	/**
+	 * The X, Y, Z size of the game
+	 */
 	public Vector3i size;
+	
+	/**
+	 * The number of same-player-marked fields required for that player to win
+	 */
 	public int winRequiredAmount;
+	
 	
 	public GameConfig(Player mainPlayer, Player opponentPlayer, Vector3i size, int winRequiredAmount) {
 		this.mainPlayer = mainPlayer;
@@ -23,7 +46,10 @@ public class GameConfig {
 		this.winRequiredAmount = winRequiredAmount;
 	}
 	
-	/// Returns an empty list if everything is OK.
+	/**
+	 * Checks the config for errors.
+	 * @return a list with all errors found on this config. If no errors are found, an empty list is returned.
+	 */
 	public List<String> validate() {
 		ArrayList<String> errors = new ArrayList<String>();
 		
