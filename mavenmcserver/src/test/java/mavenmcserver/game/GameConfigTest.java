@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 public class GameConfigTest {
 
 	@Test
-	public void testValidate() {
+	public void testValidateTest() {
 		GameConfig config = new GameConfig(null, null, new Vector3i(0, 0, 0), 2);
 		List<String> errors = config.validate();
 		assertTrue(errors.contains("Couldn't add you to the game. Please retry!"));
