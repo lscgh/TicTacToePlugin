@@ -164,7 +164,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 	
 	public class InvalidArgCountException extends Exception {
 		private static final long serialVersionUID = 5946362337911270663L;
-
+		
 		public InvalidArgCountException(String message) {
 			super(message);
 		}
