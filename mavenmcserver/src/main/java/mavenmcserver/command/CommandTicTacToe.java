@@ -85,10 +85,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 			
 			// Show the config to the player
 			sender.sendMessage("You just executed /tictactoe correctly");
-			sender.sendMessage("Opponent player name: '" + config.opponentPlayer.getName() + "'");
-			sender.sendMessage("Game size: " + config.size);
-			sender.sendMessage("WinRequiredAmount: " + config.winRequiredAmount);
-			
+			sender.sendMessage("Game configuration: '" + config + "'");
 		}
 		
 		boolean shouldShowUsage = args.length <= 0;

@@ -81,6 +81,7 @@ class GameListener {
     +@EventHandler void onMove(...) /' PlayerMoveEvent '/
     +@EventHandler void onPlayerDamaged(...) /' EntityDamageByEntityEvent '/
     +@EventHandler void onBlockMove(...) /' BlockFromToEvent '/
+    +@EventHandler void onPlayerInteract(...) /' PlayerInteractEvent '/
 }
 
 

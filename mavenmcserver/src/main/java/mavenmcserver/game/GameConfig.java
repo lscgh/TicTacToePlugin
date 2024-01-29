@@ -75,4 +75,10 @@ public class GameConfig {
 		
 		return errors;
 	}
+	
+	
+	@Override
+	public String toString() {
+		return "(GameConfig: '" + this.mainPlayer.getName() + "' against '" + this.opponentPlayer.getName() + "', size " + this.size + ", winRequiredAmount " + this.winRequiredAmount + ")";
+	}
 }
