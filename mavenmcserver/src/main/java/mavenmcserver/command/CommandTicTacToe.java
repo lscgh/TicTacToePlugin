@@ -63,7 +63,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 			
 			try {
 				config = this.createGameConfigFromCommand((Player)sender, args);
-			} catch(InvalidArgCountException | OpponentPlayerNotFoundException e) {
+			} catch(InvalidArgCountException | OpponentPlayerNotFoundException | OpponentIsMainPlayerException e) {
 				sender.sendMessage(ChatColor.RED + e.getMessage() + ChatColor.RESET);
 				return true;
 			} catch(NumberFormatException e) {
@@ -118,7 +118,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		return filteredCompletions;
 	}
 	
-	public GameConfig createGameConfigFromCommand(Player mainPlayer, String args[]) throws InvalidArgCountException, OpponentPlayerNotFoundException, NumberFormatException {
+	public GameConfig createGameConfigFromCommand(Player mainPlayer, String args[]) throws InvalidArgCountException, OpponentPlayerNotFoundException, OpponentIsMainPlayerException, NumberFormatException {
 		
 		if(args.length < CommandTicTacToe.MIN_VALID_ARG_COUNT && args.length > CommandTicTacToe.MAX_VALID_ARG_COUNT) {
 			throw new InvalidArgCountException("CommandTicTacToe.createGameConfigFromCommand was called with " + args.length + "arguments (min = " + CommandTicTacToe.MIN_VALID_ARG_COUNT + "; max = " + CommandTicTacToe.MAX_VALID_ARG_COUNT + ")!");
@@ -136,6 +136,11 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		if(opponentPlayer == null) {
 			throw new OpponentPlayerNotFoundException("The requested opponent player '" + opponentPlayerName + "' was not found on this server.");
 		}
+		
+		if(opponentPlayer == mainPlayer) {
+			throw new OpponentIsMainPlayerException("You cannot play a game with yourself ('" + opponentPlayerName + "').");
+		}
+		
 		
 		int integerArguments[] = CommandTicTacToe.extractIntegerArgs(args);
 		
@@ -174,6 +179,14 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		private static final long serialVersionUID = -3046415677251307939L;
 		
 		public OpponentPlayerNotFoundException(String message) {
+			super(message);
+		}
+	}
+	
+	public class OpponentIsMainPlayerException extends Exception {
+		private static final long serialVersionUID = 3470965440570763560L;
+
+		public OpponentIsMainPlayerException(String message) {
 			super(message);
 		}
 	}
