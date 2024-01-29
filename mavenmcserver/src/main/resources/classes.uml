@@ -5,7 +5,8 @@ class FieldPoint {
 }
 
 enum GameEndCause {
-    <b>WIN</b>, // Player won
+    <b>MAIN_WIN</b>, // Main player won
+    <b>OPPONENT_WIN</b>, // Opponent player won
     <b>TIE</b>, // Nobody won
     <b>CANCEL</b> // Player cancelled
 }
