@@ -93,6 +93,7 @@ class CubicBlockArea {
     .. Methods ..
     +CubicBlockArea(Location startBlock, Location endBlock)
     +boolean contains(Location block)
+    -int getPositiveDifference(int a, int b)
     +Vector3i size()
 }
 
