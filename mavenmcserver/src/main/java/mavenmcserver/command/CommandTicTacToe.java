@@ -58,6 +58,9 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				if(args[0].equals(noAvailablePlayersPlaceholder[0]) && args[1].equals(noAvailablePlayersPlaceholder[1]) && args[2].equals(noAvailablePlayersPlaceholder[2])) return true;
 			}
 			
+			Player player = (Player)sender;
+			player.sendMessage("You facing: " + player.getFacing());
+			
 			// Create the game's config from the command's args
 			GameConfig config;
 			
