@@ -3,8 +3,12 @@ package mavenmcserver.game;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 
 public class Game {
 
@@ -19,9 +23,11 @@ public class Game {
 		}
 		
 		private void inviteOpponent() {
-			TextComponent component = new TextComponent("hello");
-			component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/say hi"));
-			this.config.opponentPlayer.spigot().sendMessage(component);
+			this.config.opponentPlayer.sendMessage("Hello " + ChatColor.AQUA + ChatColor.BOLD + this.config.opponentPlayer.getName() + ChatColor.RESET + "! " + ChatColor.AQUA + ChatColor.BOLD + this.config.mainPlayer.getName() + ChatColor.RESET + " would like to play a game of tic-tac-toe with you!");
+			BaseComponent[] invitationComponent = new ComponentBuilder("Click ")
+					.append("here").color(ChatColor.GREEN).bold(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/about")).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to accept")))
+					.append(" to accept the game!").create();
+			this.config.opponentPlayer.spigot().sendMessage(invitationComponent);
 		}
 		
 		
