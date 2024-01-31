@@ -17,7 +17,7 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 public class Game {
 	
 		/// Contains all  queued games that still have to be accepted / rejected
-		public static HashMap<UUID, Game> queuedGames;
+		public static HashMap<UUID, Game> queuedGames = new HashMap<UUID, Game>();
 
 		UUID uuid = UUID.randomUUID();
 		GameConfig config;
