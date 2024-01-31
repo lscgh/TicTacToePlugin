@@ -26,7 +26,7 @@ public class Game {
 			this.config.opponentPlayer.sendMessage("Hello " + ChatColor.AQUA + ChatColor.BOLD + this.config.opponentPlayer.getName() + ChatColor.RESET + "! " + ChatColor.AQUA + ChatColor.BOLD + this.config.mainPlayer.getName() + ChatColor.RESET + " would like to play a game of tic-tac-toe with you!");
 			BaseComponent[] invitationComponent = new ComponentBuilder("Click ")
 					.append("here").color(ChatColor.GREEN).bold(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/about")).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to accept")))
-					.append(" to accept the game!").create();
+					.append(" to accept the game!").reset().create();
 			this.config.opponentPlayer.spigot().sendMessage(invitationComponent);
 		}
 		
