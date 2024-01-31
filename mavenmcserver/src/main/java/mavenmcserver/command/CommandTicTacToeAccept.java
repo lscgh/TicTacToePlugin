@@ -2,6 +2,7 @@ package mavenmcserver.command;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.command.Command;
@@ -40,11 +41,13 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 		try {
 			uuid = UUID.fromString(uuidString);
 		} catch(IllegalArgumentException e) {
-			sender.sendMessage(ChatColor.RED + "Please enter a valid UUID ('" + uuidString + "' is not valid)!");
+			sender.sendMessage(ChatColor.RED + "Please enter a valid UUID ('" + uuidString + "' is invalid)!");
+			return true;
 		}
 		
 		if(uuid == null) {
-			sender.sendMessage(ChatColor.RED + "Please enter a valid UUID ('" + uuidString + "' is not valid)!");
+			sender.sendMessage(ChatColor.RED + "Please enter a valid UUID ('" + uuidString + "' is invalid)!");
+			return true;
 		}
 		
 		Game targetGame = Game.queuedGames.get(uuid);
@@ -62,11 +65,17 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
 		
+		if(!(sender instanceof Player)) return new ArrayList<String>();
+		
 		if(args.length > 1) return new ArrayList<String>();
 		
 		ArrayList<String> completions = new ArrayList<String>();
-		for(UUID gameUUID: Game.queuedGames.keySet()) {
-			completions.add(gameUUID.toString());
+		for(Entry<UUID, Game> entry: Game.queuedGames.entrySet()) {
+			if(entry.getValue().config.opponentPlayer != (Player)sender) {
+				
+			}
+			
+			completions.add(entry.getKey().toString());
 		}
 		
 		ArrayList<String> filteredCompletions = new ArrayList<String>();

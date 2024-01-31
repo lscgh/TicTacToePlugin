@@ -19,9 +19,9 @@ public class Game {
 		/// Contains all  queued games that still have to be accepted / rejected
 		public static HashMap<UUID, Game> queuedGames = new HashMap<UUID, Game>();
 
-		UUID uuid = UUID.randomUUID();
-		GameConfig config;
-		Location location;
+		public UUID uuid = UUID.randomUUID();
+		public GameConfig config;
+		public Location location;
 		boolean opponentPlayersTurn;
 		
 		public Game(GameConfig config) {
