@@ -71,11 +71,9 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 		
 		ArrayList<String> completions = new ArrayList<String>();
 		for(Entry<UUID, Game> entry: Game.queuedGames.entrySet()) {
-			if(entry.getValue().config.opponentPlayer != (Player)sender) {
-				
+			if(entry.getValue().config.opponentPlayer == (Player)sender) {
+				completions.add(entry.getKey().toString());
 			}
-			
-			completions.add(entry.getKey().toString());
 		}
 		
 		ArrayList<String> filteredCompletions = new ArrayList<String>();
