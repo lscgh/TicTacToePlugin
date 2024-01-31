@@ -42,7 +42,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		
 		if(!(sender instanceof Player)) {
-			sender.sendMessage("This command may only be executed by players");
+			sender.sendMessage(ChatColor.RED + "This command may only be executed by players" + ChatColor.RESET);
 			return true;
 		}
 		

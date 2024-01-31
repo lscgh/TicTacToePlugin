@@ -13,6 +13,7 @@ enum GameEndCause {
 
 class Game {
     .. Fields ..
+    +UUID uuid
 	+GameConfig config
     +GameListener listener
     +Location location /' Start block location; stores world '/
