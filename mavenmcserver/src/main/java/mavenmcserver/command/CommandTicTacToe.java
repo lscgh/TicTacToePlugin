@@ -12,6 +12,7 @@ import org.bukkit.util.StringUtil;
 import org.joml.Vector3i;
 
 import mavenmcserver.Plugin;
+import mavenmcserver.game.Game;
 import mavenmcserver.game.GameConfig;
 import net.md_5.bungee.api.ChatColor;
 
@@ -58,9 +59,6 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				if(args[0].equals(noAvailablePlayersPlaceholder[0]) && args[1].equals(noAvailablePlayersPlaceholder[1]) && args[2].equals(noAvailablePlayersPlaceholder[2])) return true;
 			}
 			
-			Player player = (Player)sender;
-			player.sendMessage("You facing: " + player.getFacing());
-			
 			// Create the game's config from the command's args
 			GameConfig config;
 			
@@ -89,6 +87,8 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 			// Show the config to the player
 			sender.sendMessage("You just executed /tictactoe correctly");
 			sender.sendMessage("Game configuration: '" + config + "'");
+			
+			Game game = new Game(config);
 		}
 		
 		boolean shouldShowUsage = args.length <= 0;
