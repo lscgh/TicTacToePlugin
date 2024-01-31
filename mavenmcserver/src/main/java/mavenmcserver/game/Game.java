@@ -20,7 +20,7 @@ public class Game {
 		
 		private void inviteOpponent() {
 			TextComponent component = new TextComponent("hello");
-			component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "say hi"));
+			component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/say hi"));
 			this.config.opponentPlayer.spigot().sendMessage(component);
 		}
 		
