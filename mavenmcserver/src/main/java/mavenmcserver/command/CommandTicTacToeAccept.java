@@ -35,7 +35,13 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 		if(args.length != 1) return false;
 		
 		String uuidString = args[0];
-		UUID uuid = UUID.fromString(uuidString);
+		UUID uuid = null;
+		
+		try {
+			uuid = UUID.fromString(uuidString);
+		} catch(IllegalArgumentException e) {
+			sender.sendMessage(ChatColor.RED + "Please enter a valid UUID ('" + uuidString + "' is not valid)!");
+		}
 		
 		if(uuid == null) {
 			sender.sendMessage(ChatColor.RED + "Please enter a valid UUID ('" + uuidString + "' is not valid)!");
