@@ -36,14 +36,19 @@ public class GameListener implements Listener {
 		if(this.game.gameArea.contains(event.getBlock().getLocation())) {
 			event.getPlayer().sendMessage("You just placed a block!");
 			FieldPoint position = this.game.state.blockLocationToFieldPoint(this.game.location, event.getBlock().getLocation());
+
+			boolean isValid = false;
 			try {
-				if (this.game.state.fieldPointIsValid(position)) {
-					event.getPlayer().sendMessage("This block's location's FieldPoint is " + position + "!");
-				} else {
-					event.getPlayer().sendMessage("This location could not be converted to a FieldPoint");
-				}
-			} catch(IllegalArgumentException e) {
-				event.getPlayer().sendMessage("This location could not be converted to a FieldPoint: " + ChatColor.DARK_RED + e.getMessage() + ChatColor.RESET);
+				isValid = this.game.state.fieldPointIsValid(position);
+			} catch (IllegalArgumentException e) {
+				event.getPlayer().sendMessage("This location could not be converted to a FieldPoint: "
+						+ ChatColor.DARK_RED + e.getMessage() + ChatColor.RESET);
+			}
+
+			if (isValid) {
+				event.getPlayer().sendMessage("This block's location's FieldPoint is " + position + "!");
+			} else {
+				event.getPlayer().sendMessage("This location could not be converted to a FieldPoint");
 			}
 		}
 	}
