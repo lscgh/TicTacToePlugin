@@ -45,7 +45,7 @@ public class Game {
 			this.state = new GameState(this.config.size);
 			
 			Location startBlock = new Location(this.location.getWorld(), this.location.getBlockX() - 2, this.location.getBlockY() - 1, this.location.getBlockZ() - 2);
-			Location endBlock = new Location(this.location.getWorld(), this.location.getBlockX() + this.config.size.x * 2 + 1, this.location.getBlockY() + this.config.size.y * 2 + 1, this.location.getBlockZ() + this.config.size.z * 2 + 1);
+			Location endBlock = new Location(this.location.getWorld(), this.location.getBlockX() + this.config.size.x * 2, this.location.getBlockY() + this.config.size.y * 2, this.location.getBlockZ() + this.config.size.z * 2);
 			this.gameArea = new CubicBlockArea(startBlock, endBlock);
 			
 			this.inviteOpponent();
