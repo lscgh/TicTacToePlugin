@@ -36,7 +36,13 @@ public class Game {
 			
 			this.config = config;
 			this.location = this.generateGameLocation();
-			this.config.mainPlayer.getWorld().getBlockAt(this.location).setType(Material.BLACK_CONCRETE);
+			
+			for(int x = 0; x < this.config.size.x * 2 - 1; x++) {
+				for(int z = 0; z < this.config.size.z * 2 - 1; z++) {
+					this.config.mainPlayer.getWorld().getBlockAt(this.location.getBlockX() + x, this.location.getBlockY(), this.location.getBlockZ() + z);
+				}
+			}
+			
 			this.plugin = plugin;
 			this.inviteOpponent();
 			// set other members
@@ -55,10 +61,16 @@ public class Game {
 				offsetZ = -gameDepthInBlocks - 2;
 				break;
 			case EAST: // towards positive X
+				offsetX = 2;
+				offsetZ = -Math.floor(gameDepthInBlocks / 2);
 				break;
 			case SOUTH: // towards positive Z
+				offsetX = -Math.floor(gameWidthInBlocks / 2);
+				offsetZ = 2;
 				break;
 			case WEST: // towards negative X
+				offsetX = -gameWidthInBlocks - 2;
+				offsetZ = -Math.floor(gameDepthInBlocks / 2);
 				break;
 			default:
 					break;
