@@ -61,7 +61,7 @@ public class Game {
 			}
 			
 			// Remove redundant games:
-			Game.queuedGames.entrySet().removeIf(e -> (e.getValue().config.opponentPlayer == this.config.mainPlayer || e.getValue().config.opponentPlayer == this.config.mainPlayer));
+			Game.queuedGames.entrySet().removeIf(e -> (e.getValue().config.opponentPlayer == this.config.opponentPlayer || e.getValue().config.opponentPlayer == this.config.mainPlayer));
 		}
 		
 		public enum GameEndCause {
