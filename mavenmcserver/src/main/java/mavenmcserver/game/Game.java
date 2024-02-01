@@ -39,7 +39,7 @@ public class Game {
 			
 			for(int x = 0; x < this.config.size.x * 2 - 1; x++) {
 				for(int z = 0; z < this.config.size.z * 2 - 1; z++) {
-					this.config.mainPlayer.getWorld().getBlockAt(this.location.getBlockX() + x, this.location.getBlockY(), this.location.getBlockZ() + z);
+					this.config.mainPlayer.getWorld().getBlockAt(this.location.getBlockX() + x, this.location.getBlockY(), this.location.getBlockZ() + z).setType(Material.BLACK_CONCRETE);
 				}
 			}
 			
