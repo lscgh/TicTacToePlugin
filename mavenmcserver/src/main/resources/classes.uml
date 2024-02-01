@@ -20,9 +20,10 @@ class Game {
     +GameState state /' Stores the marked fields in a separate positioning system '/
     +boolean opponentPlayersTurn /' Whose turn it is! '/
     +CubicBlockArea gameArea /' Set in contructor '/
+    +Plugin plugin /' Used for listener and for placing blocks '/
     
     .. Methods ..
-    +Game(GameConfig config)
+    +Game(GameConfig config, Plugin plugin)
     -void inviteOpponent() /' Calls start() when accepted '/
     +void start() /' Starts the game and places the blocks; activates the listener '/
     +void end(GameEndCause cause) /' Ends the game and removes the blocks; deactivates the listener '/
@@ -41,6 +42,7 @@ class GameConfig {
     .. Methods ..
     +GameConfig(Player mainPlayer, Player opponentPlayer, Vector3i size, int winRequiredAmount)
     +List<String> validate() /' Returns a list of errors in the config! Empty means OK '/
+    List<String> validateNumbers() /' sub-part of validate() '/
 }
 
 
