@@ -13,6 +13,8 @@ import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import net.md_5.bungee.api.ChatColor;
+
 public class GameListener implements Listener {
 
 	Game game;
@@ -34,10 +36,14 @@ public class GameListener implements Listener {
 		if(this.game.gameArea.contains(event.getBlock().getLocation())) {
 			event.getPlayer().sendMessage("You just placed a block!");
 			FieldPoint position = this.game.state.blockLocationToFieldPoint(this.game.location, event.getBlock().getLocation());
-			if(this.game.state.fieldPointIsValid(position)) {
-				event.getPlayer().sendMessage("This block's location's FieldPoint is " + position + "!");
-			} else {
-				event.getPlayer().sendMessage("This location could not be converted to a FieldPoint");
+			try {
+				if (this.game.state.fieldPointIsValid(position)) {
+					event.getPlayer().sendMessage("This block's location's FieldPoint is " + position + "!");
+				} else {
+					event.getPlayer().sendMessage("This location could not be converted to a FieldPoint");
+				}
+			} catch(IllegalArgumentException e) {
+				event.getPlayer().sendMessage("This location could not be converted to a FieldPoint: " + ChatColor.DARK_RED + e.getMessage() + ChatColor.RESET);
 			}
 		}
 	}
