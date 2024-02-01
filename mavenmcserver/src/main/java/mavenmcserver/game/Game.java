@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import mavenmcserver.Plugin;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -24,13 +25,16 @@ public class Game {
 
 		public UUID uuid = UUID.randomUUID();
 		public GameConfig config;
+		public GameListener listener = new GameListener(this);
 		public Location location;
 		boolean opponentPlayersTurn;
+		public Plugin plugin;
 		
-		public Game(GameConfig config) {
+		public Game(GameConfig config, Plugin plugin) {
 			Game.queuedGames.put(this.uuid, this);
 			
 			this.config = config;
+			this.plugin = plugin;
 			this.inviteOpponent();
 			// set other members
 		}
@@ -44,6 +48,10 @@ public class Game {
 		}
 		
 		public void start() {
+			this.listener.activate();
+			
+			
+			
 			Game.queuedGames.remove(this.uuid);
 			Game.runningGames.put(this.config.mainPlayer, this);
 			Game.runningGames.put(this.config.opponentPlayer, this);
@@ -72,6 +80,9 @@ public class Game {
 		}
 		
 		public void end(GameEndCause cause) {
+			this.listener.deactivate();
+			
+			
 			Game.runningGames.remove(this.config.mainPlayer);
 			Game.runningGames.remove(this.config.opponentPlayer);
 		}
