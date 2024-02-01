@@ -55,13 +55,13 @@ enum FieldState {
 
 class GameState {
     .. Fields ..
-    +Game game
+    +Vector3i size
     -FieldState blockStates[]
     
     .. Methods ..
-    +GameState(Game game) /' Sizes the array and fills it with FieldState.NEUTRAL '/
-    +FieldPoint blockLocationToFieldPoint(Location block) /' /!\ CHECK FOR WORLD '/
-    +Location fieldPointToBlockLocation(FieldPoint point) /' /!\ SET WORLD '/
+    +GameState(Vector3i size) /' Sizes the array and fills it with FieldState.NEUTRAL '/
+    +FieldPoint blockLocationToFieldPoint(Location gameStartBlock, Location block) /' /!\ CHECK FOR WORLD '/
+    +Location fieldPointToBlockLocation(Location gameStartBlock, FieldPoint point) /' /!\ SET WORLD '/
     +boolean fieldPointIsValid(FieldPoint point) /' Returns true if the given FieldPoint is contained in this game (regarding the size!) '/
     +FieldState getStateAt(FieldPoint position)
     +FieldState getStateAt(int x, int y, int z)

@@ -26,9 +26,11 @@ public class Game {
 
 		public UUID uuid = UUID.randomUUID();
 		public GameConfig config;
-		public GameListener listener = new GameListener(this);
+		public GameListener listener;
 		public Location location;
-		boolean opponentPlayersTurn;
+		public GameState state;
+		boolean opponentPlayersTurn = false;
+		public CubicBlockArea gameArea; // the area to protect
 		public Plugin plugin;
 		
 		public Game(GameConfig config, Plugin plugin) {
@@ -37,15 +39,16 @@ public class Game {
 			this.config = config;
 			this.location = this.generateGameLocation();
 			
-			for(int x = 0; x < this.config.size.x * 2 - 1; x++) {
-				for(int z = 0; z < this.config.size.z * 2 - 1; z++) {
-					this.config.mainPlayer.getWorld().getBlockAt(this.location.getBlockX() + x, this.location.getBlockY(), this.location.getBlockZ() + z).setType(Material.BLACK_CONCRETE);
-				}
-			}
-			
 			this.plugin = plugin;
+			
+			this.listener = new GameListener(this);
+			this.state = new GameState(this.config.size);
+			
+			Location startBlock = new Location(this.location.getWorld(), this.location.getBlockX() - 2, this.location.getBlockY() - 1, this.location.getBlockZ() - 2);
+			Location endBlock = new Location(this.location.getWorld(), this.location.getBlockX() + this.config.size.x * 2 + 1, this.location.getBlockY() + this.config.size.y * 2 + 1, this.location.getBlockZ() + this.config.size.z * 2 + 1);
+			this.gameArea = new CubicBlockArea(startBlock, endBlock);
+			
 			this.inviteOpponent();
-			// set other members
 		}
 		
 		private Location generateGameLocation() {
@@ -92,11 +95,11 @@ public class Game {
 		public void start() {
 			this.listener.activate();
 			
-			
-			
-			Game.queuedGames.remove(this.uuid);
-			Game.runningGames.put(this.config.mainPlayer, this);
-			Game.runningGames.put(this.config.opponentPlayer, this);
+			for(int x = 0; x < this.config.size.x * 2 - 1; x++) {
+				for(int z = 0; z < this.config.size.z * 2 - 1; z++) {
+					this.config.mainPlayer.getWorld().getBlockAt(this.location.getBlockX() + x, this.location.getBlockY(), this.location.getBlockZ() + z).setType(Material.BLACK_CONCRETE);
+				}
+			}
 			
 			this.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + this.config.opponentPlayer.getName() + ChatColor.RESET + " has accepted your game!");
 			
@@ -104,6 +107,10 @@ public class Game {
 		}
 		
 		private void registerStarted() {
+			Game.queuedGames.remove(this.uuid);
+			Game.runningGames.put(this.config.mainPlayer, this);
+			Game.runningGames.put(this.config.opponentPlayer, this);
+			
 			// Tells players who have requested a game with either mainPlayer or
 			// opponentPlayer that they are not available anymore
 			for (Entry<UUID, Game> queuedGameEntry : Game.queuedGames.entrySet()) {

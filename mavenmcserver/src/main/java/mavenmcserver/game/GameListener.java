@@ -31,7 +31,9 @@ public class GameListener implements Listener {
 	
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
-		event.getPlayer().sendMessage("You just placed a block!");
+		if(this.game.gameArea.contains(event.getBlock().getLocation())) {
+			event.getPlayer().sendMessage("You just placed a block!");
+		}
 	}
 	
 	@EventHandler
