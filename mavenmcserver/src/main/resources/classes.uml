@@ -81,6 +81,7 @@ class GameListener {
     +GameListener(Game game)
     +void activate()
     +void deactivate()
+    +boolean isAuthorizedPlayer(Player player)
     +@EventHandler void onBlockPlace(...) /' BlockPlaceEvent '/
     +@EventHandler void onBlockBreak(...) /' BlockBreakEvent '/
     +@EventHandler void onEntitySummon(...) /' EntitySpawnEvent '/

@@ -2,10 +2,12 @@ package mavenmcserver.game;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -30,53 +32,71 @@ public class GameListener implements Listener {
 		HandlerList.unregisterAll(this);
 	}
 	
+	boolean isAuthorizedPlayer(Player player) {
+		return player == this.game.config.mainPlayer || player == this.game.config.opponentPlayer;
+	}
+	
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
 		if(this.game.gameArea.contains(event.getBlock().getLocation())) {
-			event.getPlayer().sendMessage("You just placed a block!");
-			
-			try {
-				FieldPoint position = this.game.state.blockLocationToFieldPoint(this.game.location,event.getBlock().getLocation());
+			event.setCancelled(!this.isAuthorizedPlayer(event.getPlayer()));
+		}
+	}
 
-				if (this.game.state.fieldPointIsValid(position)) {
-					event.getPlayer().sendMessage("This block's location's FieldPoint is " + position + "!");
-				} else {
-					event.getPlayer().sendMessage("This location could not be converted to a FieldPoint");
-				}
-			} catch (IllegalArgumentException e) {
-				event.getPlayer().sendMessage("This location could not be converted to a FieldPoint: " + ChatColor.DARK_RED + e.getMessage() + ChatColor.RESET);
-			}
+	@EventHandler
+	public void onBlockBreak(BlockBreakEvent event) {
+		if(this.game.gameArea.contains(event.getBlock().getLocation())) {
+			event.setCancelled(!this.isAuthorizedPlayer(event.getPlayer()));
 		}
 	}
 	
 	@EventHandler
-	public void onBlockBreak(BlockBreakEvent event) {
-		
-	}
-	
-	@EventHandler
 	public void onEntitySummon(EntitySpawnEvent event) {
-		
+		if(this.game.gameArea.contains(event.getLocation())) {
+			event.setCancelled(true);
+		}
 	}
 	
 	@EventHandler
 	public void onMove(PlayerMoveEvent event) {
-		
+		if(this.game.gameArea.contains(event.getTo())) {
+			event.setCancelled(!this.isAuthorizedPlayer(event.getPlayer()));
+		}
 	}
 	
 	@EventHandler
 	public void onPlayerDamaged(EntityDamageByEntityEvent event) {
 		if(!(event.getEntity() instanceof Player)) return;
+		Player player = (Player)event.getEntity();
+		if(this.game.gameArea.contains(player.getLocation())) {
+			event.setCancelled(!this.isAuthorizedPlayer(player));
+		}
 	}
 	
 	@EventHandler
 	public void onBlockMove(BlockFromToEvent event) {
-		
+		if(this.game.gameArea.contains(event.getToBlock().getLocation())) {
+			event.setCancelled(true);
+		}
 	}
 	
-	@EventHandler
+	@EventHandler 
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		
+		if(this.game.gameArea.contains(event.getPlayer().getLocation())) {
+			if(event.getAction() == Action.RIGHT_CLICK_BLOCK && this.isAuthorizedPlayer(event.getPlayer())) {
+			
+				try {
+					FieldPoint position = this.game.state.blockLocationToFieldPoint(this.game.location, event.getClickedBlock().getLocation());
+
+					if(this.game.state.fieldPointIsValid(position)) {
+						event.getClickedBlock().setType(event.getPlayer() == this.game.config.mainPlayer ? Material.RED_CONCRETE : Material.BLUE_CONCRETE);
+					}
+				} catch (IllegalArgumentException e) {}
+				
+			}
+			
+			event.setCancelled(true);
+		}
 	}
 	
 }
