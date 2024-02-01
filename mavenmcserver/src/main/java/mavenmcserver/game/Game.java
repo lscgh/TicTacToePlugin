@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import mavenmcserver.Plugin;
@@ -34,9 +35,38 @@ public class Game {
 			Game.queuedGames.put(this.uuid, this);
 			
 			this.config = config;
+			this.location = this.generateGameLocation();
+			this.config.mainPlayer.getWorld().getBlockAt(this.location).setType(Material.BLACK_CONCRETE);
 			this.plugin = plugin;
 			this.inviteOpponent();
 			// set other members
+		}
+		
+		private Location generateGameLocation() {
+			// double type to get rid of casting in the switch statement!
+			double gameWidthInBlocks = (double)this.config.size.x * 2 - 1;
+			double gameDepthInBlocks = (double)this.config.size.z * 2 - 1;
+			
+			double offsetX = 0, offsetZ = 0;
+			
+			switch(this.config.mainPlayer.getFacing()) {
+			case NORTH: // towards negative Z
+				offsetX = -Math.floor(gameWidthInBlocks / 2);
+				offsetZ = -gameDepthInBlocks - 2;
+				break;
+			case EAST: // towards positive X
+				break;
+			case SOUTH: // towards positive Z
+				break;
+			case WEST: // towards negative X
+				break;
+			default:
+					break;
+			}
+			
+			
+			Location playerLocation = this.config.mainPlayer.getLocation();
+			return new Location(playerLocation.getWorld(), playerLocation.getBlockX() + offsetX, playerLocation.getBlockY(), playerLocation.getBlockZ() + offsetZ);
 		}
 		
 		private void inviteOpponent() {
@@ -58,16 +88,21 @@ public class Game {
 			
 			this.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + this.config.opponentPlayer.getName() + ChatColor.RESET + " has accepted your game!");
 			
-			// Tells players who have requested a game with either mainPlayer or opponentPlayer that they are not available anymore
-			for(Entry<UUID, Game> queuedGameEntry: Game.queuedGames.entrySet()) {
+			this.registerStarted();
+		}
+		
+		private void registerStarted() {
+			// Tells players who have requested a game with either mainPlayer or
+			// opponentPlayer that they are not available anymore
+			for (Entry<UUID, Game> queuedGameEntry : Game.queuedGames.entrySet()) {
 				Game queuedGame = queuedGameEntry.getValue();
-				if(queuedGame.config.opponentPlayer == this.config.opponentPlayer) {
+				if (queuedGame.config.opponentPlayer == this.config.opponentPlayer) {
 					queuedGame.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + this.config.opponentPlayer.getName() + ChatColor.RESET + " has just accepted another game.");
-				} else if(queuedGame.config.opponentPlayer == this.config.mainPlayer) {
+				} else if (queuedGame.config.opponentPlayer == this.config.mainPlayer) {
 					queuedGame.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + this.config.mainPlayer.getName() + ChatColor.RESET + " has just started their own game of tic-tac-toe.");
 				}
 			}
-			
+
 			// Remove redundant games:
 			Game.queuedGames.entrySet().removeIf(e -> (e.getValue().config.opponentPlayer == this.config.opponentPlayer || e.getValue().config.opponentPlayer == this.config.mainPlayer));
 		}
@@ -82,7 +117,10 @@ public class Game {
 		public void end(GameEndCause cause) {
 			this.listener.deactivate();
 			
-			
+			this.registerEnded();
+		}
+		
+		private void registerEnded() {
 			Game.runningGames.remove(this.config.mainPlayer);
 			Game.runningGames.remove(this.config.opponentPlayer);
 		}

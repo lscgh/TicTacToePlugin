@@ -24,9 +24,12 @@ class Game {
     
     .. Methods ..
     +Game(GameConfig config, Plugin plugin)
+    -Location generateGameLocation() /' Based on the main player's facing '/
     -void inviteOpponent() /' Calls start() when accepted '/
     +void start() /' Starts the game and places the blocks; activates the listener '/
+    -void registerStarted() /' Configures the static HashMaps! '/
     +void end(GameEndCause cause) /' Ends the game and removes the blocks; deactivates the listener '/
+    -void registerEnded() /' Configured the static HashMaps! '/
     +void placeAt(FieldPoint position) /' Called when the current player marks a field; checks for win and changes the turn '/
     +Player getPlayerInTurn()
 }
