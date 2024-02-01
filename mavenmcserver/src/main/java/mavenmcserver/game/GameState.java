@@ -44,7 +44,7 @@ public class GameState {
 		int offsetX = block.getBlockX() - gameStartBlock.getBlockX();
 		if(offsetX % 2 != 0 || offsetX < 0) throw new IllegalArgumentException("The x offset (" + offsetX + ") must not be odd or negative");
 		
-		int offsetY = block.getBlockY() - gameStartBlock.getBlockY();
+		int offsetY = block.getBlockY() - gameStartBlock.getBlockY() - 1;
 		if(offsetY % 2 != 0 || offsetY < 0) throw new IllegalArgumentException("The y offset (" + offsetY + ") must not be odd or negative");
 		
 		int offsetZ = block.getBlockZ() - gameStartBlock.getBlockZ();
