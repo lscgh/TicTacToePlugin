@@ -50,17 +50,18 @@ public class Game {
 			
 			this.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + this.config.opponentPlayer.getName() + ChatColor.RESET + " has accepted your game!");
 			
+			// Tells players who have requested a game with either mainPlayer or opponentPlayer that they are not available anymore
 			for(Entry<UUID, Game> queuedGameEntry: Game.queuedGames.entrySet()) {
-				UUID gameUUID = queuedGameEntry.getKey();
 				Game queuedGame = queuedGameEntry.getValue();
 				if(queuedGame.config.opponentPlayer == this.config.opponentPlayer) {
-					queuedGame.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + this.config.opponentPlayer + ChatColor.RESET + " has just accepted another game.");
-					Game.queuedGames.remove(gameUUID);
+					queuedGame.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + this.config.opponentPlayer.getName() + ChatColor.RESET + " has just accepted another game.");
 				} else if(queuedGame.config.opponentPlayer == this.config.mainPlayer) {
-					queuedGame.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + this.config.mainPlayer + ChatColor.RESET + " has just started their own game of tic-tac-toe.");
-					Game.queuedGames.remove(gameUUID);
+					queuedGame.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + this.config.mainPlayer.getName() + ChatColor.RESET + " has just started their own game of tic-tac-toe.");
 				}
 			}
+			
+			// Remove redundant games:
+			Game.queuedGames.entrySet().removeIf(e -> (e.getValue().config.opponentPlayer == this.config.mainPlayer || e.getValue().config.opponentPlayer == this.config.mainPlayer));
 		}
 		
 		public enum GameEndCause {
