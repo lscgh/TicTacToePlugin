@@ -48,7 +48,7 @@ public class Game {
 			Game.runningGames.put(this.config.mainPlayer, this);
 			Game.runningGames.put(this.config.opponentPlayer, this);
 			
-			this.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + this.config.opponentPlayer + ChatColor.RESET + " has accepted your game!");
+			this.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + this.config.opponentPlayer.getName() + ChatColor.RESET + " has accepted your game!");
 			
 			for(Entry<UUID, Game> queuedGameEntry: Game.queuedGames.entrySet()) {
 				UUID gameUUID = queuedGameEntry.getKey();
