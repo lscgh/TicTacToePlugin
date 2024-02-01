@@ -73,6 +73,18 @@ public class GameConfig {
 			return errors;
 		}
 		
+		errors.addAll(this.validateNumbers());
+		
+		return errors;
+	}
+	
+	/**
+	 * Checks the config for errors with the size and winRequiredAmount (part of validate()).
+	 * @return a list with all errors found on this config regarding the number values. If no errors are found, an empty list is returned.
+	 */
+	List<String> validateNumbers() {
+		ArrayList<String> errors = new ArrayList<String>();
+		
 		if(Math.min(this.size.x, Math.min(this.size.y, this.size.z)) <= 0) {
 			errors.add("No dimension of the game can be smaller than 1. The smallest possible game is (" + GameConfig.minFlatSize + ", " + GameConfig.minHeight + ", " + GameConfig.minFlatSize + ").");
 		}
