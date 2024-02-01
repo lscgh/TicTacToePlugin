@@ -55,10 +55,22 @@ public class GameConfig {
 		
 		if(this.mainPlayer == null) {
 			errors.add("Couldn't add you to the game. Please retry!");
+			return errors;
 		}
 		
 		if(this.opponentPlayer == null) {
 			errors.add("Couldn't add the opponent player to the game.");
+			return errors;
+		}
+		
+		if(Game.runningGames.containsKey(this.mainPlayer)) {
+			errors.add("You are currently playing a game of tic-tac-toe and, thus, cannot start another one.");
+			return errors;
+		}
+		
+		if(Game.runningGames.containsKey(this.opponentPlayer)) {
+			errors.add("'" + this.opponentPlayer.getName() + "' is already playing tic-tac-toe with '" + Game.runningGames.get(this.opponentPlayer).config.mainPlayer.getName() + "'!");
+			return errors;
 		}
 		
 		if(Math.min(this.size.x, Math.min(this.size.y, this.size.z)) <= 0) {
