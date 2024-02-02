@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import mavenmcserver.Plugin;
+import mavenmcserver.game.GameState.FieldState;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -150,6 +151,25 @@ public class Game {
 		private void registerEnded() {
 			Game.runningGames.remove(this.config.mainPlayer);
 			Game.runningGames.remove(this.config.opponentPlayer);
+		}
+		
+		/**
+		 * The current player in turn marks the field at *position*.
+		 * @param position
+		 */
+		public void placeAt(FieldPoint position) {
+			
+			if(this.state.getStateAt(position) != FieldState.NEUTRAL) return;
+			
+			this.state.setStateAt(position, this.opponentPlayersTurn ? FieldState.OPPONENT : FieldState.MAIN);
+			
+			
+			Location inWorldLocation = this.state.fieldPointToBlockLocation(this.location, position);
+			
+			this.location.getWorld().getBlockAt(inWorldLocation).setType(this.opponentPlayersTurn ? Material.LIGHT_BLUE_CONCRETE : Material.RED_CONCRETE);
+			
+			
+			this.opponentPlayersTurn = !this.opponentPlayersTurn;
 		}
 		
 		

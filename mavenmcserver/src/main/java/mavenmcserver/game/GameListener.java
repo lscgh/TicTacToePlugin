@@ -81,16 +81,18 @@ public class GameListener implements Listener {
 	
 	@EventHandler 
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		if(this.game.gameArea.contains(event.getPlayer().getLocation())) {
-			if(event.getAction() == Action.LEFT_CLICK_BLOCK) return;
+		if(event.getAction() == Action.LEFT_CLICK_BLOCK) return;
+		
 			
-			if(event.getAction() == Action.RIGHT_CLICK_BLOCK && this.isAuthorizedPlayer(event.getPlayer())) {
+		if(event.getAction() == Action.RIGHT_CLICK_BLOCK && this.game.getPlayerInTurn() == event.getPlayer()) {
 			
+			if(this.game.gameArea.contains(event.getClickedBlock().getLocation())) {
+				
 				try {
 					FieldPoint position = this.game.state.blockLocationToFieldPoint(this.game.location, event.getClickedBlock().getLocation());
 
 					if(this.game.state.fieldPointIsValid(position)) {
-						event.getClickedBlock().setType(event.getPlayer() == this.game.config.mainPlayer ? Material.RED_CONCRETE : Material.LIGHT_BLUE_CONCRETE);
+						this.game.placeAt(position);
 					}
 				} catch (IllegalArgumentException e) {}
 				
