@@ -101,6 +101,14 @@ public class Game {
 				}
 			}
 			
+			for(int x = 0; x < this.config.size.x; x++) {
+				for(int y = 0; y < this.config.size.y; y++) {
+					for(int z = 0; z < this.config.size.z; z++) {
+						this.config.mainPlayer.getWorld().getBlockAt(this.location.getBlockX() + x * 2, this.location.getBlockY() + 1 + y * 2, this.location.getBlockZ() + z * 2).setType(Material.WHITE_CONCRETE);
+					}
+				}
+			}
+			
 			this.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + this.config.opponentPlayer.getName() + ChatColor.RESET + " has accepted your game!");
 			
 			this.registerStarted();

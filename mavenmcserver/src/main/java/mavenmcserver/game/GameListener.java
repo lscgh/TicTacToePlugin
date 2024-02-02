@@ -82,6 +82,8 @@ public class GameListener implements Listener {
 	@EventHandler 
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if(this.game.gameArea.contains(event.getPlayer().getLocation())) {
+			if(event.getAction() == Action.LEFT_CLICK_BLOCK) return;
+			
 			if(event.getAction() == Action.RIGHT_CLICK_BLOCK && this.isAuthorizedPlayer(event.getPlayer())) {
 			
 				try {
