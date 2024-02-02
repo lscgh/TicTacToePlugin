@@ -2,6 +2,7 @@ package mavenmcserver.command;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -42,6 +43,13 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 				targetGame = queuedGame;
 				break;
 			}
+		}
+		
+		if(targetGame == null) {
+			try {
+				UUID gameUUID = UUID.fromString(playerName);
+				targetGame = Game.queuedGames.get(gameUUID);
+			} catch(IllegalArgumentException e) {}
 		}
 		
 		if(targetGame == null) {
