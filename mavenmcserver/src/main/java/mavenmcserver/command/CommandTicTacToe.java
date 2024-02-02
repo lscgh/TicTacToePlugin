@@ -71,19 +71,17 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				
 				GameConfig returnConfig = Game.lostGames.get((Player)sender);
 				
-				if(returnConfig == null) {
-					sender.sendMessage(ChatColor.RED + "You haven't played any game to request a return match for yet!" + ChatColor.RESET);
+				if(returnConfig != null) {
+					
+					// Show the confirmation to the player
+					sender.sendMessage("You've just asked " + ChatColor.AQUA + ChatColor.BOLD + returnConfig.opponentPlayer.getName() + ChatColor.RESET + " to play a return match with you!");
+					
+					// Remove config from list!
+					Game.lostGames.remove((Player)sender);
+					
+					new Game(returnConfig, this.plugin, true);
 					return true;
 				}
-				
-				// Show the confirmation to the player
-				sender.sendMessage("You've just asked " + ChatColor.AQUA + ChatColor.BOLD + returnConfig.opponentPlayer.getName() + ChatColor.RESET + " to play a return match with you!");
-				
-				// Remove config from list!
-				Game.lostGames.remove((Player)sender);
-				
-				new Game(returnConfig, this.plugin, true);
-				return true;
 			}
 			
 			// Create the game's config from the command's args

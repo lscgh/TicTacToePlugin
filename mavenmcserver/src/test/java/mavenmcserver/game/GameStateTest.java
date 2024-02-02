@@ -58,5 +58,52 @@ public class GameStateTest {
 		
 	}
 	
+	
+	@Test
+	public void testGetWinnerIfAny() {
+		
+		GameState state = new GameState(new Vector3i(3, 3, 3));
+		
+		state.setStateAt(0, 0, 0, FieldState.OPPONENT);
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(0, 0, 0)));
+		
+		state.setStateAt(0, 1, 0, FieldState.MAIN);
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(0, 1, 0)));
+		
+		state.setStateAt(1, 0, 0, FieldState.OPPONENT);
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(1, 0, 0)));
+		
+		state.setStateAt(0, 2, 0, FieldState.MAIN);
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(0, 2, 0)));
+		
+		state.setStateAt(2, 0, 0, FieldState.OPPONENT);
+		assertEquals(FieldState.OPPONENT, state.getWinnerIfAny(3, new FieldPoint(2, 0, 0)));
+		
+		
+		state = new GameState(new Vector3i(3, 3, 3));
+		
+		state.setStateAt(0, 0, 0, FieldState.OPPONENT);
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(0, 0, 0)));
+		
+		state.setStateAt(0, 0, 1, FieldState.OPPONENT);
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(0, 0, 1)));
+		
+		state.setStateAt(0, 0, 2, FieldState.OPPONENT);
+		assertEquals(FieldState.OPPONENT, state.getWinnerIfAny(3, new FieldPoint(0, 0, 2)));
+		
+		
+		state = new GameState(new Vector3i(3, 3, 3));
+		
+		state.setStateAt(0, 0, 0, FieldState.MAIN);
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(0, 0, 0)));
+		
+		state.setStateAt(1, 1, 1, FieldState.MAIN);
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(1, 1, 1)));
+		
+		state.setStateAt(2, 2, 2, FieldState.MAIN);
+		assertEquals(FieldState.MAIN, state.getWinnerIfAny(3, new FieldPoint(2, 2, 2)));
+		
+	}
+	
 }
 
