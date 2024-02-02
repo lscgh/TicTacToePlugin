@@ -14,6 +14,7 @@ import org.joml.Vector3i;
 import mavenmcserver.Plugin;
 import mavenmcserver.game.Game;
 import mavenmcserver.game.GameConfig;
+import mavenmcserver.game.Game.GameEndCause;
 import net.md_5.bungee.api.ChatColor;
 
 public class CommandTicTacToe implements CommandExecutor, TabCompleter {
@@ -47,6 +48,12 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		}
 		
 		if(args.length > 0) {
+			
+			boolean playerIsCurrentlyInAGame = Game.runningGames.containsKey((Player)sender);
+			if(playerIsCurrentlyInAGame && args[0].equals("cancel")) {
+				Game.runningGames.get((Player)sender).end(GameEndCause.CANCEL);
+				return true;
+			}
 			
 			if(args.length > CommandTicTacToe.MAX_VALID_ARG_COUNT) {
 				sender.sendMessage(ChatColor.RED + "Too many arguments for command '/" + label + "'!" + ChatColor.RESET);
@@ -98,18 +105,27 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
 		
+		if(!(sender instanceof Player)) return new ArrayList<String>();
+		
 		ArrayList<String> completions = new ArrayList<String>();
 		
-		if(args.length == CommandTicTacToe.OPPONENT_ARG_INDEX) {
-			
-			for(Player player: this.plugin.getServer().getOnlinePlayers()) {
-				if(player.getName().equals(sender.getName())) continue;
-				completions.add(player.getName());
+		boolean playerIsCurrentlyInAGame = Game.runningGames.containsKey((Player)sender);
+		if(playerIsCurrentlyInAGame) {
+			if(args.length == CommandTicTacToe.OPPONENT_ARG_INDEX) {
+				completions.add("cancel");
 			}
-			
-			if(completions.isEmpty()) completions.add("(no available players)");
-		} else if(args.length <= CommandTicTacToe.MAX_VALID_ARG_COUNT) {
-			completions.add(args.length == CommandTicTacToe.Y_SIZE_ARG_INDEX ? "1" : "3");
+		} else {
+			if(args.length == CommandTicTacToe.OPPONENT_ARG_INDEX) {
+				
+				for(Player player: this.plugin.getServer().getOnlinePlayers()) {
+					if(player.getName().equals(sender.getName())) continue;
+					completions.add(player.getName());
+				}
+				
+				if(completions.isEmpty()) completions.add("(no available players)");
+			} else if(args.length <= CommandTicTacToe.MAX_VALID_ARG_COUNT) {
+				completions.add(args.length == CommandTicTacToe.Y_SIZE_ARG_INDEX ? "1" : "3");
+			}
 		}
 		
 		ArrayList<String> filteredCompletions = new ArrayList<String>();

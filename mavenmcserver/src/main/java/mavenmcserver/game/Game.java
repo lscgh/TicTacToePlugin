@@ -30,7 +30,7 @@ public class Game {
 		public GameListener listener;
 		public Location location;
 		public GameState state;
-		boolean opponentPlayersTurn = false;
+		boolean opponentPlayersTurn = true;
 		public CubicBlockArea gameArea; // the area to protect
 		public Plugin plugin;
 		
@@ -98,14 +98,14 @@ public class Game {
 			
 			for(int x = 0; x < this.config.size.x * 2 - 1; x++) {
 				for(int z = 0; z < this.config.size.z * 2 - 1; z++) {
-					this.config.mainPlayer.getWorld().getBlockAt(this.location.getBlockX() + x, this.location.getBlockY(), this.location.getBlockZ() + z).setType(Material.BLACK_CONCRETE);
+					this.location.getWorld().getBlockAt(this.location.getBlockX() + x, this.location.getBlockY(), this.location.getBlockZ() + z).setType(Material.BLACK_CONCRETE);
 				}
 			}
 			
 			for(int x = 0; x < this.config.size.x; x++) {
 				for(int y = 0; y < this.config.size.y; y++) {
 					for(int z = 0; z < this.config.size.z; z++) {
-						this.config.mainPlayer.getWorld().getBlockAt(this.location.getBlockX() + x * 2, this.location.getBlockY() + 1 + y * 2, this.location.getBlockZ() + z * 2).setType(Material.WHITE_CONCRETE);
+						this.location.getWorld().getBlockAt(this.location.getBlockX() + x * 2, this.location.getBlockY() + 1 + y * 2, this.location.getBlockZ() + z * 2).setType(Material.WHITE_CONCRETE);
 					}
 				}
 			}
@@ -144,6 +144,38 @@ public class Game {
 		
 		public void end(GameEndCause cause) {
 			this.listener.deactivate();
+			
+			
+			// TODO: reset to previous state
+			for(int x = 0; x < this.config.size.x * 2 - 1; x++) {
+				for(int z = 0; z < this.config.size.z * 2 - 1; z++) {
+					this.location.getWorld().getBlockAt(this.location.getBlockX() + x, this.location.getBlockY(), this.location.getBlockZ() + z).setType(Material.AIR);
+				}
+			}
+			
+			for(int x = 0; x < this.config.size.x; x++) {
+				for(int y = 0; y < this.config.size.y; y++) {
+					for(int z = 0; z < this.config.size.z; z++) {
+						this.location.getWorld().getBlockAt(this.location.getBlockX() + x * 2, this.location.getBlockY() + 1 + y * 2, this.location.getBlockZ() + z * 2).setType(Material.AIR);
+					}
+				}
+			}
+			
+			
+			switch(cause) {
+			case CANCEL:
+				String message = "Your current game of tic-tac-toe was " + ChatColor.YELLOW + ChatColor.BOLD + "cancelled" + ChatColor.RESET + "!";
+				this.config.mainPlayer.sendMessage(message);
+				this.config.opponentPlayer.sendMessage(message);
+				break;
+			case MAIN_WIN:
+				break;
+			case OPPONENT_WIN:
+				break;
+			case TIE:
+				break;
+			}
+			
 			
 			this.registerEnded();
 		}
