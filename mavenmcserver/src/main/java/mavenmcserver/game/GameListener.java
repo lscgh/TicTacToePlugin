@@ -10,6 +10,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -56,10 +57,16 @@ public class GameListener implements Listener {
 	}
 	
 	@EventHandler
+	public void onEntityExplode(EntityExplodeEvent event) {
+		if(this.game.gameArea.contains(event.getLocation())) {
+			event.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
 	public void onMove(PlayerMoveEvent event) {
 		if(this.game.gameArea.contains(event.getTo())) {
-			//event.setCancelled(!this.isAuthorizedPlayer(event.getPlayer()));
-			event.setCancelled(true);
+			event.setCancelled(!this.isAuthorizedPlayer(event.getPlayer()));
 		}
 	}
 		
