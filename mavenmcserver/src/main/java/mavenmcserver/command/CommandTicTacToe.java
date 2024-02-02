@@ -78,6 +78,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 					
 					// Remove config from list!
 					Game.lostGames.remove((Player)sender);
+					Game.lostGames.remove(returnConfig.opponentPlayer);
 					
 					new Game(returnConfig, this.plugin, true);
 					return true;

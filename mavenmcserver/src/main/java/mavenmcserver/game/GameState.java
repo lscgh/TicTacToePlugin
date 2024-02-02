@@ -170,7 +170,12 @@ public class GameState {
 	
 	
 	boolean winIsPossible() {
-		return true; // TODO: finish
+		
+		for(FieldState blockState: this.blockStates) {
+			if(blockState == FieldState.NEUTRAL) return true;
+		}
+		
+		return false; // TODO: finish
 	}
 	
 	

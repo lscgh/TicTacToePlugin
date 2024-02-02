@@ -195,6 +195,17 @@ public class Game {
 				Game.lostGames.put(this.config.mainPlayer, new GameConfig(this.config.mainPlayer, this.config.opponentPlayer, this.config.size, this.config.winRequiredAmount));
 				break;
 			case TIE:
+				String tieMessage = "This game ended with a " + ChatColor.YELLOW + ChatColor.BOLD + "tie" + ChatColor.RESET + "";
+				this.config.mainPlayer.sendMessage(tieMessage);
+				this.config.opponentPlayer.sendMessage(tieMessage);
+				
+				BaseComponent returnMatchMessage[] = new ComponentBuilder("Click ").append("here").color(ChatColor.GREEN).bold(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tictactoe requestReturnMatch")).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to request another game"))).append(" to request another match.").reset().create();
+				
+				this.config.mainPlayer.spigot().sendMessage(returnMatchMessage);
+				this.config.opponentPlayer.spigot().sendMessage(returnMatchMessage);
+				
+				Game.lostGames.put(this.config.mainPlayer, new GameConfig(this.config.mainPlayer, this.config.opponentPlayer, this.config.size, this.config.winRequiredAmount));
+				Game.lostGames.put(this.config.opponentPlayer, new GameConfig(this.config.opponentPlayer, this.config.mainPlayer, this.config.size, this.config.winRequiredAmount));
 				break;
 			}
 			
@@ -224,6 +235,11 @@ public class Game {
 			
 			if(this.state.getWinnerIfAny(this.config.winRequiredAmount, position) != FieldState.NEUTRAL) {
 				this.end(this.opponentPlayersTurn ? GameEndCause.OPPONENT_WIN : GameEndCause.MAIN_WIN);
+				return;
+			}
+			
+			if(!this.state.winIsPossible()) {
+				this.end(GameEndCause.TIE);
 				return;
 			}
 			
