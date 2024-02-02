@@ -67,6 +67,19 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				if(args[0].equals(noAvailablePlayersPlaceholder[0]) && args[1].equals(noAvailablePlayersPlaceholder[1]) && args[2].equals(noAvailablePlayersPlaceholder[2])) return true;
 			}
 			
+			if(args[0].equals("requestReturnMatch")) {
+				
+				GameConfig returnConfig = Game.lostGames.get((Player)sender);
+				
+				if(returnConfig == null) {
+					sender.sendMessage(ChatColor.RED + "You haven't played any game to request a return match for yet!" + ChatColor.RESET);
+					return true;
+				}
+				
+				new Game(Game.lostGames.get((Player)sender), this.plugin, true);
+				return true;
+			}
+			
 			// Create the game's config from the command's args
 			GameConfig config;
 			
@@ -93,9 +106,9 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 			}
 			
 			// Show the config to the player
-			sender.sendMessage("You just asked " + ChatColor.AQUA + ChatColor.BOLD + config.opponentPlayer.getName() + ChatColor.RESET + " to play a game of tic-tac-toe with you!");
+			sender.sendMessage("You've just asked " + ChatColor.AQUA + ChatColor.BOLD + config.opponentPlayer.getName() + ChatColor.RESET + " to play a game of tic-tac-toe with you!");
 			
-			new Game(config, this.plugin);
+			new Game(config, this.plugin, false);
 		}
 		
 		boolean shouldShowUsage = args.length <= 0;
@@ -120,6 +133,10 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				for(Player player: this.plugin.getServer().getOnlinePlayers()) {
 					if(player.getName().equals(sender.getName())) continue;
 					completions.add(player.getName());
+				}
+				
+				if(Game.lostGames.containsKey((Player)sender)) {
+					completions.add("requestReturnMatch");
 				}
 				
 				if(completions.isEmpty()) completions.add("(no available players)");

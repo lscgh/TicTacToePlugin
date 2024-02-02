@@ -25,6 +25,9 @@ public class Game {
 		
 		/// Contains all games that are currently running in connection to their players (every game is in this map twice!)
 		public static HashMap<Player, Game> runningGames = new HashMap<Player, Game>();
+		
+		/// Contains a list of game setups (value) that were lost by player (key) (ties count as well).
+		public static HashMap<Player, GameConfig> lostGames = new HashMap<Player, GameConfig>();
 
 		public UUID uuid = UUID.randomUUID();
 		public GameConfig config;
@@ -37,7 +40,7 @@ public class Game {
 		
 		private HashMap<Location, BlockData> beforeGameBlock = new HashMap<Location, BlockData>();
 		
-		public Game(GameConfig config, Plugin plugin) {
+		public Game(GameConfig config, Plugin plugin, boolean isReturnMatch) {
 			Game.queuedGames.put(this.uuid, this);
 			
 			this.config = config;
@@ -53,7 +56,7 @@ public class Game {
 			this.gameArea = new CubicBlockArea(startBlock, endBlock);
 			
 			
-			this.inviteOpponent();
+			this.inviteOpponent(isReturnMatch);
 		}
 		
 		private Location generateGameLocation() {
@@ -89,9 +92,15 @@ public class Game {
 			return new Location(playerLocation.getWorld(), playerLocation.getBlockX() + offsetX, playerLocation.getBlockY(), playerLocation.getBlockZ() + offsetZ);
 		}
 		
-		private void inviteOpponent() {
-			this.config.opponentPlayer.sendMessage("Hello " + ChatColor.AQUA + ChatColor.BOLD + this.config.opponentPlayer.getName() + ChatColor.RESET + "! " + ChatColor.AQUA + ChatColor.BOLD + this.config.mainPlayer.getName() + ChatColor.RESET + " would like to play a game of tic-tac-toe with you!");
+		private void inviteOpponent(boolean isReturnMatch) {
+			if(isReturnMatch) {
+				this.config.opponentPlayer.sendMessage("Hello " + ChatColor.AQUA + ChatColor.BOLD + this.config.opponentPlayer.getName() + ChatColor.RESET + "! " + ChatColor.AQUA + ChatColor.BOLD + this.config.mainPlayer.getName() + ChatColor.RESET + " would like to play a return match with you!");
+			} else {
+				this.config.opponentPlayer.sendMessage("Hello " + ChatColor.AQUA + ChatColor.BOLD + this.config.opponentPlayer.getName() + ChatColor.RESET + "! " + ChatColor.AQUA + ChatColor.BOLD + this.config.mainPlayer.getName() + ChatColor.RESET + " would like to play a game of tic-tac-toe with you!");
+			}
+			
 			this.config.opponentPlayer.sendMessage("It has a size of (" + ChatColor.BOLD + this.config.size.x + ChatColor.RESET + ", " + ChatColor.BOLD + this.config.size.y + ChatColor.RESET + ", " + ChatColor.BOLD + this.config.size.z + ChatColor.RESET + ") and you need " + ChatColor.BOLD + this.config.winRequiredAmount + ChatColor.RESET + " fields in a row to win!");
+			
 			BaseComponent[] invitationComponent = new ComponentBuilder("Click ")
 					.append("here").color(ChatColor.GREEN).bold(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tictactoeaccept " + this.uuid.toString())).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to accept")))
 					.append(" to accept the game!").reset().create();
@@ -176,12 +185,14 @@ public class Game {
 			case MAIN_WIN:
 				this.config.mainPlayer.sendMessage("You " + ChatColor.GREEN + ChatColor.BOLD + "won" + ChatColor.RESET + " the game!");
 				this.config.opponentPlayer.sendMessage("You " + ChatColor.RED + ChatColor.BOLD + "lost" + ChatColor.RESET + " the game!");
-				this.config.opponentPlayer.spigot().sendMessage(new ComponentBuilder("Click ").append("here").color(ChatColor.GREEN).bold(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tictactoe " + this.config.mainPlayer.getName())).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to request another game"))).append(" to request a return match.").reset().create());
+				this.config.opponentPlayer.spigot().sendMessage(new ComponentBuilder("Click ").append("here").color(ChatColor.GREEN).bold(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tictactoe requestReturnMatch")).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to request another game"))).append(" to request a return match.").reset().create());
+				Game.lostGames.put(this.config.opponentPlayer, new GameConfig(this.config.opponentPlayer, this.config.mainPlayer, this.config.size, this.config.winRequiredAmount));
 				break;
 			case OPPONENT_WIN:
 				this.config.opponentPlayer.sendMessage("You " + ChatColor.GREEN + ChatColor.BOLD + "won" + ChatColor.RESET + " the game!");
 				this.config.mainPlayer.sendMessage("You " + ChatColor.RED + ChatColor.BOLD + "lost" + ChatColor.RESET + " the game!");
-				this.config.mainPlayer.spigot().sendMessage(new ComponentBuilder("Click ").append("here").color(ChatColor.GREEN).bold(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tictactoe " + this.config.opponentPlayer.getName())).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to request another game"))).append(" to request a return match.").reset().create());
+				this.config.mainPlayer.spigot().sendMessage(new ComponentBuilder("Click ").append("here").color(ChatColor.GREEN).bold(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tictactoe requestReturnMatch")).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to request another game"))).append(" to request a return match.").reset().create());
+				Game.lostGames.put(this.config.mainPlayer, new GameConfig(this.config.mainPlayer, this.config.opponentPlayer, this.config.size, this.config.winRequiredAmount));
 				break;
 			case TIE:
 				break;
