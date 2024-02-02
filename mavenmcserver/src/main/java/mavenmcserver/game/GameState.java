@@ -104,12 +104,35 @@ public class GameState {
 	FieldState getWinnerIfAny(int winRequiredAmount, FieldPoint lastChanged) {
 		
 		Vector3i directionsToCheck[] = {
+				// Straight
 			new Vector3i(1, 0, 0),
 			new Vector3i(-1, 0, 0),
 			new Vector3i(0, 1, 0),
 			new Vector3i(0, -1, 0),
 			new Vector3i(0, 0, 1),
-			new Vector3i(0, 0, -1)
+			new Vector3i(0, 0, -1),
+			// Flat diagonal
+			new Vector3i(1, 0, 1),
+			new Vector3i(1, 0, -1),
+			new Vector3i(-1, 0, 1),
+			new Vector3i(-1, 0, -1),
+			new Vector3i(1, 1, 0),
+			new Vector3i(1, -1, 0),
+			new Vector3i(-1, 1,0),
+			new Vector3i(-1, -1, 0),
+			new Vector3i(0, 1, 1),
+			new Vector3i(0, 1, -1),
+			new Vector3i(0, -1, 1),
+			new Vector3i(0, -1, -1),
+			// non-flat diagonal
+			new Vector3i(1, 1, 1),
+			new Vector3i(1, 1, -1),
+			new Vector3i(1, -1, 1),
+			new Vector3i(1, -1, -1),
+			new Vector3i(-1, 1, 1),
+			new Vector3i(-1, 1, -1),
+			new Vector3i(-1, -1, 1),
+			new Vector3i(-1, -1, -1)
 		};
 		
 		for(Vector3i direction: directionsToCheck) {
