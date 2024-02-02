@@ -137,18 +137,37 @@ public class GameState {
 		
 		for(Vector3i direction: directionsToCheck) {
 			
-			boolean isWinCondition = true;
-			for(int i = 0; i < winRequiredAmount; i++) {
-				FieldPoint point = lastChanged.offsetBy(i * direction.x, i * direction.y, i * direction.z);
-				if(this.getStateIfAny(point) != this.getStateAt(lastChanged)) isWinCondition = false;
-			}
+			int amountOfCorrectFields = this.getFieldsInARowCount(lastChanged, direction);
 			
-			if(isWinCondition) return this.getStateAt(lastChanged);
+			if(amountOfCorrectFields >= winRequiredAmount) return this.getStateAt(lastChanged);
+			else if(amountOfCorrectFields > 1) {
+				
+				// Check in opposite direction
+				Vector3i oppositeDirection = new Vector3i(-direction.x, -direction.y, -direction.z);
+				amountOfCorrectFields += this.getFieldsInARowCount(lastChanged, oppositeDirection) - 1;
+				
+				
+				if(amountOfCorrectFields >= winRequiredAmount) return this.getStateAt(lastChanged);
+			}
 			
 		}
 		
 		return FieldState.NEUTRAL;
 	}
+	
+	
+	private int getFieldsInARowCount(FieldPoint startPoint, Vector3i direction) {
+		int amountOfCorrectFields = 0;
+		while(true) {
+			FieldPoint point = startPoint.offsetBy(amountOfCorrectFields * direction.x, amountOfCorrectFields * direction.y, amountOfCorrectFields * direction.z);
+			if(this.getStateIfAny(point) != this.getStateAt(startPoint)) break;
+			
+			amountOfCorrectFields++;
+		}
+		
+		return amountOfCorrectFields;
+	}
+	
 	
 	boolean winIsPossible() {
 		return true; // TODO: finish

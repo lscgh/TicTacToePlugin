@@ -103,6 +103,18 @@ public class GameStateTest {
 		state.setStateAt(2, 2, 2, FieldState.MAIN);
 		assertEquals(FieldState.MAIN, state.getWinnerIfAny(3, new FieldPoint(2, 2, 2)));
 		
+		
+		state = new GameState(new Vector3i(3, 1, 3));
+		
+		state.setStateAt(0, 0, 0, FieldState.MAIN);
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(0, 0, 0)));
+		
+		state.setStateAt(2, 0, 0, FieldState.MAIN);
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(2, 0, 0)));
+		
+		state.setStateAt(1, 0, 0, FieldState.MAIN);
+		assertEquals(FieldState.MAIN, state.getWinnerIfAny(3, new FieldPoint(1, 0, 0)));
+		
 	}
 	
 }
