@@ -38,14 +38,14 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
 		if(this.game.gameArea.contains(event.getBlock().getLocation())) {
-			event.setCancelled(!this.isAuthorizedPlayer(event.getPlayer()));
+			event.setCancelled(true);
 		}
 	}
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		if(this.game.gameArea.contains(event.getBlock().getLocation())) {
-			event.setCancelled(!this.isAuthorizedPlayer(event.getPlayer()));
+			event.setCancelled(true);
 		}
 	}
 	
@@ -88,7 +88,7 @@ public class GameListener implements Listener {
 					FieldPoint position = this.game.state.blockLocationToFieldPoint(this.game.location, event.getClickedBlock().getLocation());
 
 					if(this.game.state.fieldPointIsValid(position)) {
-						event.getClickedBlock().setType(event.getPlayer() == this.game.config.mainPlayer ? Material.RED_CONCRETE : Material.BLUE_CONCRETE);
+						event.getClickedBlock().setType(event.getPlayer() == this.game.config.mainPlayer ? Material.RED_CONCRETE : Material.LIGHT_BLUE_CONCRETE);
 					}
 				} catch (IllegalArgumentException e) {}
 				

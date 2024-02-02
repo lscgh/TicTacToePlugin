@@ -88,7 +88,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 			sender.sendMessage("You just executed /tictactoe correctly");
 			sender.sendMessage("Game configuration: '" + config + "'");
 			
-			Game game = new Game(config, this.plugin);
+			new Game(config, this.plugin);
 		}
 		
 		boolean shouldShowUsage = args.length <= 0;
