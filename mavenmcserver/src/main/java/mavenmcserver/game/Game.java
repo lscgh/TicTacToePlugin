@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import mavenmcserver.Plugin;
@@ -33,6 +34,8 @@ public class Game {
 		boolean opponentPlayersTurn = true;
 		public CubicBlockArea gameArea; // the area to protect
 		public Plugin plugin;
+		
+		private HashMap<Location, Block> beforeGameBlocks;
 		
 		public Game(GameConfig config, Plugin plugin) {
 			Game.queuedGames.put(this.uuid, this);
@@ -96,6 +99,9 @@ public class Game {
 		public void start() {
 			this.listener.activate();
 			
+			
+			this.gameArea.forEach((block) -> this.config.mainPlayer.sendMessage("" + block.getType()));
+			
 			for(int x = 0; x < this.config.size.x * 2 - 1; x++) {
 				for(int z = 0; z < this.config.size.z * 2 - 1; z++) {
 					this.location.getWorld().getBlockAt(this.location.getBlockX() + x, this.location.getBlockY(), this.location.getBlockZ() + z).setType(Material.BLACK_CONCRETE);
@@ -157,6 +163,7 @@ public class Game {
 				for(int y = 0; y < this.config.size.y; y++) {
 					for(int z = 0; z < this.config.size.z; z++) {
 						this.location.getWorld().getBlockAt(this.location.getBlockX() + x * 2, this.location.getBlockY() + 1 + y * 2, this.location.getBlockZ() + z * 2).setType(Material.AIR);
+						
 					}
 				}
 			}

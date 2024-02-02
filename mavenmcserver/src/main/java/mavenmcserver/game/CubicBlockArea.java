@@ -1,6 +1,9 @@
 package mavenmcserver.game;
 
+import java.util.function.Consumer;
+
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.joml.Vector3i;
 
 public class CubicBlockArea {
@@ -45,6 +48,24 @@ public class CubicBlockArea {
 		int depth = this.getPositiveDifference(this.startBlock.getBlockZ(), this.endBlock.getBlockZ()) + 1;
 		
 		return new Vector3i(width, height, depth);
+	}
+	
+	
+	void forEach(Consumer<Block> action) {
+		
+		Vector3i size = this.size();
+		for(int x = 0; x < size.x; x++) {
+			for(int y = 0; y < size.y; y++) {
+				for(int z = 0; z < size.z; z++) {
+					
+					Location currentLocation = new Location(this.startBlock.getWorld(), this.startBlock.getBlockX() + x, this.startBlock.getBlockY() + y, this.startBlock.getBlockZ() + z);
+					Block currentBlock = currentLocation.getBlock();
+					action.accept(currentBlock);
+					
+				}
+			}
+		}
+		
 	}
 	
 }

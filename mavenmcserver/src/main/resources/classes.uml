@@ -22,6 +22,8 @@ class Game {
     +CubicBlockArea gameArea /' Set in contructor '/
     +Plugin plugin /' Used for listener and for placing blocks '/
     
+    -HashMap<Location, Block> beforeGameBlocks
+    
     .. Methods ..
     +Game(GameConfig config, Plugin plugin)
     -Location generateGameLocation() /' Based on the main player's facing '/
