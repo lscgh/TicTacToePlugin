@@ -2,8 +2,6 @@ package mavenmcserver.command;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.UUID;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -35,25 +33,19 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 		
 		if(args.length != 1) return false;
 		
-		String uuidString = args[0];
-		UUID uuid = null;
+		String playerName = args[0];
 		
-		try {
-			uuid = UUID.fromString(uuidString);
-		} catch(IllegalArgumentException e) {
-			sender.sendMessage(ChatColor.RED + "Please enter a valid UUID ('" + uuidString + "' is invalid)!");
-			return true;
+		Game targetGame = null;
+		
+		for(Game queuedGame: Game.queuedGames.values()) {
+			if(queuedGame.config.mainPlayer.getName() == playerName) {
+				targetGame = queuedGame;
+				break;
+			}
 		}
-		
-		if(uuid == null) {
-			sender.sendMessage(ChatColor.RED + "Please enter a valid UUID ('" + uuidString + "' is invalid)!");
-			return true;
-		}
-		
-		Game targetGame = Game.queuedGames.get(uuid);
 		
 		if(targetGame == null) {
-			sender.sendMessage(ChatColor.RED + "No such game ('" + uuidString + "')!" + ChatColor.RESET);
+			sender.sendMessage(ChatColor.RED + "'" + playerName + "' hasn't sent any game request to you!" + ChatColor.RESET);
 			return true;
 		}
 		
@@ -70,9 +62,9 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 		if(args.length > 1) return new ArrayList<String>();
 		
 		ArrayList<String> completions = new ArrayList<String>();
-		for(Entry<UUID, Game> entry: Game.queuedGames.entrySet()) {
-			if(entry.getValue().config.opponentPlayer == (Player)sender) {
-				completions.add(entry.getKey().toString());
+		for(Game queuedGame: Game.queuedGames.values()) {
+			if(queuedGame.config.opponentPlayer == (Player)sender) {
+				completions.add(queuedGame.config.mainPlayer.getName());
 			}
 		}
 		

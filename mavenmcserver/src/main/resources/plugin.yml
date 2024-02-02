@@ -9,5 +9,5 @@ commands:
   description: "Request a new Tic-Tac-Toe game!"
   usage: "§cUsage: /<command> <opponent: Player> [sizeX = 3] [sizeY = 1] [sizeZ = 3] [winRequiredAmount = 3]§r"
  tictactoeaccept:
-  description: "Accept a game by UUID"
-  usage: "§cUsage: /<command> <uuid: String>§r"
+  description: "Accept a Tic-Tac-Toe game!"
+  usage: "§cUsage: /<command> <requestingPlayerName: String>§r"
