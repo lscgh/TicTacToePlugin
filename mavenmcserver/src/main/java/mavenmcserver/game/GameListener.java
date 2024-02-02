@@ -58,16 +58,17 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onMove(PlayerMoveEvent event) {
 		if(this.game.gameArea.contains(event.getTo())) {
-			event.setCancelled(!this.isAuthorizedPlayer(event.getPlayer()));
+			//event.setCancelled(!this.isAuthorizedPlayer(event.getPlayer()));
+			event.setCancelled(true);
 		}
 	}
-	
+		
 	@EventHandler
 	public void onPlayerDamaged(EntityDamageByEntityEvent event) {
 		if(!(event.getEntity() instanceof Player)) return;
 		Player player = (Player)event.getEntity();
 		if(this.game.gameArea.contains(player.getLocation())) {
-			event.setCancelled(!this.isAuthorizedPlayer(player));
+			event.setCancelled(this.isAuthorizedPlayer(player));
 		}
 	}
 	
