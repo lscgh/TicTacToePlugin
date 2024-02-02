@@ -38,7 +38,7 @@ public class Game {
 		public CubicBlockArea gameArea; // the area to protect
 		public Plugin plugin;
 		
-		private HashMap<Location, BlockData> beforeGameBlock = new HashMap<Location, BlockData>();
+		private HashMap<Location, BlockData> beforeGameBlocks = new HashMap<Location, BlockData>();
 		
 		public Game(GameConfig config, Plugin plugin, boolean isReturnMatch) {
 			Game.queuedGames.put(this.uuid, this);
@@ -111,8 +111,8 @@ public class Game {
 			this.listener.activate();
 			
 			// Store old blocks
-			this.beforeGameBlock.clear();
-			this.gameArea.forEach((block) -> this.beforeGameBlock.put(block.getLocation(), block.getBlockData()));
+			this.beforeGameBlocks.clear();
+			this.gameArea.forEach((block) -> this.beforeGameBlocks.put(block.getLocation(), block.getBlockData()));
 			
 			// Fill area with air (except for bottom layer)
 			this.gameArea.forEach((block) -> {
@@ -143,11 +143,12 @@ public class Game {
 		}
 		
 		private void registerStarted() {
+			// Mark this game as runing
 			Game.queuedGames.remove(this.uuid);
 			Game.runningGames.put(this.config.mainPlayer, this);
 			Game.runningGames.put(this.config.opponentPlayer, this);
 			
-			// Tells players who have requested a game with either mainPlayer or
+			// Tell players who have requested a game with either mainPlayer or
 			// opponentPlayer that they are not available anymore
 			for (Entry<UUID, Game> queuedGameEntry : Game.queuedGames.entrySet()) {
 				Game queuedGame = queuedGameEntry.getValue();
@@ -162,6 +163,9 @@ public class Game {
 			Game.queuedGames.entrySet().removeIf(e -> (e.getValue().config.opponentPlayer == this.config.opponentPlayer || e.getValue().config.opponentPlayer == this.config.mainPlayer));
 		}
 		
+		/**
+		 * Describes the cause for a tic-tac-toe games ending.
+		 */
 		public enum GameEndCause {
 			MAIN_WIN,
 			OPPONENT_WIN,
@@ -172,10 +176,10 @@ public class Game {
 		public void end(GameEndCause cause) {
 			this.listener.deactivate();
 			
+			// Restore old blocks
+			this.gameArea.forEach((block) -> block.setBlockData(this.beforeGameBlocks.get(block.getLocation())));
 			
-			this.gameArea.forEach((block) -> block.setBlockData(this.beforeGameBlock.get(block.getLocation())));
-			
-			
+			// Send cause-specific message
 			switch(cause) {
 			case CANCEL:
 				String message = "Your current game of tic-tac-toe was " + ChatColor.YELLOW + ChatColor.BOLD + "cancelled" + ChatColor.RESET + "!";
@@ -195,11 +199,11 @@ public class Game {
 				Game.lostGames.put(this.config.mainPlayer, new GameConfig(this.config.mainPlayer, this.config.opponentPlayer, this.config.size, this.config.winRequiredAmount));
 				break;
 			case TIE:
-				String tieMessage = "This game ended with a " + ChatColor.YELLOW + ChatColor.BOLD + "tie" + ChatColor.RESET + "";
+				String tieMessage = "This game ended with a " + ChatColor.YELLOW + ChatColor.BOLD + "tie" + ChatColor.RESET + "!";
 				this.config.mainPlayer.sendMessage(tieMessage);
 				this.config.opponentPlayer.sendMessage(tieMessage);
 				
-				BaseComponent returnMatchMessage[] = new ComponentBuilder("Click ").append("here").color(ChatColor.GREEN).bold(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tictactoe requestReturnMatch")).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to request another game"))).append(" to request another match.").reset().create();
+				BaseComponent returnMatchMessage[] = new ComponentBuilder("Click ").append("here").color(ChatColor.GREEN).bold(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tictactoe requestReturnMatch")).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to request another game"))).append(" to request another game.").reset().create();
 				
 				this.config.mainPlayer.spigot().sendMessage(returnMatchMessage);
 				this.config.opponentPlayer.spigot().sendMessage(returnMatchMessage);

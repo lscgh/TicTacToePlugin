@@ -18,6 +18,8 @@ import net.md_5.bungee.api.ChatColor;
 public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 	
 	public static String COMMAND_NAME = "tictactoeaccept";
+	public static int ARG_COUNT = 1;
+	public static int PLAYER_NAME_ARG_INDEX = 0;
 	
 	public CommandTicTacToeAccept(Plugin plugin) {
 		plugin.getCommand(CommandTicTacToeAccept.COMMAND_NAME).setExecutor(this);
@@ -32,9 +34,9 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 			return true;
 		}
 		
-		if(args.length != 1) return false;
+		if(args.length != CommandTicTacToeAccept.ARG_COUNT) return false;
 		
-		String playerName = args[0];
+		String playerName = args[CommandTicTacToeAccept.PLAYER_NAME_ARG_INDEX];
 		
 		Game targetGame = null;
 		
@@ -75,7 +77,7 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 		
 		if(!(sender instanceof Player)) return new ArrayList<String>();
 		
-		if(args.length > 1) return new ArrayList<String>();
+		if(args.length > CommandTicTacToeAccept.ARG_COUNT) return new ArrayList<String>();
 		
 		ArrayList<String> completions = new ArrayList<String>();
 		for(Game queuedGame: Game.queuedGames.values()) {

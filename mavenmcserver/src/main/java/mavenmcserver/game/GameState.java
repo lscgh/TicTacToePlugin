@@ -21,6 +21,8 @@ class FieldPoint extends Vector3i {
  */
 public class GameState {
 	
+	public static int CONVERSION_Y_OFFSET = 1;
+	
 	public enum FieldState {
 		NEUTRAL, // Not marked yet
 		MAIN, // Marked by main player
@@ -48,7 +50,7 @@ public class GameState {
 		int offsetX = block.getBlockX() - gameStartBlock.getBlockX();
 		if(offsetX % 2 != 0 || offsetX < 0) throw new IllegalArgumentException("The x offset (" + offsetX + ") must not be odd or negative");
 		
-		int offsetY = block.getBlockY() - gameStartBlock.getBlockY() - 1;
+		int offsetY = block.getBlockY() - gameStartBlock.getBlockY() - GameState.CONVERSION_Y_OFFSET;
 		if(offsetY % 2 != 0 || offsetY < 0) throw new IllegalArgumentException("The y offset (" + offsetY + ") must not be odd or negative");
 		
 		int offsetZ = block.getBlockZ() - gameStartBlock.getBlockZ();
@@ -58,7 +60,7 @@ public class GameState {
 	}
 	
 	public Location fieldPointToBlockLocation(Location gameStartBlock, FieldPoint point) {
-		return new Location(gameStartBlock.getWorld(), gameStartBlock.getBlockX() + point.x * 2, gameStartBlock.getBlockY() + 1 + point.y * 2, gameStartBlock.getBlockZ() + point.z * 2);
+		return new Location(gameStartBlock.getWorld(), gameStartBlock.getBlockX() + point.x * 2, gameStartBlock.getBlockY() + GameState.CONVERSION_Y_OFFSET + point.y * 2, gameStartBlock.getBlockZ() + point.z * 2);
 	}
 	
 	public boolean fieldPointIsValid(FieldPoint point) {
@@ -78,6 +80,10 @@ public class GameState {
 		return this.getStateAt(new FieldPoint(x, y, z));
 	}
 	
+	/**
+	 * @param position The FieldPoint to get the state from.
+	 * @return The state at the given FieldPoint. If that is invalid, <i>FieldState.NEUTRAL</i> is returned.
+	 */
 	public FieldState getStateIfAny(FieldPoint position) {
 		try {
 			return this.getStateAt(position);
@@ -144,7 +150,7 @@ public class GameState {
 				
 				// Check in opposite direction
 				Vector3i oppositeDirection = new Vector3i(-direction.x, -direction.y, -direction.z);
-				amountOfCorrectFields += this.getFieldsInARowCount(lastChanged, oppositeDirection) - 1;
+				amountOfCorrectFields += this.getFieldsInARowCount(lastChanged, oppositeDirection) - 1; // subtract 1 because the lastChanged Block is counted twice.
 				
 				
 				if(amountOfCorrectFields >= winRequiredAmount) return this.getStateAt(lastChanged);
@@ -155,7 +161,12 @@ public class GameState {
 		return FieldState.NEUTRAL;
 	}
 	
-	
+	/**
+	 * Counts how many fields in a row (also diagonally) are marked by the same player.
+	 * @param startPoint The starting point to start the counting from.
+	 * @param direction The direction in which to go.
+	 * @return The count.
+	 */
 	private int getFieldsInARowCount(FieldPoint startPoint, Vector3i direction) {
 		int amountOfCorrectFields = 0;
 		while(true) {
