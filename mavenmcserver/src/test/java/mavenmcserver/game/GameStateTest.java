@@ -2,6 +2,7 @@ package mavenmcserver.game;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.joml.Vector3i;
@@ -114,6 +115,42 @@ public class GameStateTest {
 		
 		state.setStateAt(1, 0, 0, FieldState.MAIN);
 		assertEquals(FieldState.MAIN, state.getWinnerIfAny(3, new FieldPoint(1, 0, 0)));
+		
+	}
+	
+	
+	@Test
+	public void testWinIsPossible() {
+		
+		GameState state = new GameState(new Vector3i(3, 1, 3));
+		assertTrue(state.winIsPossible());
+		
+		state.setStateAt(1, 0, 1, FieldState.OPPONENT);
+		assertTrue(state.winIsPossible());
+		
+		state.setStateAt(1, 0, 0, FieldState.MAIN);
+		assertTrue(state.winIsPossible());
+		
+		state.setStateAt(2, 0, 0, FieldState.OPPONENT);
+		assertTrue(state.winIsPossible());
+		
+		state.setStateAt(2, 0, 1, FieldState.MAIN);
+		assertTrue(state.winIsPossible());
+		
+		state.setStateAt(0, 0, 1, FieldState.OPPONENT);
+		assertTrue(state.winIsPossible());
+		
+		state.setStateAt(0, 0, 0, FieldState.MAIN);
+		assertTrue(state.winIsPossible());
+		
+		state.setStateAt(2, 0, 2, FieldState.OPPONENT);
+		assertTrue(state.winIsPossible());
+		
+		state.setStateAt(0, 0, 2, FieldState.MAIN);
+		assertTrue(state.winIsPossible());
+		
+		state.setStateAt(1, 0, 2, FieldState.OPPONENT);
+		assertFalse(state.winIsPossible());
 		
 	}
 	
