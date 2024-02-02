@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
 import mavenmcserver.Plugin;
@@ -35,7 +36,7 @@ public class Game {
 		public CubicBlockArea gameArea; // the area to protect
 		public Plugin plugin;
 		
-		private HashMap<Location, Block> beforeGameBlocks;
+		private HashMap<Location, BlockData> beforeGameBlock = new HashMap<Location, BlockData>();
 		
 		public Game(GameConfig config, Plugin plugin) {
 			Game.queuedGames.put(this.uuid, this);
@@ -51,6 +52,7 @@ public class Game {
 			Location startBlock = new Location(this.location.getWorld(), this.location.getBlockX() - 2, this.location.getBlockY() - 1, this.location.getBlockZ() - 2);
 			Location endBlock = new Location(this.location.getWorld(), this.location.getBlockX() + this.config.size.x * 2, this.location.getBlockY() + this.config.size.y * 2, this.location.getBlockZ() + this.config.size.z * 2);
 			this.gameArea = new CubicBlockArea(startBlock, endBlock);
+			
 			
 			this.inviteOpponent();
 		}
@@ -99,15 +101,21 @@ public class Game {
 		public void start() {
 			this.listener.activate();
 			
+			// Store old blocks
+			this.beforeGameBlock.clear();
+			this.gameArea.forEach((block) -> this.beforeGameBlock.put(block.getLocation(), block.getBlockData()));
 			
-			this.gameArea.forEach((block) -> this.config.mainPlayer.sendMessage("" + block.getType()));
+			// Fill area with air
+			this.gameArea.forEach((block) -> block.setType(Material.AIR));
 			
+			// Base plate
 			for(int x = 0; x < this.config.size.x * 2 - 1; x++) {
 				for(int z = 0; z < this.config.size.z * 2 - 1; z++) {
 					this.location.getWorld().getBlockAt(this.location.getBlockX() + x, this.location.getBlockY(), this.location.getBlockZ() + z).setType(Material.BLACK_CONCRETE);
 				}
 			}
 			
+			// Fields
 			for(int x = 0; x < this.config.size.x; x++) {
 				for(int y = 0; y < this.config.size.y; y++) {
 					for(int z = 0; z < this.config.size.z; z++) {
@@ -152,21 +160,7 @@ public class Game {
 			this.listener.deactivate();
 			
 			
-			// TODO: reset to previous state
-			for(int x = 0; x < this.config.size.x * 2 - 1; x++) {
-				for(int z = 0; z < this.config.size.z * 2 - 1; z++) {
-					this.location.getWorld().getBlockAt(this.location.getBlockX() + x, this.location.getBlockY(), this.location.getBlockZ() + z).setType(Material.AIR);
-				}
-			}
-			
-			for(int x = 0; x < this.config.size.x; x++) {
-				for(int y = 0; y < this.config.size.y; y++) {
-					for(int z = 0; z < this.config.size.z; z++) {
-						this.location.getWorld().getBlockAt(this.location.getBlockX() + x * 2, this.location.getBlockY() + 1 + y * 2, this.location.getBlockZ() + z * 2).setType(Material.AIR);
-						
-					}
-				}
-			}
+			this.gameArea.forEach((block) -> block.setBlockData(this.beforeGameBlock.get(block.getLocation())));
 			
 			
 			switch(cause) {

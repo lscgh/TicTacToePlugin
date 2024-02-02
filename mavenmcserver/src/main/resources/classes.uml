@@ -22,7 +22,7 @@ class Game {
     +CubicBlockArea gameArea /' Set in contructor '/
     +Plugin plugin /' Used for listener and for placing blocks '/
     
-    -HashMap<Location, Block> beforeGameBlocks
+    -HashMap<Location, BlockData> beforeGameBlocks
     
     .. Methods ..
     +Game(GameConfig config, Plugin plugin)
