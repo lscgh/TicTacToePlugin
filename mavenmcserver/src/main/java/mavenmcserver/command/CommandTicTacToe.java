@@ -175,7 +175,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		
 		for(int i = 1; i < 5; i++) {
 			try {
-				if(args.length <= i) {
+				if(args.length <= i || args[i].isEmpty()) {
 					if(i == CommandTicTacToe.WIN_REQUIRED_AMOUNT_INDEX) {
 						integerArguments[i - 1] = Math.max(integerArguments[0], Math.max(integerArguments[1], integerArguments[2]));
 					} else {
