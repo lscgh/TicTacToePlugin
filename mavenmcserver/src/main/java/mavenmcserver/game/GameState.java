@@ -54,7 +54,7 @@ public class GameState {
 	}
 	
 	public Location fieldPointToBlockLocation(Location gameStartBlock, FieldPoint point) {
-		return new Location(gameStartBlock.getWorld(), gameStartBlock.getBlockX() + point.x * 2, gameStartBlock.getBlockY() + point.y * 2, gameStartBlock.getBlockZ() + point.z * 2);
+		return new Location(gameStartBlock.getWorld(), gameStartBlock.getBlockX() + point.x * 2, gameStartBlock.getBlockY() + 1 + point.y * 2, gameStartBlock.getBlockZ() + point.z * 2);
 	}
 	
 	public boolean fieldPointIsValid(FieldPoint point) {
