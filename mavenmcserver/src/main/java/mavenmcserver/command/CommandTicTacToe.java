@@ -93,8 +93,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 			}
 			
 			// Show the config to the player
-			sender.sendMessage("You just executed /tictactoe correctly");
-			sender.sendMessage("Game configuration: '" + config + "'");
+			sender.sendMessage("You just asked " + ChatColor.AQUA + ChatColor.BOLD + config.opponentPlayer.getName() + ChatColor.RESET + " to play a game of tic-tac-toe with you!");
 			
 			new Game(config, this.plugin);
 		}

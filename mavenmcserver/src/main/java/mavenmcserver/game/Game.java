@@ -91,6 +91,7 @@ public class Game {
 		
 		private void inviteOpponent() {
 			this.config.opponentPlayer.sendMessage("Hello " + ChatColor.AQUA + ChatColor.BOLD + this.config.opponentPlayer.getName() + ChatColor.RESET + "! " + ChatColor.AQUA + ChatColor.BOLD + this.config.mainPlayer.getName() + ChatColor.RESET + " would like to play a game of tic-tac-toe with you!");
+			this.config.opponentPlayer.sendMessage("It has a size of (" + ChatColor.BOLD + this.config.size.x + ChatColor.RESET + ", " + ChatColor.BOLD + this.config.size.y + ChatColor.RESET + ", " + ChatColor.BOLD + this.config.size.z + ChatColor.RESET + ") and you need " + ChatColor.BOLD + this.config.winRequiredAmount + ChatColor.RESET + " fields in a row to win!");
 			BaseComponent[] invitationComponent = new ComponentBuilder("Click ")
 					.append("here").color(ChatColor.GREEN).bold(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tictactoeaccept " + this.uuid.toString())).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to accept")))
 					.append(" to accept the game!").reset().create();
@@ -127,7 +128,7 @@ public class Game {
 				}
 			}
 			
-			this.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + this.config.opponentPlayer.getName() + ChatColor.RESET + " has accepted your game!");
+			this.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + this.config.opponentPlayer.getName() + ChatColor.RESET + " has accepted your game!");
 			
 			this.registerStarted();
 		}
@@ -142,9 +143,9 @@ public class Game {
 			for (Entry<UUID, Game> queuedGameEntry : Game.queuedGames.entrySet()) {
 				Game queuedGame = queuedGameEntry.getValue();
 				if (queuedGame.config.opponentPlayer == this.config.opponentPlayer) {
-					queuedGame.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + this.config.opponentPlayer.getName() + ChatColor.RESET + " has just accepted another game.");
+					queuedGame.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + this.config.opponentPlayer.getName() + ChatColor.RESET + " has just accepted another game.");
 				} else if (queuedGame.config.opponentPlayer == this.config.mainPlayer) {
-					queuedGame.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + this.config.mainPlayer.getName() + ChatColor.RESET + " has just started their own game of tic-tac-toe.");
+					queuedGame.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + this.config.mainPlayer.getName() + ChatColor.RESET + " has just started their own game of tic-tac-toe.");
 				}
 			}
 
@@ -175,10 +176,12 @@ public class Game {
 			case MAIN_WIN:
 				this.config.mainPlayer.sendMessage("You " + ChatColor.GREEN + ChatColor.BOLD + "won" + ChatColor.RESET + " the game!");
 				this.config.opponentPlayer.sendMessage("You " + ChatColor.RED + ChatColor.BOLD + "lost" + ChatColor.RESET + " the game!");
+				this.config.opponentPlayer.spigot().sendMessage(new ComponentBuilder("Click ").append("here").color(ChatColor.GREEN).bold(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tictactoe " + this.config.mainPlayer.getName())).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to request another game"))).append(" to request a return match.").reset().create());
 				break;
 			case OPPONENT_WIN:
 				this.config.opponentPlayer.sendMessage("You " + ChatColor.GREEN + ChatColor.BOLD + "won" + ChatColor.RESET + " the game!");
 				this.config.mainPlayer.sendMessage("You " + ChatColor.RED + ChatColor.BOLD + "lost" + ChatColor.RESET + " the game!");
+				this.config.mainPlayer.spigot().sendMessage(new ComponentBuilder("Click ").append("here").color(ChatColor.GREEN).bold(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tictactoe " + this.config.opponentPlayer.getName())).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to request another game"))).append(" to request a return match.").reset().create());
 				break;
 			case TIE:
 				break;
