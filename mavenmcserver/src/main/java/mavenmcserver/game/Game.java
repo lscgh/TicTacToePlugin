@@ -105,8 +105,12 @@ public class Game {
 			this.beforeGameBlock.clear();
 			this.gameArea.forEach((block) -> this.beforeGameBlock.put(block.getLocation(), block.getBlockData()));
 			
-			// Fill area with air
-			this.gameArea.forEach((block) -> block.setType(Material.AIR));
+			// Fill area with air (except for bottom layer)
+			this.gameArea.forEach((block) -> {
+				if(block.getLocation().getBlockY() != this.gameArea.startBlock.getBlockY()) {
+					block.setType(Material.AIR);
+				}
+			});
 			
 			// Base plate
 			for(int x = 0; x < this.config.size.x * 2 - 1; x++) {
