@@ -67,11 +67,12 @@ class GameState {
     +boolean fieldPointIsValid(FieldPoint point) /' Returns true if the given FieldPoint is contained in this game (regarding the size!) '/
     +FieldState getStateAt(FieldPoint position)
     +FieldState getStateAt(int x, int y, int z)
+    +FieldState getStateIfAny(FieldPoint position) /' NEUTRAL on exception '/
     +void setStateAt(FieldPoint position, FieldState newState)
     +void setStateAt(int x, int y, int z, FieldState newState)
     
     // Returns NEUTRAL if there is no winner yet
-    +FieldState getWinnerIfAny() /' Returns NEUTRAL for no winner yet '/
+    +FieldState getWinnerIfAny(FieldPoint lastChanged) /' Returns NEUTRAL for no winner yet '/
     +boolean winIsPossible() /' Whether (false) or not (true) to cancel the game '/
 }
 

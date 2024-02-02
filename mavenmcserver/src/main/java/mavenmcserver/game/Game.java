@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
@@ -174,8 +173,12 @@ public class Game {
 				this.config.opponentPlayer.sendMessage(message);
 				break;
 			case MAIN_WIN:
+				this.config.mainPlayer.sendMessage("You " + ChatColor.GREEN + ChatColor.BOLD + "won" + ChatColor.RESET + " the game!");
+				this.config.opponentPlayer.sendMessage("You " + ChatColor.RED + ChatColor.BOLD + "lost" + ChatColor.RESET + " the game!");
 				break;
 			case OPPONENT_WIN:
+				this.config.opponentPlayer.sendMessage("You " + ChatColor.GREEN + ChatColor.BOLD + "won" + ChatColor.RESET + " the game!");
+				this.config.mainPlayer.sendMessage("You " + ChatColor.RED + ChatColor.BOLD + "lost" + ChatColor.RESET + " the game!");
 				break;
 			case TIE:
 				break;
@@ -205,6 +208,10 @@ public class Game {
 			
 			this.location.getWorld().getBlockAt(inWorldLocation).setType(this.opponentPlayersTurn ? Material.LIGHT_BLUE_CONCRETE : Material.RED_CONCRETE);
 			
+			if(this.state.getWinnerIfAny(this.config.winRequiredAmount, position) != FieldState.NEUTRAL) {
+				this.end(this.opponentPlayersTurn ? GameEndCause.OPPONENT_WIN : GameEndCause.MAIN_WIN);
+				return;
+			}
 			
 			this.opponentPlayersTurn = !this.opponentPlayersTurn;
 		}

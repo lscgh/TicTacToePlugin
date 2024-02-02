@@ -10,6 +10,10 @@ class FieldPoint extends Vector3i {
 	public FieldPoint(int x, int y, int z) {
 		super(x, y, z);
 	}
+	
+	public FieldPoint offsetBy(int x, int y, int z) {
+		return new FieldPoint(this.x + x, this.y + y, this.z + z);
+	}
 }
 
 /**
@@ -74,6 +78,14 @@ public class GameState {
 		return this.getStateAt(new FieldPoint(x, y, z));
 	}
 	
+	public FieldState getStateIfAny(FieldPoint position) {
+		try {
+			return this.getStateAt(position);
+		} catch(IllegalArgumentException e) {
+			return FieldState.NEUTRAL;
+		}
+	}
+	
 	public void setStateAt(FieldPoint position, FieldState newState) {
 		if(!this.fieldPointIsValid(position)) throw new IllegalArgumentException("point " + position + " is invalid for size " + this.gameSize);
 		
@@ -84,9 +96,35 @@ public class GameState {
 		this.setStateAt(new FieldPoint(x, y, z), newState);
 	}
 	
-	
-	FieldState getWinnerIfAny() {
-		return FieldState.NEUTRAL; // TODO: finish
+	/**
+	 * Checks if a player won the game
+	 * @param lastChanged the field point that was last changed. Checks are done from this point into all possible directions.
+	 * @return NEUTRAL if there is no winner yet. MAIN if the mainPlayer has won, OPPONENT if the opponentPlayer has won!
+	 */
+	FieldState getWinnerIfAny(int winRequiredAmount, FieldPoint lastChanged) {
+		
+		Vector3i directionsToCheck[] = {
+			new Vector3i(1, 0, 0),
+			new Vector3i(-1, 0, 0),
+			new Vector3i(0, 1, 0),
+			new Vector3i(0, -1, 0),
+			new Vector3i(0, 0, 1),
+			new Vector3i(0, 0, -1)
+		};
+		
+		for(Vector3i direction: directionsToCheck) {
+			
+			boolean isWinCondition = true;
+			for(int i = 0; i < winRequiredAmount; i++) {
+				FieldPoint point = lastChanged.offsetBy(i * direction.x, i * direction.y, i * direction.z);
+				if(this.getStateIfAny(point) != this.getStateAt(lastChanged)) isWinCondition = false;
+			}
+			
+			if(isWinCondition) return this.getStateAt(lastChanged);
+			
+		}
+		
+		return FieldState.NEUTRAL;
 	}
 	
 	boolean winIsPossible() {
