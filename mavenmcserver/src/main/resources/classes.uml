@@ -89,6 +89,8 @@ class GameListener {
     +@EventHandler void onBlockBreak(...) /' BlockBreakEvent '/
     +@EventHandler void onEntitySummon(...) /' EntitySpawnEvent '/
     +@EventHandler void onEntityExplode(...) /' EntityExplodeEvent '/
+    +@EventHandler void onBlockExplode(...) /' BlockExplodeEvent '/
+    +@EventHandler void onLightningStrike(..) /' LightningStrikeEvent '/
     +@EventHandler void onMove(...) /' PlayerMoveEvent '/
     +@EventHandler void onPlayerDamaged(...) /' EntityDamageByEntityEvent '/
     +@EventHandler void onBlockMove(...) /' BlockFromToEvent '/

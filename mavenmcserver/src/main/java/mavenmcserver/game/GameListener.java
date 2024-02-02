@@ -15,6 +15,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.weather.LightningStrikeEvent;
 
 public class GameListener implements Listener {
 
@@ -73,6 +74,13 @@ public class GameListener implements Listener {
 		}
 		
 		event.blockList().removeIf((block) -> this.game.gameArea.contains(block.getLocation()));
+	}
+	
+	@EventHandler
+	public void onLightningStrike(LightningStrikeEvent event) {
+		if(this.game.gameArea.contains(event.getLightning().getLocation())) {
+			event.setCancelled(true);
+		}
 	}
 	
 	@EventHandler
