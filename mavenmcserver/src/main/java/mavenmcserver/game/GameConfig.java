@@ -73,6 +73,13 @@ public class GameConfig {
 			return errors;
 		}
 		
+		for(Game queuedGame: Game.queuedGames.values()) {
+			if(queuedGame.config.mainPlayer == this.mainPlayer) {
+				errors.add("You have already requested a game of tic-tac-toe from '" + queuedGame.config.opponentPlayer.getName() + "'!");
+				return errors;
+			}
+		}
+		
 		errors.addAll(this.validateNumbers());
 		
 		return errors;
