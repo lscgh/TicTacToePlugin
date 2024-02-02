@@ -76,6 +76,10 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 					return true;
 				}
 				
+				sender.sendMessage("You've just asked " + ChatColor.AQUA + ChatColor.BOLD + returnConfig.opponentPlayer.getName() + ChatColor.RESET + " to play a return match with you!");
+				
+				Game.lostGames.remove((Player)sender);
+				
 				new Game(Game.lostGames.get((Player)sender), this.plugin, true);
 				return true;
 			}
@@ -105,7 +109,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				return true;
 			}
 			
-			// Show the config to the player
+			// Show the confirmation to the player
 			sender.sendMessage("You've just asked " + ChatColor.AQUA + ChatColor.BOLD + config.opponentPlayer.getName() + ChatColor.RESET + " to play a game of tic-tac-toe with you!");
 			
 			new Game(config, this.plugin, false);
