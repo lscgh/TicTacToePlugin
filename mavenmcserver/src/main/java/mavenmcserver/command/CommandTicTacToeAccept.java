@@ -39,21 +39,29 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 		Game targetGame = null;
 		
 		for(Game queuedGame: Game.queuedGames.values()) {
-			if(queuedGame.config.mainPlayer.getName() == playerName) {
+			if(queuedGame.config.opponentPlayer != (Player)sender) continue;
+			if(queuedGame.config.mainPlayer.getName().equals(playerName)) {
 				targetGame = queuedGame;
 				break;
 			}
 		}
 		
+		boolean validUUIDIsGiven = false;
+		
 		if(targetGame == null) {
 			try {
 				UUID gameUUID = UUID.fromString(playerName);
+				validUUIDIsGiven = true;
 				targetGame = Game.queuedGames.get(gameUUID);
 			} catch(IllegalArgumentException e) {}
 		}
 		
 		if(targetGame == null) {
-			sender.sendMessage(ChatColor.RED + "'" + playerName + "' hasn't sent any game request to you!" + ChatColor.RESET);
+			if(validUUIDIsGiven) {
+				sender.sendMessage(ChatColor.RED + "This game is not available anymore." + ChatColor.RESET);
+			} else {
+				sender.sendMessage(ChatColor.RED + "'" + playerName + "' hasn't sent any game request to you!" + ChatColor.RESET);
+			}
 			return true;
 		}
 		
