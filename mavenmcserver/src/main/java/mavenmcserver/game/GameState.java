@@ -183,15 +183,21 @@ public class GameState {
 	 */
 	FieldState getWinnerIfAny(int winRequiredAmount, FieldPoint lastChanged) {
 		
-		System.out.println("State at lastChanged=" + this.getStateAt(lastChanged));
+		try {
+			Bukkit.getLogger().info("State at lastChanged=" + this.getStateAt(lastChanged));
+		} catch(Throwable e) {}
 		
 		for(Vector3i direction: GameState.DIRECTIONS_TO_CHECK) {
 			
-			System.out.println("Current direction=" + direction);
+			try {
+				Bukkit.getLogger().info("Current direction=" + direction);
+			} catch(Throwable e) {}
 			
 			int amountOfCorrectFields = this.getFieldsInARowCount(lastChanged, direction);
 			
-			System.out.println("Amount=" + amountOfCorrectFields);
+			try {
+				Bukkit.getLogger().info("Amount=" + amountOfCorrectFields);
+			} catch(Throwable e) {}
 			
 			if(amountOfCorrectFields >= winRequiredAmount) return this.getStateAt(lastChanged);
 			else if(amountOfCorrectFields > 1) {
