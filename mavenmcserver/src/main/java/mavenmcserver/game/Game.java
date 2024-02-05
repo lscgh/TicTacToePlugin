@@ -50,6 +50,7 @@ public class Game {
 		public GameState state;
 		/// The FieldPoint of the last marked field, starting as null
 		public FieldPoint lastPlacePosition = null;
+		boolean didCompletePlace = true;
 		boolean opponentPlayersTurn = true;
 		public CubicBlockArea gameArea; // the area to protect
 		public Plugin plugin;
@@ -76,17 +77,14 @@ public class Game {
 			
 			this.grativtyRunnable = new BukkitRunnable() {
 				
-				boolean didApplyAnyChangeInPreviousTick = false;
-				
 				@Override
 				public void run() {
 					boolean didApplyAnyChangeInCurrentTick = state.applyGravityTick(location, lastPlacePosition);
-					if(!didApplyAnyChangeInCurrentTick && this.didApplyAnyChangeInPreviousTick) {
+					if(!didApplyAnyChangeInCurrentTick && !didCompletePlace) {
 						// Falling is now done
 						checkForWin();
+						didCompletePlace = true;
 					}
-					
-					this.didApplyAnyChangeInPreviousTick = didApplyAnyChangeInCurrentTick;
 				}
 				
 			};
@@ -268,6 +266,7 @@ public class Game {
 		public void placeAt(FieldPoint position) {
 			// Store the position for use in checkForWin();
 			this.lastPlacePosition = position;
+			this.didCompletePlace = false;
 			
 			if(this.state.getStateAt(position) != FieldState.NEUTRAL) return;
 			
