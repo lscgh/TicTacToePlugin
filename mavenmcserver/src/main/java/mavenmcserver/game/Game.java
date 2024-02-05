@@ -63,6 +63,7 @@ public class Game {
 				
 				@Override
 				public void run() {
+					plugin.getLogger().info("Applying Gravity Tick to game '" + uuid.toString() + "'");
 					state.applyGravityTick();
 				}
 				

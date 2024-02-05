@@ -1,5 +1,6 @@
 package mavenmcserver.game;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.joml.Vector3i;
 
@@ -109,6 +110,7 @@ public class GameState {
 				for(int z = 0; z < this.gameSize.z; z++) {
 					if(this.getStateAt(x, y, z) != FieldState.NEUTRAL) {
 						if(this.getStateAt(x, y - 1, z) == FieldState.NEUTRAL) {
+							Bukkit.getLogger().info("Applied fall!!!");
 							this.setStateAt(x, y - 1, z, this.getStateAt(x, y, z));
 							this.setStateAt(x, y, z, FieldState.NEUTRAL);
 						}
