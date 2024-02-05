@@ -1,6 +1,6 @@
 package mavenmcserver;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,7 +27,7 @@ public class Plugin extends JavaPlugin {
 	public void onDisable() {
 		
 		// Cancel all running games
-		ArrayList<Game> runningGames = new ArrayList<Game>();
+		HashSet<Game> runningGames = new HashSet<Game>();
 		runningGames.addAll(Game.runningGames.values());
 		
 		for(Game runningGame: runningGames) {
