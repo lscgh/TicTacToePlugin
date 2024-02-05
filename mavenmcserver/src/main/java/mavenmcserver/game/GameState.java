@@ -1,7 +1,7 @@
 package mavenmcserver.game;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.joml.Vector3i;
 
 /**
@@ -104,15 +104,24 @@ public class GameState {
 	}
 	
 	
-	public void applyGravityTick() {
+	public void applyGravityTick(Location gameStartBlock) {
 		for(int y = 1; y < this.gameSize.y; y++) {
 			for(int x = 0; x < this.gameSize.x; x++) {
 				for(int z = 0; z < this.gameSize.z; z++) {
 					if(this.getStateAt(x, y, z) != FieldState.NEUTRAL) {
 						if(this.getStateAt(x, y - 1, z) == FieldState.NEUTRAL) {
-							Bukkit.getLogger().info("Applied fall!!!");
 							this.setStateAt(x, y - 1, z, this.getStateAt(x, y, z));
 							this.setStateAt(x, y, z, FieldState.NEUTRAL);
+							
+							// Update changes visually
+							World gameWorld = gameStartBlock.getWorld();
+							
+							Location inWorldLocationOfUnderneathBlock = this.fieldPointToBlockLocation(gameStartBlock, new FieldPoint(x, y - 1, z));
+							if(this.getStateAt(x, y - 1, z) == FieldState.MAIN) gameWorld.getBlockAt(inWorldLocationOfUnderneathBlock).setType(Game.MAIN_PLAYER_MATERIAL);
+							else if(this.getStateAt(x, y - 1, z) == FieldState.OPPONENT) gameWorld.getBlockAt(inWorldLocationOfUnderneathBlock).setType(Game.OPPONENT_PLAYER_MATERIAL);
+							
+							Location inWorldLocationOfCurrentBlock = this.fieldPointToBlockLocation(gameStartBlock, new FieldPoint(x, y, z));
+							gameWorld.getBlockAt(inWorldLocationOfCurrentBlock).setType(Game.NEUTRAL_MATERIAL);
 						}
 					}
 				}

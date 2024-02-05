@@ -21,6 +21,11 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 
 public class Game {
 	
+		public static Material BASE_PLATE_MATERIAL = Material.BLACK_CONCRETE;
+		public static Material NEUTRAL_MATERIAL = Material.WHITE_CONCRETE;
+		public static Material MAIN_PLAYER_MATERIAL = Material.RED_CONCRETE;
+		public static Material OPPONENT_PLAYER_MATERIAL = Material.LIGHT_BLUE_CONCRETE;
+	
 		/// Contains all  queued games that still have to be accepted / rejected
 		public static HashMap<UUID, Game> queuedGames = new HashMap<UUID, Game>();
 		
@@ -63,8 +68,7 @@ public class Game {
 				
 				@Override
 				public void run() {
-					plugin.getLogger().info("Applying Gravity Tick to game '" + uuid.toString() + "'");
-					state.applyGravityTick();
+					state.applyGravityTick(location);
 				}
 				
 			};
@@ -137,7 +141,7 @@ public class Game {
 			// Base plate
 			for(int x = 0; x < this.config.size.x * 2 - 1; x++) {
 				for(int z = 0; z < this.config.size.z * 2 - 1; z++) {
-					this.location.getWorld().getBlockAt(this.location.getBlockX() + x, this.location.getBlockY(), this.location.getBlockZ() + z).setType(Material.BLACK_CONCRETE);
+					this.location.getWorld().getBlockAt(this.location.getBlockX() + x, this.location.getBlockY(), this.location.getBlockZ() + z).setType(Game.BASE_PLATE_MATERIAL);
 				}
 			}
 			
@@ -145,7 +149,7 @@ public class Game {
 			for(int x = 0; x < this.config.size.x; x++) {
 				for(int y = 0; y < this.config.size.y; y++) {
 					for(int z = 0; z < this.config.size.z; z++) {
-						this.location.getWorld().getBlockAt(this.location.getBlockX() + x * 2, this.location.getBlockY() + 1 + y * 2, this.location.getBlockZ() + z * 2).setType(Material.WHITE_CONCRETE);
+						this.location.getWorld().getBlockAt(this.location.getBlockX() + x * 2, this.location.getBlockY() + 1 + y * 2, this.location.getBlockZ() + z * 2).setType(Game.NEUTRAL_MATERIAL);
 					}
 				}
 			}
@@ -252,7 +256,7 @@ public class Game {
 			
 			Location inWorldLocation = this.state.fieldPointToBlockLocation(this.location, position);
 			
-			this.location.getWorld().getBlockAt(inWorldLocation).setType(this.opponentPlayersTurn ? Material.LIGHT_BLUE_CONCRETE : Material.RED_CONCRETE);
+			this.location.getWorld().getBlockAt(inWorldLocation).setType(this.opponentPlayersTurn ? Game.OPPONENT_PLAYER_MATERIAL : Game.MAIN_PLAYER_MATERIAL);
 			
 			if(this.state.getWinnerIfAny(this.config.winRequiredAmount, position) != FieldState.NEUTRAL) {
 				this.end(this.opponentPlayersTurn ? GameEndCause.OPPONENT_WIN : GameEndCause.MAIN_WIN);
