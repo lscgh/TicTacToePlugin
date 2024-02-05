@@ -1,5 +1,7 @@
 package mavenmcserver;
 
+import java.util.ArrayList;
+
 import org.bukkit.plugin.java.JavaPlugin;
 
 import mavenmcserver.command.CommandTicTacToe;
@@ -25,7 +27,10 @@ public class Plugin extends JavaPlugin {
 	public void onDisable() {
 		
 		// Cancel all running games
-		for(Game runningGame: Game.runningGames.values()) {
+		ArrayList<Game> runningGames = new ArrayList<Game>();
+		runningGames.addAll(Game.runningGames.values());
+		
+		for(Game runningGame: runningGames) {
 			runningGame.end(GameEndCause.CANCEL);
 		}
 		
