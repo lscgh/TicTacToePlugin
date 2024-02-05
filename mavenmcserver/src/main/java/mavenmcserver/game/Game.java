@@ -295,6 +295,9 @@ public class Game {
 					
 					@Override
 					public void run() {
+						
+						plugin.getLogger().info("Hello! i = " + this.i + " and blockLocations = '" + this.blockLocations + "'! :D");
+						
 						if(this.i < 0) {
 							this.i++;
 							return;
@@ -314,6 +317,7 @@ public class Game {
 						float currentPitch = 1.0f + (1 / (config.winRequiredAmount - 1)) * this.i;
 						playGameSound(Game.WIN_BEEP_SOUND, currentPitch);
 						
+						i++;
 					}
 					
 				}.runTaskTimer(this.plugin, 10, 10);
