@@ -33,7 +33,10 @@ public class Game {
 		public static Sound MARK_FIELD_SOUND = Sound.BLOCK_NOTE_BLOCK_BELL;
 		public static float MARK_FIELD_SOUND_PITCH = 0.5f;
 		public static Sound WIN_BEEP_SOUND = Sound.BLOCK_NOTE_BLOCK_BIT; // no pitch because it varies
+		public static Sound WIN_SOUND = Sound.ENTITY_PLAYER_LEVELUP;
 		public static Sound LOSE_SOUND = Sound.ENTITY_WITHER_HURT;
+		public static Sound TIE_SOUND = Sound.BLOCK_NOTE_BLOCK_COW_BELL;
+		public static float TIE_SOUND_PITCH = 0.5f;
 	
 		/// Contains all  queued games that still have to be accepted / rejected
 		public static HashMap<UUID, Game> queuedGames = new HashMap<UUID, Game>();
@@ -224,6 +227,7 @@ public class Game {
 				break;
 			case MAIN_WIN:
 				this.config.mainPlayer.sendTitle("You " + ChatColor.GREEN + ChatColor.BOLD + "won" + ChatColor.RESET + " the game!", "Good job!", 10, 60, 10);
+				this.config.mainPlayer.playSound(this.config.mainPlayer.getLocation(), Game.WIN_SOUND, 1.0f, 1.0f);
 				this.config.opponentPlayer.sendTitle("You " + ChatColor.RED + ChatColor.BOLD + "lost" + ChatColor.RESET + " the game!", "Never give up!", 10, 60, 10);
 				this.config.opponentPlayer.playSound(this.config.opponentPlayer.getLocation(), Game.LOSE_SOUND, 1.0f, 1.0f);
 				this.config.opponentPlayer.spigot().sendMessage(new ComponentBuilder("Click ").append("here").color(ChatColor.GREEN).bold(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tictactoe requestReturnMatch")).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to request another game"))).append(" to request a return match.").reset().create());
@@ -231,6 +235,7 @@ public class Game {
 				break;
 			case OPPONENT_WIN:
 				this.config.opponentPlayer.sendTitle("You " + ChatColor.GREEN + ChatColor.BOLD + "won" + ChatColor.RESET + " the game!", "Good job!", 10, 60, 10);
+				this.config.opponentPlayer.playSound(this.config.opponentPlayer.getLocation(), Game.WIN_SOUND, 1.0f, 1.0f);
 				this.config.mainPlayer.sendTitle("You " + ChatColor.RED + ChatColor.BOLD + "lost" + ChatColor.RESET + " the game!", "Never give up!", 10, 60, 10);
 				this.config.mainPlayer.playSound(this.config.mainPlayer.getLocation(), Game.LOSE_SOUND, 1.0f, 1.0f);
 				this.config.mainPlayer.spigot().sendMessage(new ComponentBuilder("Click ").append("here").color(ChatColor.GREEN).bold(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tictactoe requestReturnMatch")).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to request another game"))).append(" to request a return match.").reset().create());
@@ -241,6 +246,9 @@ public class Game {
 				String tieMessage = "This game ended with a " + ChatColor.YELLOW + ChatColor.BOLD + "tie" + ChatColor.RESET + "!";
 				this.config.mainPlayer.sendTitle(tieTitle, tieMessage, 10, 50, 10);
 				this.config.opponentPlayer.sendTitle(tieTitle, tieMessage, 10, 50, 10);
+				
+				this.config.mainPlayer.playSound(this.config.mainPlayer.getLocation(), Game.TIE_SOUND, 1.0f, Game.TIE_SOUND_PITCH);
+				this.config.opponentPlayer.playSound(this.config.opponentPlayer.getLocation(), Game.TIE_SOUND, 1.0f, Game.TIE_SOUND_PITCH);
 				
 				BaseComponent returnMatchMessage[] = new ComponentBuilder("Click ").append("here").color(ChatColor.GREEN).bold(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tictactoe requestReturnMatch")).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to request another game"))).append(" to request another game.").reset().create();
 				
