@@ -288,6 +288,8 @@ public class Game {
 			
 			if(this.state.getWinnerIfAny(this.config.winRequiredAmount, this.lastPlacePosition) != FieldState.NEUTRAL) {
 				
+				this.plugin.getLogger().info("Somebody won!");
+				
 				new BukkitRunnable() {
 				
 					int i = -1;
