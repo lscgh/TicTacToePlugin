@@ -183,21 +183,9 @@ public class GameState {
 	 */
 	FieldState getWinnerIfAny(int winRequiredAmount, FieldPoint lastChanged) {
 		
-		try {
-			Bukkit.getLogger().info("State at lastChanged=" + this.getStateAt(lastChanged));
-		} catch(Throwable e) {}
-		
 		for(Vector3i direction: GameState.DIRECTIONS_TO_CHECK) {
 			
-			try {
-				Bukkit.getLogger().info("Current direction=" + direction);
-			} catch(Throwable e) {}
-			
 			int amountOfCorrectFields = this.getFieldsInARowCount(lastChanged, direction);
-			
-			try {
-				Bukkit.getLogger().info("Amount=" + amountOfCorrectFields);
-			} catch(Throwable e) {}
 			
 			if(amountOfCorrectFields >= winRequiredAmount) return this.getStateAt(lastChanged);
 			else if(amountOfCorrectFields > 1) {
@@ -249,22 +237,21 @@ public class GameState {
 		
 		for(Vector3i direction : GameState.DIRECTIONS_TO_CHECK) {
 
-			int amountOfCorrectFields = this.getFieldsInARowCount(lastChanged, direction);
+			int amountOfCorrectFields = this.getFieldsInARowCount(lastChanged, direction) - 1;
 			int amountOfCorrectFieldsInOppositeDirection = 0;
 
-			if(amountOfCorrectFields > 1 && amountOfCorrectFields < winRequiredAmount) {
-
+			if(amountOfCorrectFields > 0 && amountOfCorrectFields < winRequiredAmount - 1) {
 				// Check in opposite direction
 				Vector3i oppositeDirection = new Vector3i(-direction.x, -direction.y, -direction.z);
 				amountOfCorrectFieldsInOppositeDirection = this.getFieldsInARowCount(lastChanged, oppositeDirection) - 1;
 			}
 			
-			if(amountOfCorrectFields + amountOfCorrectFieldsInOppositeDirection < winRequiredAmount) continue;
+			if(amountOfCorrectFields + amountOfCorrectFieldsInOppositeDirection < winRequiredAmount - 1) continue;
 			
 			ArrayList<Location> blockLocations = new ArrayList<Location>();
 			
 			for(int i = -amountOfCorrectFieldsInOppositeDirection; i <= amountOfCorrectFields; i++) {
-				FieldPoint currentPoint = lastChanged.offsetBy(i + direction.x, i * direction.y, i * direction.z);
+				FieldPoint currentPoint = lastChanged.offsetBy(i * direction.x, i * direction.y, i * direction.z);
 				Location fieldPointAsBlockLocation = this.fieldPointToBlockLocation(gameStartBlock, currentPoint);
 				blockLocations.add(fieldPointAsBlockLocation);
 			}

@@ -307,6 +307,7 @@ public class Game {
 						}
 						
 						if(this.i >= config.winRequiredAmount) {
+							opponentPlayersTurn = !opponentPlayersTurn; 
 							end(opponentPlayersTurn ? GameEndCause.OPPONENT_WIN : GameEndCause.MAIN_WIN);
 							this.cancel();
 							return;
