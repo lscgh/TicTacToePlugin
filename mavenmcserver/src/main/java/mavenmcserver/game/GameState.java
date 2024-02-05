@@ -89,10 +89,6 @@ public class GameState {
 	 */
 	public FieldState getStateIfAny(FieldPoint position) {
 		try {
-			Bukkit.getLogger().info("getStateIfAny " + position);
-		} catch(Throwable e) { /* oops */ }
-		
-		try {
 			return this.getStateAt(position);
 		} catch(IllegalArgumentException e) {
 			return FieldState.NEUTRAL;
@@ -110,7 +106,7 @@ public class GameState {
 	}
 	
 	
-	public boolean applyGravityTick(Location gameStartBlock) {
+	public boolean applyGravityTick(Location gameStartBlock, FieldPoint lastPlacePosition) {
 		boolean didApplyAnyChange = false;
 		
 		for(int y = 1; y < this.gameSize.y; y++) {
@@ -130,6 +126,11 @@ public class GameState {
 							
 							Location inWorldLocationOfCurrentBlock = this.fieldPointToBlockLocation(gameStartBlock, new FieldPoint(x, y, z));
 							gameWorld.getBlockAt(inWorldLocationOfCurrentBlock).setType(Game.NEUTRAL_MATERIAL);
+							
+							boolean didModifyLastPlacePosition = lastPlacePosition.equals(new FieldPoint(x, y, z));
+							if(didModifyLastPlacePosition) {
+								lastPlacePosition.y -= 1;
+							}
 							
 							didApplyAnyChange = true;
 						}
@@ -207,6 +208,8 @@ public class GameState {
 	 * @return The count.
 	 */
 	private int getFieldsInARowCount(FieldPoint startPoint, Vector3i direction) {
+		if(this.getStateAt(startPoint) == FieldState.NEUTRAL) throw new IllegalArgumentException("getStateAt(startPoint) == FieldState.NEUTRAL");
+		
 		int amountOfCorrectFields = 0;
 		while(true) {
 			FieldPoint point = startPoint.offsetBy(amountOfCorrectFields * direction.x, amountOfCorrectFields * direction.y, amountOfCorrectFields * direction.z);

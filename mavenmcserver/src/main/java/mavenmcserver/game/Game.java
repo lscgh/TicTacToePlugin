@@ -72,7 +72,7 @@ public class Game {
 				
 				@Override
 				public void run() {
-					boolean didApplyAnyChangeInCurrentTick = state.applyGravityTick(location);
+					boolean didApplyAnyChangeInCurrentTick = state.applyGravityTick(location, lastPlacePosition);
 					if(!didApplyAnyChangeInCurrentTick && this.didApplyAnyChangeInPreviousTick) {
 						// Falling is now done
 						checkForWin();
