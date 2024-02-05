@@ -102,6 +102,22 @@ public class GameState {
 		this.setStateAt(new FieldPoint(x, y, z), newState);
 	}
 	
+	
+	public void applyGravityTick() {
+		for(int y = 1; y < this.gameSize.y; y++) {
+			for(int x = 0; x < this.gameSize.x; x++) {
+				for(int z = 0; z < this.gameSize.z; z++) {
+					if(this.getStateAt(x, y, z) != FieldState.NEUTRAL) {
+						if(this.getStateAt(x, y - 1, z) == FieldState.NEUTRAL) {
+							this.setStateAt(x, y - 1, z, this.getStateAt(x, y, z));
+							this.setStateAt(x, y, z, FieldState.NEUTRAL);
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Checks if a player won the game
 	 * @param lastChanged the field point that was last changed. Checks are done from this point into all possible directions.

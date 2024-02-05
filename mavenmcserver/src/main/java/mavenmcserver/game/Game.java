@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import mavenmcserver.Plugin;
 import mavenmcserver.game.GameState.FieldState;
@@ -38,6 +39,9 @@ public class Game {
 		public CubicBlockArea gameArea; // the area to protect
 		public Plugin plugin;
 		
+		// Repeatedly makes the blocks fall
+		public BukkitRunnable grativtyRunnable;
+		
 		private HashMap<Location, BlockData> beforeGameBlocks = new HashMap<Location, BlockData>();
 		
 		public Game(GameConfig config, Plugin plugin, boolean isReturnMatch) {
@@ -55,6 +59,14 @@ public class Game {
 			Location endBlock = new Location(this.location.getWorld(), this.location.getBlockX() + this.config.size.x * 2, this.location.getBlockY() + this.config.size.y * 2, this.location.getBlockZ() + this.config.size.z * 2);
 			this.gameArea = new CubicBlockArea(startBlock, endBlock);
 			
+			this.grativtyRunnable = new BukkitRunnable() {
+				
+				@Override
+				public void run() {
+					state.applyGravityTick();
+				}
+				
+			};
 			
 			this.inviteOpponent(isReturnMatch);
 		}
@@ -137,6 +149,8 @@ public class Game {
 				}
 			}
 			
+			this.grativtyRunnable.runTaskTimer(this.plugin, 0, 10);
+			
 			this.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + this.config.opponentPlayer.getName() + ChatColor.RESET + " has accepted your game!");
 			
 			this.registerStarted();
@@ -212,6 +226,8 @@ public class Game {
 				Game.lostGames.put(this.config.opponentPlayer, new GameConfig(this.config.opponentPlayer, this.config.mainPlayer, this.config.size, this.config.winRequiredAmount));
 				break;
 			}
+			
+			this.grativtyRunnable.cancel();
 			
 			
 			this.registerEnded();
