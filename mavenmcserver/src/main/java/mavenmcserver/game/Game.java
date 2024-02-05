@@ -316,7 +316,7 @@ public class Game {
 						
 					}
 					
-				};
+				}.runTaskTimer(this.plugin, 10, 10);
 				
 				return;
 			}
