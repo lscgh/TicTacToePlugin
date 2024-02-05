@@ -1,5 +1,7 @@
 package mavenmcserver.game;
 
+import java.util.ArrayList;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.joml.Vector3i;
@@ -23,6 +25,38 @@ class FieldPoint extends Vector3i {
 public class GameState {
 	
 	public static int CONVERSION_Y_OFFSET = 1;
+	
+	public static Vector3i DIRECTIONS_TO_CHECK[] = {
+			// Straight
+		new Vector3i(1, 0, 0),
+		new Vector3i(-1, 0, 0),
+		new Vector3i(0, 1, 0),
+		new Vector3i(0, -1, 0),
+		new Vector3i(0, 0, 1),
+		new Vector3i(0, 0, -1),
+		// Flat diagonal
+		new Vector3i(1, 0, 1),
+		new Vector3i(1, 0, -1),
+		new Vector3i(-1, 0, 1),
+		new Vector3i(-1, 0, -1),
+		new Vector3i(1, 1, 0),
+		new Vector3i(1, -1, 0),
+		new Vector3i(-1, 1,0),
+		new Vector3i(-1, -1, 0),
+		new Vector3i(0, 1, 1),
+		new Vector3i(0, 1, -1),
+		new Vector3i(0, -1, 1),
+		new Vector3i(0, -1, -1),
+		// non-flat diagonal
+		new Vector3i(1, 1, 1),
+		new Vector3i(1, 1, -1),
+		new Vector3i(1, -1, 1),
+		new Vector3i(1, -1, -1),
+		new Vector3i(-1, 1, 1),
+		new Vector3i(-1, 1, -1),
+		new Vector3i(-1, -1, 1),
+		new Vector3i(-1, -1, -1)
+	};
 	
 	public enum FieldState {
 		NEUTRAL, // Not marked yet
@@ -148,39 +182,7 @@ public class GameState {
 	 */
 	FieldState getWinnerIfAny(int winRequiredAmount, FieldPoint lastChanged) {
 		
-		Vector3i directionsToCheck[] = {
-				// Straight
-			new Vector3i(1, 0, 0),
-			new Vector3i(-1, 0, 0),
-			new Vector3i(0, 1, 0),
-			new Vector3i(0, -1, 0),
-			new Vector3i(0, 0, 1),
-			new Vector3i(0, 0, -1),
-			// Flat diagonal
-			new Vector3i(1, 0, 1),
-			new Vector3i(1, 0, -1),
-			new Vector3i(-1, 0, 1),
-			new Vector3i(-1, 0, -1),
-			new Vector3i(1, 1, 0),
-			new Vector3i(1, -1, 0),
-			new Vector3i(-1, 1,0),
-			new Vector3i(-1, -1, 0),
-			new Vector3i(0, 1, 1),
-			new Vector3i(0, 1, -1),
-			new Vector3i(0, -1, 1),
-			new Vector3i(0, -1, -1),
-			// non-flat diagonal
-			new Vector3i(1, 1, 1),
-			new Vector3i(1, 1, -1),
-			new Vector3i(1, -1, 1),
-			new Vector3i(1, -1, -1),
-			new Vector3i(-1, 1, 1),
-			new Vector3i(-1, 1, -1),
-			new Vector3i(-1, -1, 1),
-			new Vector3i(-1, -1, -1)
-		};
-		
-		for(Vector3i direction: directionsToCheck) {
+		for(Vector3i direction: GameState.DIRECTIONS_TO_CHECK) {
 			
 			int amountOfCorrectFields = this.getFieldsInARowCount(lastChanged, direction);
 			
@@ -221,13 +223,43 @@ public class GameState {
 	}
 	
 	
-	boolean winIsPossible() {
+	public boolean winIsPossible() {
 		
 		for(FieldState blockState: this.blockStates) {
 			if(blockState == FieldState.NEUTRAL) return true;
 		}
 		
 		return false; // TODO: finish
+	}
+	
+	public ArrayList<Location> getWinRowBlockLocations(int winRequiredAmount, Location gameStartBlock, FieldPoint lastChanged) {
+		
+		for(Vector3i direction : GameState.DIRECTIONS_TO_CHECK) {
+
+			int amountOfCorrectFields = this.getFieldsInARowCount(lastChanged, direction);
+			int amountOfCorrectFieldsInOppositeDirection = 0;
+
+			if(amountOfCorrectFields > 1 && amountOfCorrectFields < winRequiredAmount) {
+
+				// Check in opposite direction
+				Vector3i oppositeDirection = new Vector3i(-direction.x, -direction.y, -direction.z);
+				amountOfCorrectFieldsInOppositeDirection = this.getFieldsInARowCount(lastChanged, oppositeDirection) - 1;
+			}
+			
+			if(amountOfCorrectFields + amountOfCorrectFieldsInOppositeDirection < winRequiredAmount) continue;
+			
+			ArrayList<Location> blockLocations = new ArrayList<Location>();
+			
+			for(int i = -amountOfCorrectFieldsInOppositeDirection; i <= amountOfCorrectFields; i++) {
+				FieldPoint currentPoint = lastChanged.offsetBy(i + direction.x, i * direction.y, i * direction.z);
+				Location fieldPointAsBlockLocation = this.fieldPointToBlockLocation(gameStartBlock, currentPoint);
+				blockLocations.add(fieldPointAsBlockLocation);
+			}
+			
+			return blockLocations;
+		}
+		
+		return null;
 	}
 	
 	

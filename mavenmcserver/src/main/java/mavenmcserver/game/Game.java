@@ -1,11 +1,14 @@
 package mavenmcserver.game;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -19,12 +22,17 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 
+
 public class Game {
 	
 		public static Material BASE_PLATE_MATERIAL = Material.BLACK_CONCRETE;
 		public static Material NEUTRAL_MATERIAL = Material.WHITE_CONCRETE;
 		public static Material MAIN_PLAYER_MATERIAL = Material.RED_CONCRETE;
 		public static Material OPPONENT_PLAYER_MATERIAL = Material.LIGHT_BLUE_CONCRETE;
+		
+		public static Sound MARK_FIELD_SOUND = Sound.BLOCK_NOTE_BLOCK_BELL;
+		public static float MARK_FIELD_SOUND_PITCH = 0.5f;
+		public static Sound WIN_BEEP_SOUND = Sound.BLOCK_NOTE_BLOCK_BIT; // no pitch because it varies
 	
 		/// Contains all  queued games that still have to be accepted / rejected
 		public static HashMap<UUID, Game> queuedGames = new HashMap<UUID, Game>();
@@ -272,12 +280,44 @@ public class Game {
 			
 			
 			this.opponentPlayersTurn = !this.opponentPlayersTurn;
+			
+			this.playGameSound(Game.MARK_FIELD_SOUND, Game.MARK_FIELD_SOUND_PITCH);
 		}
 		
 		public void checkForWin() {
 			
 			if(this.state.getWinnerIfAny(this.config.winRequiredAmount, this.lastPlacePosition) != FieldState.NEUTRAL) {
-				this.end(this.opponentPlayersTurn ? GameEndCause.OPPONENT_WIN : GameEndCause.MAIN_WIN);
+				
+				new BukkitRunnable() {
+				
+					int i = -1;
+					ArrayList<Location> blockLocations = state.getWinRowBlockLocations(config.winRequiredAmount, location, lastPlacePosition);
+					
+					@Override
+					public void run() {
+						if(this.i < 0) {
+							this.i++;
+							return;
+						}
+						
+						if(this.i >= config.winRequiredAmount) {
+							end(opponentPlayersTurn ? GameEndCause.OPPONENT_WIN : GameEndCause.MAIN_WIN);
+							this.cancel();
+							return;
+						}
+						
+						Location currentBlock = this.blockLocations.get(this.i);
+						Location middleOfCurrentBlock = new Location(currentBlock.getWorld(), currentBlock.getBlockX() + 0.5, currentBlock.getBlockY() + 0.5, currentBlock.getBlockZ() + 0.5);
+						
+						currentBlock.getWorld().spawnParticle(Particle.BLOCK_CRACK, middleOfCurrentBlock, 50, 0.5, 0.5, 0.5, 1.0, currentBlock.getBlock().getBlockData(), true);
+						
+						float currentPitch = 1.0f + (1 / (config.winRequiredAmount - 1)) * this.i;
+						playGameSound(Game.WIN_BEEP_SOUND, currentPitch);
+						
+					}
+					
+				};
+				
 				return;
 			}
 			
@@ -290,6 +330,11 @@ public class Game {
 		
 		public Player getPlayerInTurn() {
 			return this.opponentPlayersTurn ? this.config.opponentPlayer : this.config.mainPlayer;
+		}
+		
+		public void playGameSound(Sound sound, float pitch) {
+			this.config.mainPlayer.playSound(this.config.mainPlayer.getLocation(), sound, 1.0f, pitch);
+			this.config.opponentPlayer.playSound(this.config.opponentPlayer.getLocation(), sound, 1.0f, pitch);
 		}
 	
 }

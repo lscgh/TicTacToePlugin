@@ -35,6 +35,7 @@ class Game {
     +void placeAt(FieldPoint position) /' Called when the current player marks a field; checks for win and changes the turn '/
     +void checkForWin() /' Called when falling is done '/
     +Player getPlayerInTurn()
+    +void playGameSound(Sound sound, float pitch) /' Plays a sound to both config players! '/
 }
 
 
@@ -77,6 +78,7 @@ class GameState {
     // Returns NEUTRAL if there is no winner yet
     +FieldState getWinnerIfAny(FieldPoint lastChanged) /' Returns NEUTRAL for no winner yet '/
     +boolean winIsPossible() /' Whether (false) or not (true) to cancel the game '/
+    +ArrayList<Location> getWinRowBlockLocations(int winRequiredAmount, Location gameStartBlock, FieldPoint lastChanged) /' Returns the Locations of the Blocks used to win the game '/
 }
 
 class GameListener {
