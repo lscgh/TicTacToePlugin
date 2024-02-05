@@ -88,7 +88,9 @@ public class GameState {
 	 * @return The state at the given FieldPoint. If that is invalid, <i>FieldState.NEUTRAL</i> is returned.
 	 */
 	public FieldState getStateIfAny(FieldPoint position) {
-		if(Bukkit.getLogger() != null) Bukkit.getLogger().info("getStateIfAny " + position);
+		try {
+			Bukkit.getLogger().info("getStateIfAny " + position);
+		} catch(Throwable e) { /* oops */ }
 		
 		try {
 			return this.getStateAt(position);
