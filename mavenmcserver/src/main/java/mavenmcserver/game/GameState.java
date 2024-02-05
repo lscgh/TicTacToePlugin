@@ -104,7 +104,9 @@ public class GameState {
 	}
 	
 	
-	public void applyGravityTick(Location gameStartBlock) {
+	public boolean applyGravityTick(Location gameStartBlock) {
+		boolean didApplyAnyChange = false;
+		
 		for(int y = 1; y < this.gameSize.y; y++) {
 			for(int x = 0; x < this.gameSize.x; x++) {
 				for(int z = 0; z < this.gameSize.z; z++) {
@@ -122,11 +124,15 @@ public class GameState {
 							
 							Location inWorldLocationOfCurrentBlock = this.fieldPointToBlockLocation(gameStartBlock, new FieldPoint(x, y, z));
 							gameWorld.getBlockAt(inWorldLocationOfCurrentBlock).setType(Game.NEUTRAL_MATERIAL);
+							
+							didApplyAnyChange = true;
 						}
 					}
 				}
 			}
 		}
+		
+		return didApplyAnyChange;
 	}
 	
 	/**

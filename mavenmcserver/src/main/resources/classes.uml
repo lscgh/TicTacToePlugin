@@ -33,6 +33,7 @@ class Game {
     +void end(GameEndCause cause) /' Ends the game and removes the blocks; deactivates the listener '/
     -void registerEnded() /' Configured the static HashMaps! '/
     +void placeAt(FieldPoint position) /' Called when the current player marks a field; checks for win and changes the turn '/
+    +void checkForWin(FieldPoint lastPlacePosition) /' Called when falling is done '/
     +Player getPlayerInTurn()
 }
 
@@ -71,7 +72,7 @@ class GameState {
     +void setStateAt(FieldPoint position, FieldState newState)
     +void setStateAt(int x, int y, int z, FieldState newState)
     
-    +void applyGravityTick() /' Makes all blocks in air fall by one '/
+    +boolean applyGravityTick() /' Makes all blocks in air fall by one '/
     
     // Returns NEUTRAL if there is no winner yet
     +FieldState getWinnerIfAny(FieldPoint lastChanged) /' Returns NEUTRAL for no winner yet '/

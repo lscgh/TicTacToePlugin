@@ -40,6 +40,8 @@ public class Game {
 		public GameListener listener;
 		public Location location;
 		public GameState state;
+		/// The FieldPoint of the last marked field, starting as null
+		public FieldPoint lastPlacePosition = null;
 		boolean opponentPlayersTurn = true;
 		public CubicBlockArea gameArea; // the area to protect
 		public Plugin plugin;
@@ -66,9 +68,17 @@ public class Game {
 			
 			this.grativtyRunnable = new BukkitRunnable() {
 				
+				boolean didApplyAnyChangeInPreviousTick = false;
+				
 				@Override
 				public void run() {
-					state.applyGravityTick(location);
+					boolean didApplyAnyChangeInCurrentTick = state.applyGravityTick(location);
+					if(!didApplyAnyChangeInCurrentTick && this.didApplyAnyChangeInPreviousTick) {
+						// Falling is now done
+						checkForWin(lastPlacePosition);
+					}
+					
+					this.didApplyAnyChangeInPreviousTick = didApplyAnyChangeInCurrentTick;
 				}
 				
 			};
@@ -162,7 +172,7 @@ public class Game {
 		}
 		
 		private void registerStarted() {
-			// Mark this game as runing
+			// Mark this game as running
 			Game.queuedGames.remove(this.uuid);
 			Game.runningGames.put(this.config.mainPlayer, this);
 			Game.runningGames.put(this.config.opponentPlayer, this);
@@ -248,6 +258,8 @@ public class Game {
 		 * @param position
 		 */
 		public void placeAt(FieldPoint position) {
+			// Store the position for use in checkForWin(FieldPoint lastPlacePosition);
+			this.lastPlacePosition = position;
 			
 			if(this.state.getStateAt(position) != FieldState.NEUTRAL) return;
 			
@@ -258,7 +270,13 @@ public class Game {
 			
 			this.location.getWorld().getBlockAt(inWorldLocation).setType(this.opponentPlayersTurn ? Game.OPPONENT_PLAYER_MATERIAL : Game.MAIN_PLAYER_MATERIAL);
 			
-			if(this.state.getWinnerIfAny(this.config.winRequiredAmount, position) != FieldState.NEUTRAL) {
+			
+			
+			this.opponentPlayersTurn = !this.opponentPlayersTurn;
+		}
+		
+		public void checkForWin(FieldPoint lastPlacePosition) {
+			if(this.state.getWinnerIfAny(this.config.winRequiredAmount, lastPlacePosition) != FieldState.NEUTRAL) {
 				this.end(this.opponentPlayersTurn ? GameEndCause.OPPONENT_WIN : GameEndCause.MAIN_WIN);
 				return;
 			}
@@ -267,8 +285,6 @@ public class Game {
 				this.end(GameEndCause.TIE);
 				return;
 			}
-			
-			this.opponentPlayersTurn = !this.opponentPlayersTurn;
 		}
 		
 		
