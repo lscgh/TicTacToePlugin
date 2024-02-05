@@ -65,6 +65,7 @@ public class GameState {
 	}
 	
 	public boolean fieldPointIsValid(FieldPoint point) {
+		if(point == null) return false;
 		boolean valuesArePositive = point.x >= 0 && point.y >= 0 && point.z >= 0;
 		boolean valuesAreInSize = point.x < this.gameSize.x && point.y < this.gameSize.y && point.z < this.gameSize.z;
 		return valuesArePositive && valuesAreInSize;

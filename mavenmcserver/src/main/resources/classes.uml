@@ -33,7 +33,7 @@ class Game {
     +void end(GameEndCause cause) /' Ends the game and removes the blocks; deactivates the listener '/
     -void registerEnded() /' Configured the static HashMaps! '/
     +void placeAt(FieldPoint position) /' Called when the current player marks a field; checks for win and changes the turn '/
-    +void checkForWin(FieldPoint lastPlacePosition) /' Called when falling is done '/
+    +void checkForWin() /' Called when falling is done '/
     +Player getPlayerInTurn()
 }
 

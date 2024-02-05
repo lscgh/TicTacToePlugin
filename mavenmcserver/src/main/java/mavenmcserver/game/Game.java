@@ -75,7 +75,7 @@ public class Game {
 					boolean didApplyAnyChangeInCurrentTick = state.applyGravityTick(location);
 					if(!didApplyAnyChangeInCurrentTick && this.didApplyAnyChangeInPreviousTick) {
 						// Falling is now done
-						checkForWin(lastPlacePosition);
+						checkForWin();
 					}
 					
 					this.didApplyAnyChangeInPreviousTick = didApplyAnyChangeInCurrentTick;
@@ -258,7 +258,7 @@ public class Game {
 		 * @param position
 		 */
 		public void placeAt(FieldPoint position) {
-			// Store the position for use in checkForWin(FieldPoint lastPlacePosition);
+			// Store the position for use in checkForWin();
 			this.lastPlacePosition = position;
 			
 			if(this.state.getStateAt(position) != FieldState.NEUTRAL) return;
@@ -271,12 +271,11 @@ public class Game {
 			this.location.getWorld().getBlockAt(inWorldLocation).setType(this.opponentPlayersTurn ? Game.OPPONENT_PLAYER_MATERIAL : Game.MAIN_PLAYER_MATERIAL);
 			
 			
-			
 			this.opponentPlayersTurn = !this.opponentPlayersTurn;
 		}
 		
-		public void checkForWin(FieldPoint lastPlacePosition) {
-			if(this.state.getWinnerIfAny(this.config.winRequiredAmount, lastPlacePosition) != FieldState.NEUTRAL) {
+		public void checkForWin() {
+			if(this.state.getWinnerIfAny(this.config.winRequiredAmount, this.lastPlacePosition) != FieldState.NEUTRAL) {
 				this.end(this.opponentPlayersTurn ? GameEndCause.OPPONENT_WIN : GameEndCause.MAIN_WIN);
 				return;
 			}
