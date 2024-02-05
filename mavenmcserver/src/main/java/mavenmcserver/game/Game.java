@@ -33,6 +33,7 @@ public class Game {
 		public static Sound MARK_FIELD_SOUND = Sound.BLOCK_NOTE_BLOCK_BELL;
 		public static float MARK_FIELD_SOUND_PITCH = 0.5f;
 		public static Sound WIN_BEEP_SOUND = Sound.BLOCK_NOTE_BLOCK_BIT; // no pitch because it varies
+		public static Sound LOSE_SOUND = Sound.ENTITY_WITHER_HURT;
 	
 		/// Contains all  queued games that still have to be accepted / rejected
 		public static HashMap<UUID, Game> queuedGames = new HashMap<UUID, Game>();
@@ -222,21 +223,24 @@ public class Game {
 				this.config.opponentPlayer.sendMessage(message);
 				break;
 			case MAIN_WIN:
-				this.config.mainPlayer.sendMessage("You " + ChatColor.GREEN + ChatColor.BOLD + "won" + ChatColor.RESET + " the game!");
-				this.config.opponentPlayer.sendMessage("You " + ChatColor.RED + ChatColor.BOLD + "lost" + ChatColor.RESET + " the game!");
+				this.config.mainPlayer.sendTitle("You " + ChatColor.GREEN + ChatColor.BOLD + "won" + ChatColor.RESET + " the game!", "Good job!", 10, 60, 10);
+				this.config.opponentPlayer.sendTitle("You " + ChatColor.RED + ChatColor.BOLD + "lost" + ChatColor.RESET + " the game!", "Never give up!", 10, 60, 10);
+				this.config.opponentPlayer.playSound(this.config.opponentPlayer.getLocation(), Game.LOSE_SOUND, 1.0f, 1.0f);
 				this.config.opponentPlayer.spigot().sendMessage(new ComponentBuilder("Click ").append("here").color(ChatColor.GREEN).bold(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tictactoe requestReturnMatch")).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to request another game"))).append(" to request a return match.").reset().create());
 				Game.lostGames.put(this.config.opponentPlayer, new GameConfig(this.config.opponentPlayer, this.config.mainPlayer, this.config.size, this.config.winRequiredAmount));
 				break;
 			case OPPONENT_WIN:
-				this.config.opponentPlayer.sendMessage("You " + ChatColor.GREEN + ChatColor.BOLD + "won" + ChatColor.RESET + " the game!");
-				this.config.mainPlayer.sendMessage("You " + ChatColor.RED + ChatColor.BOLD + "lost" + ChatColor.RESET + " the game!");
+				this.config.opponentPlayer.sendTitle("You " + ChatColor.GREEN + ChatColor.BOLD + "won" + ChatColor.RESET + " the game!", "Good job!", 10, 60, 10);
+				this.config.mainPlayer.sendTitle("You " + ChatColor.RED + ChatColor.BOLD + "lost" + ChatColor.RESET + " the game!", "Never give up!", 10, 60, 10);
+				this.config.mainPlayer.playSound(this.config.mainPlayer.getLocation(), Game.LOSE_SOUND, 1.0f, 1.0f);
 				this.config.mainPlayer.spigot().sendMessage(new ComponentBuilder("Click ").append("here").color(ChatColor.GREEN).bold(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tictactoe requestReturnMatch")).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to request another game"))).append(" to request a return match.").reset().create());
 				Game.lostGames.put(this.config.mainPlayer, new GameConfig(this.config.mainPlayer, this.config.opponentPlayer, this.config.size, this.config.winRequiredAmount));
 				break;
 			case TIE:
+				String tieTitle = ChatColor.YELLOW + "Tie" + ChatColor.RESET;
 				String tieMessage = "This game ended with a " + ChatColor.YELLOW + ChatColor.BOLD + "tie" + ChatColor.RESET + "!";
-				this.config.mainPlayer.sendMessage(tieMessage);
-				this.config.opponentPlayer.sendMessage(tieMessage);
+				this.config.mainPlayer.sendTitle(tieTitle, tieMessage, 10, 50, 10);
+				this.config.opponentPlayer.sendTitle(tieTitle, tieMessage, 10, 50, 10);
 				
 				BaseComponent returnMatchMessage[] = new ComponentBuilder("Click ").append("here").color(ChatColor.GREEN).bold(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tictactoe requestReturnMatch")).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to request another game"))).append(" to request another game.").reset().create();
 				
@@ -285,11 +289,7 @@ public class Game {
 		
 		public void checkForWin() {
 			
-			this.plugin.getLogger().info("checkForWin() called!");
-			
 			if(this.state.getWinnerIfAny(this.config.winRequiredAmount, this.lastPlacePosition) != FieldState.NEUTRAL) {
-				
-				this.plugin.getLogger().info("Somebody won!");
 				
 				new BukkitRunnable() {
 				
@@ -298,8 +298,6 @@ public class Game {
 					
 					@Override
 					public void run() {
-						
-						plugin.getLogger().info("Hello! i = " + this.i + " and blockLocations = '" + this.blockLocations + "'! :D");
 						
 						if(this.i < 0) {
 							this.i++;
@@ -319,6 +317,7 @@ public class Game {
 						currentBlock.getWorld().spawnParticle(Particle.BLOCK_CRACK, middleOfCurrentBlock, 50, 0.5, 0.5, 0.5, 1.0, currentBlock.getBlock().getBlockData(), true);
 						
 						float currentPitch = 1.0f + (1 / (config.winRequiredAmount - 1)) * this.i;
+						plugin.getLogger().info("Current pitch for " + (i + 1) + "/" + config.winRequiredAmount + " is " + currentPitch);
 						playGameSound(Game.WIN_BEEP_SOUND, currentPitch);
 						
 						i++;
