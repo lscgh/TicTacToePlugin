@@ -275,7 +275,9 @@ public class Game {
 		}
 		
 		public void checkForWin() {
-			if(this.state.getWinnerIfAny(this.config.winRequiredAmount, this.lastPlacePosition) != FieldState.NEUTRAL) {
+			return;
+			
+			/*if(this.state.getWinnerIfAny(this.config.winRequiredAmount, this.lastPlacePosition) != FieldState.NEUTRAL) {
 				this.end(this.opponentPlayersTurn ? GameEndCause.OPPONENT_WIN : GameEndCause.MAIN_WIN);
 				return;
 			}
@@ -283,7 +285,7 @@ public class Game {
 			if(!this.state.winIsPossible()) {
 				this.end(GameEndCause.TIE);
 				return;
-			}
+			}*/
 		}
 		
 		
