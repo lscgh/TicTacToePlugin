@@ -286,6 +286,8 @@ public class Game {
 		
 		public void checkForWin() {
 			
+			this.plugin.getLogger().info("checkForWin() called!");
+			
 			if(this.state.getWinnerIfAny(this.config.winRequiredAmount, this.lastPlacePosition) != FieldState.NEUTRAL) {
 				
 				this.plugin.getLogger().info("Somebody won!");
