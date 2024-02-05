@@ -63,7 +63,7 @@ class GameState {
     -FieldState blockStates[]
     
     .. Methods ..
-    +GameState(Vector3i size) /' Sizes the array and fills it with FieldState.NEUTRAL '/
+    +GameState(Vector3i gameSize) /' Sizes the array and fills it with FieldState.NEUTRAL '/
     +FieldPoint blockLocationToFieldPoint(Location gameStartBlock, Location block) /' /!\ CHECK FOR WORLD '/
     +Location fieldPointToBlockLocation(Location gameStartBlock, FieldPoint point) /' /!\ SET WORLD '/
     +boolean fieldPointIsValid(FieldPoint point) /' Returns true if the given FieldPoint is contained in this game (regarding the size!) '/
