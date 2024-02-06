@@ -152,7 +152,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		ArrayList<String> argList = new ArrayList<String>();
 		int i = 0;
 		for(String arg: args) {
-			if(!arg.isBlank() || (i == args.length - 1)) {
+			if(!arg.trim().isEmpty() || (i == args.length - 1)) {
 				argList.add(arg);
 			}
 			
