@@ -2,7 +2,6 @@ package mavenmcserver.game;
 
 import java.util.ArrayList;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.joml.Vector3i;
@@ -182,7 +181,6 @@ public class GameState {
 							
 							boolean didModifyBlockAtLastPlacePosition = lastPlacePosition.equals(new FieldPoint(x, y, z));
 							if(didModifyBlockAtLastPlacePosition) {
-								Bukkit.getLogger().info("Did Modify Block At Last Place Position");
 								lastPlacePosition.y -= 1;
 							}
 							

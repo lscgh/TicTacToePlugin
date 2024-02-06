@@ -86,9 +86,7 @@ public class Game {
 				
 				@Override
 				public void run() {
-					plugin.getLogger().info("Current lastPlacePosition: " + lastPlacePosition);
 					boolean didApplyAnyChangeInCurrentTick = state.applyGravityTick(location, lastPlacePosition);
-					plugin.getLogger().info("New lastPlacePosition: " + lastPlacePosition);
 					if(!didApplyAnyChangeInCurrentTick && !didCompletePlace) {
 						// Falling is now done
 						checkForWin();
@@ -181,7 +179,7 @@ public class Game {
 			
 			// Light blocks (to light up the game when it is night)
 			for(int x = 0; x < this.config.size.x - 1; x++) {
-				for(int y = 0; y < this.config.size.y - 1; y++) {
+				for(int y = 0; y < Math.max(1, this.config.size.y - 1); y++) {
 					for(int z = 0; z < this.config.size.z - 1; z++) {
 						Block currentBlock = this.location.getWorld().getBlockAt(this.location.getBlockX() + 1 + x * 2, this.location.getBlockY() + 2 + y * 2, this.location.getBlockZ() + 1 + z * 2);
 						currentBlock.setType(Material.LIGHT);
