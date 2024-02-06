@@ -29,6 +29,14 @@ class FieldPoint {
 	public String toString() {
 		return "fp(" + this.x + ", " + this.y + ", " + this.z + ")";
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null) return false;
+		if(!(obj instanceof FieldPoint)) return false;
+		FieldPoint point = (FieldPoint)obj;
+		return point.x == this.x && point.y == this.y && point.z == this.z;
+	}
 }
 
 /**
