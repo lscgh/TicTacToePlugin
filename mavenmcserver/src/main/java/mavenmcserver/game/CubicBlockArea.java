@@ -11,16 +11,6 @@ public class CubicBlockArea {
 	public Location startBlock;
 	public Location endBlock;
 	
-	public CubicBlockArea(Location startBlock, Location endBlock) {
-		if(startBlock.getWorld() != endBlock.getWorld()) {
-			throw new IllegalArgumentException("Attempted to create a CubicBlockArea with two Locations in different worlds. Have '" + startBlock.getWorld().getName() + "' and '" + endBlock.getWorld().getName() + "'!");
-		}
-		
-		this.startBlock = startBlock;
-		this.endBlock = endBlock;
-	}
-	
-	
 	public boolean contains(Location block) {
 		if(block.getWorld() != this.startBlock.getWorld()) {
 			throw new IllegalArgumentException("Attempted to execute contains() on a CubicBlockArea in world '" + this.startBlock.getWorld().getName() + "' using a location in world '" + block.getWorld().getName() + "'");

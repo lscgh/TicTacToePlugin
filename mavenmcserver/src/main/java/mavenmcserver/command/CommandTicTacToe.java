@@ -3,6 +3,7 @@ package mavenmcserver.command;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -38,6 +39,15 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		
 		this.plugin.getCommand(CommandTicTacToe.COMMAND_NAME).setExecutor(this);
 		this.plugin.getCommand(CommandTicTacToe.COMMAND_NAME).setTabCompleter(this);
+	}
+
+	public CubicBlockArea(Location startBlock, Location endBlock) {
+		if(startBlock.getWorld() != endBlock.getWorld()) {
+			throw new IllegalArgumentException("Attempted to create a CubicBlockArea with two Locations in different worlds. Have '" + startBlock.getWorld().getName() + "' and '" + endBlock.getWorld().getName() + "'!");
+		}
+		
+		this.startBlock = startBlock;
+		this.endBlock = endBlock;
 	}
 
 	@Override
@@ -177,7 +187,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		}
 		
 		ArrayList<String> filteredCompletions = new ArrayList<String>();
-		StringUtil.copyPartialMatches(argList.get(argList.size() - 1), completions, filteredCompletions);
+		StringUtil.copyPartialMatches(argList.size() > 0 ? argList.get(argList.size() - 1) : "", completions, filteredCompletions);
 		
 		return filteredCompletions;
 	}
