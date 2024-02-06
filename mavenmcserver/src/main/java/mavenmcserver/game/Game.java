@@ -9,7 +9,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -174,6 +176,20 @@ public class Game {
 					}
 				}
 			}
+			
+			// Light blocks (to light up the game when it is night)
+			for(int x = 0; x < this.config.size.x - 1; x++) {
+				for(int y = 0; y < this.config.size.y - 1; y++) {
+					for(int z = 0; z < this.config.size.z - 1; z++) {
+						Block currentBlock = this.location.getWorld().getBlockAt(this.location.getBlockX() + 1 + x * 2, this.location.getBlockY() + 2 + y * 2, this.location.getBlockZ() + 1 + z * 2);
+						currentBlock.setType(Material.LIGHT);
+						Levelled levelledBlockData = (Levelled)currentBlock.getBlockData();
+						levelledBlockData.setLevel(13);
+						currentBlock.setBlockData(levelledBlockData);
+					}
+				}
+			}
+			
 			
 			this.gravityRunnable.runTaskTimer(this.plugin, 0, 10);
 			
