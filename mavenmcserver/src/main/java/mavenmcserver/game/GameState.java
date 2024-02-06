@@ -23,6 +23,11 @@ class FieldPoint {
 	public FieldPoint offsetBy(int x, int y, int z) {
 		return new FieldPoint(this.x + x, this.y + y, this.z + z);
 	}
+	
+	@Override
+	public String toString() {
+		return "fp(" + this.x + ", " + this.y + ", " + this.z + ")";
+	}
 }
 
 /**
@@ -166,8 +171,8 @@ public class GameState {
 							Location inWorldLocationOfCurrentBlock = this.fieldPointToBlockLocation(gameStartBlock, new FieldPoint(x, y, z));
 							gameWorld.getBlockAt(inWorldLocationOfCurrentBlock).setType(Game.NEUTRAL_MATERIAL);
 							
-							boolean didModifyLastPlacePosition = lastPlacePosition.equals(new FieldPoint(x, y, z));
-							if(didModifyLastPlacePosition) {
+							boolean didModifyBlockAtLastPlacePosition = lastPlacePosition.equals(new FieldPoint(x, y, z));
+							if(didModifyBlockAtLastPlacePosition) {
 								lastPlacePosition.y -= 1;
 							}
 							

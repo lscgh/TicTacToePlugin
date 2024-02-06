@@ -86,7 +86,9 @@ public class Game {
 				
 				@Override
 				public void run() {
+					plugin.getLogger().info("Current lastPlacePosition: " + lastPlacePosition);
 					boolean didApplyAnyChangeInCurrentTick = state.applyGravityTick(location, lastPlacePosition);
+					plugin.getLogger().info("New lastPlacePosition: " + lastPlacePosition);
 					if(!didApplyAnyChangeInCurrentTick && !didCompletePlace) {
 						// Falling is now done
 						checkForWin();
@@ -341,7 +343,7 @@ public class Game {
 						
 						currentBlock.getWorld().spawnParticle(Particle.BLOCK_CRACK, middleOfCurrentBlock, 50, 0.5, 0.5, 0.5, 1.0, currentBlock.getBlock().getBlockData(), true);
 						
-						float currentPitch = 1.0f + (1 / (config.winRequiredAmount - 1)) * this.i;
+						float currentPitch = 1.0f + (1.0f / ((float)config.winRequiredAmount - 1.0f)) * (float)this.i;
 						plugin.getLogger().info("Current pitch for " + (i + 1) + "/" + config.winRequiredAmount + " is " + currentPitch);
 						playGameSound(Game.WIN_BEEP_SOUND, currentPitch);
 						
