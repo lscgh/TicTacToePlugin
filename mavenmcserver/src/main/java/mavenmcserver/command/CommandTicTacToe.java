@@ -110,6 +110,24 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				return true;
 			}
 			
+			ArrayList<Game> queuedGames = new ArrayList<Game>();
+			queuedGames.addAll(Game.queuedGames.values());
+			
+			for(Game queuedGame: queuedGames) {
+				if(queuedGame.config.mainPlayer == config.mainPlayer) {
+					Game.queuedGames.remove(queuedGame.uuid);
+					
+					String revokeMessage;
+					if(queuedGame.config.opponentPlayer == config.opponentPlayer) {
+						revokeMessage = ChatColor.AQUA + "" + ChatColor.BOLD + config.mainPlayer.getName() + ChatColor.RESET + " has updated their tic-tac-toe-game request. See below.";
+					} else {
+						revokeMessage = ChatColor.AQUA + "" + ChatColor.BOLD + config.mainPlayer.getName() + ChatColor.RESET + " has revoked their tic-tac-toe-game request to you.";
+					}
+					
+					queuedGame.config.opponentPlayer.sendMessage(revokeMessage);
+				}
+			}
+			
 			// Show the confirmation to the player
 			sender.sendMessage("You've just asked " + ChatColor.AQUA + ChatColor.BOLD + config.opponentPlayer.getName() + ChatColor.RESET + " to play a game of tic-tac-toe with you!");
 			
