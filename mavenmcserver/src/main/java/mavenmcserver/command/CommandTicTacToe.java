@@ -151,7 +151,15 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		
 		ArrayList<String> argList = new ArrayList<String>();
 		for(String arg: args) argList.add(arg);
-		argList.removeIf((arg) -> arg.isEmpty() && argList.indexOf(arg) != argList.size() - 1);
+		
+		int i = 0;
+		for(String arg: args) {
+			if(arg.isEmpty() && i < argList.size() - 1) {
+				argList.remove(arg);
+			}
+				
+			i++;
+		}
 		
 		sender.sendMessage("Your list " + argList + " (count=" + argList.size() + ")");
 		
