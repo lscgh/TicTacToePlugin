@@ -25,15 +25,15 @@ public class GameListener implements Listener {
 		this.game = game;
 	}
 	
-	void activate() {
+	public void activate() {
 		Bukkit.getServer().getPluginManager().registerEvents(this, this.game.plugin);
 	}
 	
-	void deactivate() {
+	public void deactivate() {
 		HandlerList.unregisterAll(this);
 	}
 	
-	boolean isAuthorizedPlayer(Player player) {
+	private boolean isAuthorizedPlayer(Player player) {
 		return player == this.game.config.mainPlayer || player == this.game.config.opponentPlayer;
 	}
 	

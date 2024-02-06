@@ -1,33 +1,60 @@
 @startuml
 
 class FieldPoint {
-    = Vector3i
+    .. Fields..
+    +int x
+    +int y
+    +int z
+    
+    .. Methods ..
+    +FieldPoint(int x, int y, int z)
+    +FieldPoint offsetBy(int x, int y, int z)
 }
 
-enum GameEndCause {
++enum GameEndCause {
     <b>MAIN_WIN</b>, // Main player won
     <b>OPPONENT_WIN</b>, // Opponent player won
     <b>TIE</b>, // Nobody won
     <b>CANCEL</b> // Player cancelled
 }
 
-class Game {
+#class Game {
+    .. Constants ..
+    +{static}Material BASE_PLATE_MATERIAL
+    +{static}Material NEUTRAL_MATERIAL
+    +{static}Material MAIN_PLAYER_MATERIAL
+    +{static}Material OPPONENT_PLAYER_MATERIAL
+    +{static}Sound MARK_FIELD_SOUND
+    +{static}float MARK_FIELD_SOUND_PITCH
+    +{static}Sound WIN_BEEP_SOUND
+    +{static}Sound WIN_SOUND
+    +{static}Sound LOSE_SOUND
+    +{static}Sound TIE_SOUND
+    +{static}float TIE_SOUND_PITCH
+    +{static}HashMap<UUID, Game> queuedGames
+    +{static}HashMap<Player, Game> runningGames
+    +{static}HashMap<Player, GameConfig> lostGames
+    
     .. Fields ..
     +UUID uuid
 	+GameConfig config
     +GameListener listener
     +Location location /' Start block location; stores world '/
     +GameState state /' Stores the marked fields in a separate positioning system '/
+    +FieldPoint lastPlacePosition
+    boolean didCompletePlace
     +boolean opponentPlayersTurn /' Whose turn it is! '/
     +CubicBlockArea gameArea /' Set in contructor '/
     +Plugin plugin /' Used for listener and for placing blocks '/
     
+    +BukkitRunnable gravityRunnable
+    
     -HashMap<Location, BlockData> beforeGameBlocks
     
     .. Methods ..
-    +Game(GameConfig config, Plugin plugin)
+    +Game(GameConfig config, Plugin plugin, boolean isReturnMatch)
     -Location generateGameLocation() /' Based on the main player's facing '/
-    -void inviteOpponent() /' Calls start() when accepted '/
+    -void inviteOpponent(boolean isReturnMatch) /' Calls start() when accepted '/
     +void start() /' Starts the game and places the blocks; activates the listener '/
     -void registerStarted() /' Configures the static HashMaps! '/
     +void end(GameEndCause cause) /' Ends the game and removes the blocks; deactivates the listener '/
@@ -39,7 +66,11 @@ class Game {
 }
 
 
-class GameConfig {
++class GameConfig {
+    .. Constants ..
+    +{static}int MIN_X_Z_SIZE
+    +{static}int MIN_HEIGHT
+    
     .. Fields ..
     +Player mainPlayer
     +Player opponentPlayer
@@ -53,14 +84,18 @@ class GameConfig {
 }
 
 
-enum FieldState {
++enum FieldState {
     <b>NEUTRAL</b>, <b>MAIN</b>, <b>OPPONENT</b>
 }
 
 class GameState {
+    .. Constants ..
+    +{static}int CONVERSION_Y_OFFSET
+    +{static}Vector3i DIRECTIONS_TO_CHECK[]
+    
     .. Fields ..
-    +Vector3i size
-    -FieldState blockStates[]
+    +Vector3i gameSize
+    FieldState blockStates[]
     
     .. Methods ..
     +GameState(Vector3i gameSize) /' Sizes the array and fills it with FieldState.NEUTRAL '/
@@ -73,23 +108,24 @@ class GameState {
     +void setStateAt(FieldPoint position, FieldState newState)
     +void setStateAt(int x, int y, int z, FieldState newState)
     
-    +boolean applyGravityTick() /' Makes all blocks in air fall by one '/
+    +boolean applyGravityTick(Location gameStartBlock, FieldPoint lastPlacePosition) /' Makes all blocks in air fall by one '/
     
     // Returns NEUTRAL if there is no winner yet
-    +FieldState getWinnerIfAny(FieldPoint lastChanged) /' Returns NEUTRAL for no winner yet '/
+    +FieldState getWinnerIfAny(int winRequiredAmount, FieldPoint lastPlacePosition) /' Returns NEUTRAL for no winner yet '/
+    -int getFieldsInARowCount(FieldPoint startPoint, Vector3i direction) /' Counts how many fields, starting from *startPoint* and going into *direction*, have the same state. Immediate return if the state at *startPoint* == *FieldState.NEUTRAL* '/
     +boolean winIsPossible() /' Whether (false) or not (true) to cancel the game '/
-    +ArrayList<Location> getWinRowBlockLocations(int winRequiredAmount, Location gameStartBlock, FieldPoint lastChanged) /' Returns the Locations of the Blocks used to win the game '/
+    +ArrayList<Location> getWinRowBlockLocations(int winRequiredAmount, Location gameStartBlock, FieldPoint lastPlacePosition) /' Returns the Locations of the Blocks used to win the game '/
 }
 
-class GameListener {
++class GameListener {
     .. Fields ..
-    +Game game
+    Game game
     
     .. Methods ..
     +GameListener(Game game)
     +void activate()
     +void deactivate()
-    +boolean isAuthorizedPlayer(Player player)
+    -boolean isAuthorizedPlayer(Player player)
     +@EventHandler void onBlockPlace(...) /' BlockPlaceEvent '/
     +@EventHandler void onBlockBreak(...) /' BlockBreakEvent '/
     +@EventHandler void onEntitySummon(...) /' EntitySpawnEvent '/
@@ -103,7 +139,7 @@ class GameListener {
 }
 
 
-class CubicBlockArea {
++class CubicBlockArea {
     .. Fields ..
     +Location startBlock
     +Location endBlock
@@ -113,6 +149,7 @@ class CubicBlockArea {
     +boolean contains(Location block)
     -int getPositiveDifference(int a, int b)
     +Vector3i size()
+    +void forEach(Consumer<Block> action) /' Executes *action* for every block in the area!! '/
 }
 
 Game --- GameConfig
@@ -120,8 +157,8 @@ Game --- GameListener
 Game ..> CubicBlockArea
 Game ..> GameEndCause
 
-FieldPoint ..> GameState
-FieldState ..> GameState
+GameState ..> FieldPoint
+GameState ..> FieldState
 Game --- GameState
 
 @enduml

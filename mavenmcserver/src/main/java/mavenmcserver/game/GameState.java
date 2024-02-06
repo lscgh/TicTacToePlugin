@@ -9,9 +9,15 @@ import org.joml.Vector3i;
 /**
  * Represents a point inside a game, in fields, NOT in blocks.
  */
-class FieldPoint extends Vector3i {
+class FieldPoint {
+	public int x = 0;
+	public int y = 0;
+	public int z = 0;
+	
 	public FieldPoint(int x, int y, int z) {
-		super(x, y, z);
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 	
 	public FieldPoint offsetBy(int x, int y, int z) {
@@ -177,24 +183,24 @@ public class GameState {
 	
 	/**
 	 * Checks if a player won the game
-	 * @param lastChanged the field point that was last changed. Checks are done from this point into all possible directions.
+	 * @param lastPlacePosition the field point that was last changed. Checks are done from this point into all possible directions.
 	 * @return NEUTRAL if there is no winner yet. MAIN if the mainPlayer has won, OPPONENT if the opponentPlayer has won!
 	 */
-	FieldState getWinnerIfAny(int winRequiredAmount, FieldPoint lastChanged) {
+	public FieldState getWinnerIfAny(int winRequiredAmount, FieldPoint lastPlacePosition) {
 		
 		for(Vector3i direction: GameState.DIRECTIONS_TO_CHECK) {
 			
-			int amountOfCorrectFields = this.getFieldsInARowCount(lastChanged, direction);
+			int amountOfCorrectFields = this.getFieldsInARowCount(lastPlacePosition, direction);
 			
-			if(amountOfCorrectFields >= winRequiredAmount) return this.getStateAt(lastChanged);
+			if(amountOfCorrectFields >= winRequiredAmount) return this.getStateAt(lastPlacePosition);
 			else if(amountOfCorrectFields > 1) {
 				
 				// Check in opposite direction
 				Vector3i oppositeDirection = new Vector3i(-direction.x, -direction.y, -direction.z);
-				amountOfCorrectFields += this.getFieldsInARowCount(lastChanged, oppositeDirection) - 1; // subtract 1 because the lastChanged Block is counted twice.
+				amountOfCorrectFields += this.getFieldsInARowCount(lastPlacePosition, oppositeDirection) - 1; // subtract 1 because the lastChanged Block is counted twice.
 				
 				
-				if(amountOfCorrectFields >= winRequiredAmount) return this.getStateAt(lastChanged);
+				if(amountOfCorrectFields >= winRequiredAmount) return this.getStateAt(lastPlacePosition);
 			}
 			
 		}
@@ -232,17 +238,17 @@ public class GameState {
 		return false; // TODO: finish
 	}
 	
-	public ArrayList<Location> getWinRowBlockLocations(int winRequiredAmount, Location gameStartBlock, FieldPoint lastChanged) {
+	public ArrayList<Location> getWinRowBlockLocations(int winRequiredAmount, Location gameStartBlock, FieldPoint lastPlacePosition) {
 		
 		for(Vector3i direction : GameState.DIRECTIONS_TO_CHECK) {
 
-			int amountOfCorrectFields = this.getFieldsInARowCount(lastChanged, direction) - 1;
+			int amountOfCorrectFields = this.getFieldsInARowCount(lastPlacePosition, direction) - 1;
 			int amountOfCorrectFieldsInOppositeDirection = 0;
 
 			if(amountOfCorrectFields > 0 && amountOfCorrectFields < winRequiredAmount - 1) {
 				// Check in opposite direction
 				Vector3i oppositeDirection = new Vector3i(-direction.x, -direction.y, -direction.z);
-				amountOfCorrectFieldsInOppositeDirection = this.getFieldsInARowCount(lastChanged, oppositeDirection) - 1;
+				amountOfCorrectFieldsInOppositeDirection = this.getFieldsInARowCount(lastPlacePosition, oppositeDirection) - 1;
 			}
 			
 			if(amountOfCorrectFields + amountOfCorrectFieldsInOppositeDirection < winRequiredAmount - 1) continue;
@@ -250,7 +256,7 @@ public class GameState {
 			ArrayList<Location> blockLocations = new ArrayList<Location>();
 			
 			for(int i = -amountOfCorrectFieldsInOppositeDirection; i <= amountOfCorrectFields; i++) {
-				FieldPoint currentPoint = lastChanged.offsetBy(i * direction.x, i * direction.y, i * direction.z);
+				FieldPoint currentPoint = lastPlacePosition.offsetBy(i * direction.x, i * direction.y, i * direction.z);
 				Location fieldPointAsBlockLocation = this.fieldPointToBlockLocation(gameStartBlock, currentPoint);
 				blockLocations.add(fieldPointAsBlockLocation);
 			}

@@ -8,8 +8,8 @@ import org.joml.Vector3i;
 
 public class CubicBlockArea {
 
-	Location startBlock;
-	Location endBlock;
+	public Location startBlock;
+	public Location endBlock;
 	
 	public CubicBlockArea(Location startBlock, Location endBlock) {
 		if(startBlock.getWorld() != endBlock.getWorld()) {
@@ -21,7 +21,7 @@ public class CubicBlockArea {
 	}
 	
 	
-	boolean contains(Location block) {
+	public boolean contains(Location block) {
 		if(block.getWorld() != this.startBlock.getWorld()) {
 			throw new IllegalArgumentException("Attempted to execute contains() on a CubicBlockArea in world '" + this.startBlock.getWorld().getName() + "' using a location in world '" + block.getWorld().getName() + "'");
 		}
@@ -42,7 +42,7 @@ public class CubicBlockArea {
 		}
 	}
 	
-	Vector3i size() {
+	public Vector3i size() {
 		int width = this.getPositiveDifference(this.startBlock.getBlockX(), this.endBlock.getBlockX()) + 1;
 		int height = this.getPositiveDifference(this.startBlock.getBlockY(), this.endBlock.getBlockY()) + 1;
 		int depth = this.getPositiveDifference(this.startBlock.getBlockZ(), this.endBlock.getBlockZ()) + 1;
@@ -51,7 +51,7 @@ public class CubicBlockArea {
 	}
 	
 	
-	void forEach(Consumer<Block> action) {
+	public void forEach(Consumer<Block> action) {
 		
 		Vector3i size = this.size();
 		for(int x = 0; x < size.x; x++) {

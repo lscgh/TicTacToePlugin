@@ -11,12 +11,12 @@ public class GameConfig {
 	/**
 	 *  The minimum X and Z size of a game
 	 */
-	static int minFlatSize = 2;
+	public static int MIN_X_Z_SIZE = 2;
 	
 	/**
 	 *  The minimum Y size of a game
 	 */
-	static int minHeight = 1;
+	public static int MIN_HEIGHT = 1;
 	
 	/**
 	 * The player who started the game
@@ -93,11 +93,11 @@ public class GameConfig {
 		ArrayList<String> errors = new ArrayList<String>();
 		
 		if(Math.min(this.size.x, Math.min(this.size.y, this.size.z)) <= 0) {
-			errors.add("No dimension of the game can be smaller than 1. The smallest possible game is (" + GameConfig.minFlatSize + ", " + GameConfig.minHeight + ", " + GameConfig.minFlatSize + ").");
+			errors.add("No dimension of the game can be smaller than 1. The smallest possible game is (" + GameConfig.MIN_X_Z_SIZE + ", " + GameConfig.MIN_HEIGHT + ", " + GameConfig.MIN_X_Z_SIZE + ").");
 		}
 		
-		if(Math.min(this.size.x, this.size.z) < GameConfig.minFlatSize) {
-			errors.add("The X and Z size of the game must not be smaller than " + GameConfig.minFlatSize + ".");
+		if(Math.min(this.size.x, this.size.z) < GameConfig.MIN_X_Z_SIZE) {
+			errors.add("The X and Z size of the game must not be smaller than " + GameConfig.MIN_X_Z_SIZE + ".");
 		}
 		
 		if(this.winRequiredAmount > Math.max(this.size.x, Math.max(this.size.y, this.size.z))) {

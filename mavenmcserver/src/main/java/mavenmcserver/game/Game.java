@@ -55,14 +55,15 @@ public class Game {
 		/// The FieldPoint of the last marked field, starting as null
 		public FieldPoint lastPlacePosition = null;
 		boolean didCompletePlace = true;
-		boolean opponentPlayersTurn = true;
+		public boolean opponentPlayersTurn = true;
 		public CubicBlockArea gameArea; // the area to protect
 		public Plugin plugin;
 		
 		// Repeatedly makes the blocks fall
-		public BukkitRunnable grativtyRunnable;
+		public BukkitRunnable gravityRunnable;
 		
 		private HashMap<Location, BlockData> beforeGameBlocks = new HashMap<Location, BlockData>();
+		
 		
 		public Game(GameConfig config, Plugin plugin, boolean isReturnMatch) {
 			Game.queuedGames.put(this.uuid, this);
@@ -79,7 +80,7 @@ public class Game {
 			Location endBlock = new Location(this.location.getWorld(), this.location.getBlockX() + this.config.size.x * 2, this.location.getBlockY() + this.config.size.y * 2, this.location.getBlockZ() + this.config.size.z * 2);
 			this.gameArea = new CubicBlockArea(startBlock, endBlock);
 			
-			this.grativtyRunnable = new BukkitRunnable() {
+			this.gravityRunnable = new BukkitRunnable() {
 				
 				@Override
 				public void run() {
@@ -174,7 +175,7 @@ public class Game {
 				}
 			}
 			
-			this.grativtyRunnable.runTaskTimer(this.plugin, 0, 10);
+			this.gravityRunnable.runTaskTimer(this.plugin, 0, 10);
 			
 			this.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + this.config.opponentPlayer.getName() + ChatColor.RESET + " has accepted your game!");
 			
@@ -260,7 +261,7 @@ public class Game {
 				break;
 			}
 			
-			this.grativtyRunnable.cancel();
+			this.gravityRunnable.cancel();
 			
 			
 			this.registerEnded();
