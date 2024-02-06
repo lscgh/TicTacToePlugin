@@ -143,15 +143,19 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		
 		if(!(sender instanceof Player)) return new ArrayList<String>();
 		
+		ArrayList<String> argList = new ArrayList<String>();
+		for(String arg: args) argList.add(arg);
+		argList.removeIf((arg) -> arg.isEmpty());
+		
 		ArrayList<String> completions = new ArrayList<String>();
 		
 		boolean playerIsCurrentlyInAGame = Game.runningGames.containsKey((Player)sender);
 		if(playerIsCurrentlyInAGame) {
-			if(args.length == CommandTicTacToe.OPPONENT_ARG_INDEX + 1) {
+			if(argList.size() == CommandTicTacToe.OPPONENT_ARG_INDEX + 1) {
 				completions.add("cancel");
 			}
 		} else {
-			if(args.length == CommandTicTacToe.OPPONENT_ARG_INDEX + 1) {
+			if(argList.size() == CommandTicTacToe.OPPONENT_ARG_INDEX + 1) {
 				
 				for(Player player: this.plugin.getServer().getOnlinePlayers()) {
 					if(player.getName().equals(sender.getName())) continue;
@@ -163,17 +167,17 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				}
 				
 				if(completions.isEmpty()) completions.add("(no available players)");
-			} else if(args.length == CommandTicTacToe.WIN_REQUIRED_AMOUNT_ARG_INDEX + 1) {
-				int integerArgs[] = CommandTicTacToe.extractIntegerArgs(args);
+			} else if(argList.size() == CommandTicTacToe.WIN_REQUIRED_AMOUNT_ARG_INDEX + 1) {
+				int integerArgs[] = CommandTicTacToe.extractIntegerArgs((String[])argList.toArray());
 				int maxDimension = Math.max(integerArgs[0], Math.max(integerArgs[1], integerArgs[2]));
 				completions.add("" + maxDimension);
-			} else if(args.length <= CommandTicTacToe.MAX_VALID_ARG_COUNT) {
-				completions.add(args.length == (CommandTicTacToe.Y_SIZE_ARG_INDEX + 1) ? "1" : "3");
+			} else if(argList.size() <= CommandTicTacToe.MAX_VALID_ARG_COUNT) {
+				completions.add(argList.size() == (CommandTicTacToe.Y_SIZE_ARG_INDEX + 1) ? "1" : "3");
 			}
 		}
 		
 		ArrayList<String> filteredCompletions = new ArrayList<String>();
-		StringUtil.copyPartialMatches(args[args.length - 1], completions, filteredCompletions);
+		StringUtil.copyPartialMatches(argList.getLast(), completions, filteredCompletions);
 		
 		return filteredCompletions;
 	}
