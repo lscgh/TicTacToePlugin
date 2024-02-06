@@ -18,3 +18,10 @@ The smallest possible game has the size `(2, 1, 2)`.
 ## State
 
 Still **early** in development.
+
+
+## Images
+
+![A 3x3x3 game](img/img1.png)
+
+![A 3x1x3 game](img/img2.png)
