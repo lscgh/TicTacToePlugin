@@ -177,7 +177,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		}
 		
 		ArrayList<String> filteredCompletions = new ArrayList<String>();
-		StringUtil.copyPartialMatches(argList.getLast(), completions, filteredCompletions);
+		StringUtil.copyPartialMatches(argList.get(argList.size() - 1), completions, filteredCompletions);
 		
 		return filteredCompletions;
 	}
