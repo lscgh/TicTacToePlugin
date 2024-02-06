@@ -147,6 +147,8 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		for(String arg: args) argList.add(arg);
 		argList.removeIf((arg) -> arg.isEmpty());
 		
+		sender.sendMessage("You args: " + argList + "; (count " + argList.size() + ")!!");
+		
 		ArrayList<String> completions = new ArrayList<String>();
 		
 		boolean playerIsCurrentlyInAGame = Game.runningGames.containsKey((Player)sender);
