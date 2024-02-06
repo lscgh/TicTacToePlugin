@@ -1,6 +1,7 @@
 package mavenmcserver.command;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.command.Command;
@@ -13,8 +14,8 @@ import org.joml.Vector3i;
 
 import mavenmcserver.Plugin;
 import mavenmcserver.game.Game;
-import mavenmcserver.game.GameConfig;
 import mavenmcserver.game.Game.GameEndCause;
+import mavenmcserver.game.GameConfig;
 import net.md_5.bungee.api.ChatColor;
 
 public class CommandTicTacToe implements CommandExecutor, TabCompleter {
@@ -155,11 +156,11 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		
 		boolean playerIsCurrentlyInAGame = Game.runningGames.containsKey((Player)sender);
 		if(playerIsCurrentlyInAGame) {
-			if(argList.size() == CommandTicTacToe.OPPONENT_ARG_INDEX + 1) {
+			if(argList.size() == CommandTicTacToe.OPPONENT_ARG_INDEX) {
 				completions.add("cancel");
 			}
 		} else {
-			if(argList.size() == CommandTicTacToe.OPPONENT_ARG_INDEX + 1) {
+			if(argList.size() == CommandTicTacToe.OPPONENT_ARG_INDEX) {
 				
 				for(Player player: this.plugin.getServer().getOnlinePlayers()) {
 					if(player.getName().equals(sender.getName())) continue;
@@ -171,12 +172,12 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				}
 				
 				if(completions.isEmpty()) completions.add("(no available players)");
-			} else if(argList.size() == CommandTicTacToe.WIN_REQUIRED_AMOUNT_ARG_INDEX + 1) {
-				int integerArgs[] = CommandTicTacToe.extractIntegerArgs((String[])argList.toArray());
+			} else if(argList.size() == CommandTicTacToe.WIN_REQUIRED_AMOUNT_ARG_INDEX) {
+				int integerArgs[] = CommandTicTacToe.extractIntegerArgs(Arrays.copyOf(args, args.length, String[].class));
 				int maxDimension = Math.max(integerArgs[0], Math.max(integerArgs[1], integerArgs[2]));
 				completions.add("" + maxDimension);
 			} else if(argList.size() <= CommandTicTacToe.MAX_VALID_ARG_COUNT) {
-				completions.add(argList.size() == (CommandTicTacToe.Y_SIZE_ARG_INDEX + 1) ? "1" : "3");
+				completions.add(argList.size() == (CommandTicTacToe.Y_SIZE_ARG_INDEX) ? "1" : "3");
 			}
 		}
 		
