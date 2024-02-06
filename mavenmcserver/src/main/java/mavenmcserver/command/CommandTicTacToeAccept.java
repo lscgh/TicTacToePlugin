@@ -77,7 +77,11 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 		
 		if(!(sender instanceof Player)) return new ArrayList<String>();
 		
-		if(args.length > CommandTicTacToeAccept.ARG_COUNT) return new ArrayList<String>();
+		ArrayList<String> argList = new ArrayList<String>();
+		for(String arg: args) argList.add(arg);
+		argList.removeIf((arg) -> arg.isEmpty() && !CommandTicTacToeAccept.containsNonEmptyString(argList.subList(0, argList.indexOf(arg) - 1)));
+		
+		if(argList.size() > CommandTicTacToeAccept.ARG_COUNT) return new ArrayList<String>();
 		
 		ArrayList<String> completions = new ArrayList<String>();
 		for(Game queuedGame: Game.queuedGames.values()) {
@@ -93,4 +97,11 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 	}
 	
 	
+	public static boolean containsNonEmptyString(List<String> list) {
+		for(String string: list) {
+			if(!string.isEmpty()) return true;
+		}
+		
+		return false;
+	}
 }
