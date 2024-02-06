@@ -146,17 +146,17 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		
 		ArrayList<String> argList = new ArrayList<String>();
 		for(String arg: args) argList.add(arg);
-		argList.removeIf((arg) -> arg.isEmpty() && !CommandTicTacToeAccept.containsNonEmptyString(argList.subList(argList.indexOf(arg), argList.size() - 1)));
+		argList.removeIf((arg) -> arg.isEmpty() && argList.indexOf(arg) != argList.size() - 1);
 		
 		ArrayList<String> completions = new ArrayList<String>();
 		
 		boolean playerIsCurrentlyInAGame = Game.runningGames.containsKey((Player)sender);
 		if(playerIsCurrentlyInAGame) {
-			if(argList.size() <= CommandTicTacToe.OPPONENT_ARG_INDEX) {
+			if(argList.size() == CommandTicTacToe.OPPONENT_ARG_INDEX + 1) {
 				completions.add("cancel");
 			}
 		} else {
-			if(argList.size() == CommandTicTacToe.OPPONENT_ARG_INDEX) {
+			if(argList.size() == CommandTicTacToe.OPPONENT_ARG_INDEX + 1) {
 				
 				for(Player player: this.plugin.getServer().getOnlinePlayers()) {
 					if(player.getName().equals(sender.getName())) continue;
@@ -168,7 +168,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				}
 				
 				if(completions.isEmpty()) completions.add("(no available players)");
-			} else if(argList.size() == CommandTicTacToe.WIN_REQUIRED_AMOUNT_ARG_INDEX) {
+			} else if(argList.size() == CommandTicTacToe.WIN_REQUIRED_AMOUNT_ARG_INDEX + 1) {
 				ArrayList<String> listWithNoEmptyArgsAtAll = new ArrayList<String>();
 				for(String arg: args) listWithNoEmptyArgsAtAll.add(arg);
 				listWithNoEmptyArgsAtAll.removeIf((arg) -> arg.isEmpty());
@@ -176,8 +176,8 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				int integerArgs[] = CommandTicTacToe.extractIntegerArgs(Arrays.copyOf(listWithNoEmptyArgsAtAll.toArray(), listWithNoEmptyArgsAtAll.size(), String[].class));
 				int maxDimension = Math.max(integerArgs[0], Math.max(integerArgs[1], integerArgs[2]));
 				completions.add("" + maxDimension);
-			} else if(argList.size() < CommandTicTacToe.MAX_VALID_ARG_COUNT) {
-				completions.add(argList.size() == (CommandTicTacToe.Y_SIZE_ARG_INDEX) ? "1" : "3");
+			} else if(argList.size() < CommandTicTacToe.MAX_VALID_ARG_COUNT + 1) {
+				completions.add(argList.size() == (CommandTicTacToe.Y_SIZE_ARG_INDEX + 1) ? "1" : "3");
 			}
 		}
 		
