@@ -79,7 +79,7 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 		
 		ArrayList<String> argList = new ArrayList<String>();
 		for(String arg: args) argList.add(arg);
-		argList.removeIf((arg) -> arg.isEmpty() && !CommandTicTacToeAccept.containsNonEmptyString(argList.subList(0, argList.indexOf(arg) - 1)));
+		argList.removeIf((arg) -> arg.isEmpty() && !CommandTicTacToeAccept.containsNonEmptyString(argList.subList(0, Math.max(0, argList.indexOf(arg) - 1))));
 		
 		if(argList.size() > CommandTicTacToeAccept.ARG_COUNT) return new ArrayList<String>();
 		
