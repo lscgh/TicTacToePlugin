@@ -150,14 +150,12 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		sender.sendMessage("Your original list " + a + " (count=" + a.size() + ")");
 		
 		ArrayList<String> argList = new ArrayList<String>();
-		for(String arg: args) argList.add(arg);
-		
 		int i = 0;
 		for(String arg: args) {
-			if(arg.isEmpty() && i > 0) {
-				if(args[i - 1].isEmpty()) argList.remove(arg);
+			if(!arg.isBlank() || (i == args.length - 1)) {
+				argList.add(arg);
 			}
-				
+			
 			i++;
 		}
 		
