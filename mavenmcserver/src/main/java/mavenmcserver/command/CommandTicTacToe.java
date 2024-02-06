@@ -173,10 +173,10 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				
 				if(completions.isEmpty()) completions.add("(no available players)");
 			} else if(argList.size() == CommandTicTacToe.WIN_REQUIRED_AMOUNT_ARG_INDEX) {
-				int integerArgs[] = CommandTicTacToe.extractIntegerArgs(Arrays.copyOf(args, args.length, String[].class));
+				int integerArgs[] = CommandTicTacToe.extractIntegerArgs(Arrays.copyOf(argList.toArray(), argList.size(), String[].class));
 				int maxDimension = Math.max(integerArgs[0], Math.max(integerArgs[1], integerArgs[2]));
 				completions.add("" + maxDimension);
-			} else if(argList.size() <= CommandTicTacToe.MAX_VALID_ARG_COUNT) {
+			} else if(argList.size() < CommandTicTacToe.MAX_VALID_ARG_COUNT) {
 				completions.add(argList.size() == (CommandTicTacToe.Y_SIZE_ARG_INDEX) ? "1" : "3");
 			}
 		}
