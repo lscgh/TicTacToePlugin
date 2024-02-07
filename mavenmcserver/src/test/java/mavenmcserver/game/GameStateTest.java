@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import static java.util.Map.entry; 
 
@@ -236,6 +235,30 @@ public class GameStateTest {
 		assertTrue(state.applyGravityTick(lastPlacePosition));
 		assertEquals(new FieldPoint(1, 0, 3), lastPlacePosition);
 		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(0, 0, 0), FieldState.MAIN), entry(new FieldPoint(1, 0, 3), FieldState.OPPONENT))));
+		
+		assertFalse(state.applyGravityTick(lastPlacePosition));
+		assertFalse(state.applyGravityTick(lastPlacePosition));
+		assertFalse(state.applyGravityTick(lastPlacePosition));
+		
+		
+		// 5 x 4 x 5
+		state = new GameState(new Vector3i(5, 4, 5));
+		lastPlacePosition = new FieldPoint(4, 3, 0);
+		
+		state.setStateAt(lastPlacePosition, FieldState.OPPONENT);
+		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(4, 3, 0), FieldState.OPPONENT))));
+		
+		assertTrue(state.applyGravityTick(lastPlacePosition));
+		assertEquals(new FieldPoint(4, 2, 0), lastPlacePosition);
+		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(4, 2, 0), FieldState.OPPONENT))));
+		
+		assertTrue(state.applyGravityTick(lastPlacePosition));
+		assertEquals(new FieldPoint(4, 1, 0), lastPlacePosition);
+		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(4, 1, 0), FieldState.OPPONENT))));
+		
+		assertTrue(state.applyGravityTick(lastPlacePosition));
+		assertEquals(new FieldPoint(4, 0, 0), lastPlacePosition);
+		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(4, 0, 0), FieldState.OPPONENT))));
 		
 		assertFalse(state.applyGravityTick(lastPlacePosition));
 		assertFalse(state.applyGravityTick(lastPlacePosition));

@@ -139,7 +139,7 @@ public class GameState {
 	public FieldState getStateAt(FieldPoint position) {
 		if(!this.fieldPointIsValid(position)) throw new IllegalArgumentException("position " + position + " is invalid for size " + this.gameSize);
 		
-		return this.blockStates[position.x * this.gameSize.x * this.gameSize.y + position.y * this.gameSize.y + position.z];
+		return this.blockStates[position.x * this.gameSize.y * this.gameSize.z + position.y * this.gameSize.z + position.z];
 	}
 	
 	public FieldState getStateAt(int x, int y, int z) {
@@ -161,7 +161,7 @@ public class GameState {
 	public void setStateAt(FieldPoint position, FieldState newState) {
 		if(!this.fieldPointIsValid(position)) throw new IllegalArgumentException("point " + position + " is invalid for size " + this.gameSize);
 		
-		this.blockStates[position.x * this.gameSize.x * this.gameSize.y + position.y * this.gameSize.y + position.z] = newState;
+		this.blockStates[position.x * this.gameSize.y * this.gameSize.z + position.y * this.gameSize.z + position.z] = newState;
 	}
 	
 	public void setStateAt(int x, int y, int z, FieldState newState) {
