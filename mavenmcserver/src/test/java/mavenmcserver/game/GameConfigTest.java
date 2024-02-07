@@ -14,7 +14,7 @@ public class GameConfigTest {
 	public void testValidate() {
 		GameConfig config = new GameConfig(null, null, new Vector3i(2, 1, 2), 2);
 		List<String> errors = config.validate();
-		assertTrue(errors.contains("Couldn't add you to the game. Please retry!"));
+		assertTrue(errors.contains(GameConfig.ERROR_MAIN_PLAYER_NULL));
 	}
 	
 	
@@ -32,7 +32,7 @@ public class GameConfigTest {
 
 		config = new GameConfig(null, null, new Vector3i(3, 1, 2), 4);
 		errors = config.validateNumbers();
-		assertTrue(errors.contains("The required win amount must not be larger than the size's largest dimension."));
+		assertTrue(errors.contains(GameConfig.ERROR_WIN_REQUIRED_AMOUNT_TOO_LARGE));
 		
 		config = new GameConfig(null, null, new Vector3i(1, 1, 2), 3);
 		errors = config.validateNumbers();

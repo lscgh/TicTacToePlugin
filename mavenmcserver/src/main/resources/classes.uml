@@ -41,11 +41,11 @@ class FieldPoint {
     +UUID uuid
 	+GameConfig config
     +GameListener listener
-    +Location location /' Start block location; stores world '/
     +GameState state /' Stores the marked fields in a separate positioning system '/
     +FieldPoint lastPlacePosition
     boolean didCompletePlace
     +boolean opponentPlayersTurn /' Whose turn it is! '/
+    +Location location /' Start block location; stores world '/
     +CubicBlockArea gameArea /' Set in contructor '/
     +Plugin plugin /' Used for listener and for placing blocks '/
     
@@ -55,7 +55,9 @@ class FieldPoint {
     
     .. Methods ..
     +Game(GameConfig config, Plugin plugin, boolean isReturnMatch)
+    -void registerQueued()
     -Location generateGameLocation() /' Based on the main player's facing '/
+    -CubicBlockArea generateGameArea() /' Based on the game's size and the main player's location '/
     -void inviteOpponent(boolean isReturnMatch) /' Calls start() when accepted '/
     +void start() /' Starts the game and places the blocks; activates the listener '/
     -void registerStarted() /' Configures the static HashMaps! '/
@@ -72,9 +74,10 @@ class FieldPoint {
     .. Constants ..
     +{static}int MIN_X_Z_SIZE
     +{static}int MIN_HEIGHT
+    {static}String ERROR_MAIN_PLAYER_NULL
     
     .. Fields ..
-    +Player mainPlayer
+    +{final}Player mainPlayer
     +Player opponentPlayer
     +Vector3i size
     +int winRequiredAmount

@@ -18,25 +18,30 @@ public class GameConfig {
 	 */
 	public static int MIN_HEIGHT = 1;
 	
+	static String ERROR_MAIN_PLAYER_NULL = "Couldn't add you to the game. Please retry!";
+	static String ERROR_OPPONENT_PLAYER_NULL = "Couldn't add the opponent player to the game.";
+	static String ERROR_PLAYER_ALREADY_IN_GAME = "You are currently playing a game of tic-tac-toe and, thus, cannot start another one.";
+	static String ERROR_WIN_REQUIRED_AMOUNT_TOO_LARGE = "The required win amount must not be larger than the size's largest dimension.";
+	
 	/**
 	 * The player who started the game
 	 */
-	public Player mainPlayer;
+	public final Player mainPlayer;
 	
 	/**
 	 * The player who was invited to the game
 	 */
-	public Player opponentPlayer;
+	public final Player opponentPlayer;
 	
 	/**
 	 * The X, Y, Z size of the game
 	 */
-	public Vector3i size;
+	public final Vector3i size;
 	
 	/**
 	 * The number of same-player-marked fields required for that player to win
 	 */
-	public int winRequiredAmount;
+	public final int winRequiredAmount;
 	
 	
 	public GameConfig(Player mainPlayer, Player opponentPlayer, Vector3i size, int winRequiredAmount) {
@@ -54,17 +59,17 @@ public class GameConfig {
 		ArrayList<String> errors = new ArrayList<String>();
 		
 		if(this.mainPlayer == null) {
-			errors.add("Couldn't add you to the game. Please retry!");
+			errors.add(GameConfig.ERROR_MAIN_PLAYER_NULL);
 			return errors;
 		}
 		
 		if(this.opponentPlayer == null) {
-			errors.add("Couldn't add the opponent player to the game.");
+			errors.add(GameConfig.ERROR_OPPONENT_PLAYER_NULL);
 			return errors;
 		}
 		
 		if(Game.runningGames.containsKey(this.mainPlayer)) {
-			errors.add("You are currently playing a game of tic-tac-toe and, thus, cannot start another one.");
+			errors.add(GameConfig.ERROR_PLAYER_ALREADY_IN_GAME);
 			return errors;
 		}
 		
@@ -94,7 +99,7 @@ public class GameConfig {
 		}
 		
 		if(this.winRequiredAmount > Math.max(this.size.x, Math.max(this.size.y, this.size.z))) {
-			errors.add("The required win amount must not be larger than the size's largest dimension.");
+			errors.add(GameConfig.ERROR_WIN_REQUIRED_AMOUNT_TOO_LARGE);
 		}
 		
 		return errors;

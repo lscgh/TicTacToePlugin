@@ -27,11 +27,13 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 
 public class Game {
 	
+		// Constants for the block materials the game uses
 		public static Material BASE_PLATE_MATERIAL = Material.BLACK_CONCRETE;
 		public static Material NEUTRAL_MATERIAL = Material.WHITE_CONCRETE;
 		public static Material MAIN_PLAYER_MATERIAL = Material.RED_CONCRETE;
 		public static Material OPPONENT_PLAYER_MATERIAL = Material.LIGHT_BLUE_CONCRETE;
 		
+		// Constants for the sounds the game uses
 		public static Sound MARK_FIELD_SOUND = Sound.BLOCK_NOTE_BLOCK_BELL;
 		public static float MARK_FIELD_SOUND_PITCH = 0.5f;
 		public static Sound WIN_BEEP_SOUND = Sound.BLOCK_NOTE_BLOCK_BIT; // no pitch because it varies
@@ -50,39 +52,44 @@ public class Game {
 		
 		/// Contains a list of game setups (value) that were lost by player (key) (ties count as well).
 		public static HashMap<Player, GameConfig> lostGames = new HashMap<Player, GameConfig>();
+		
 
 		public UUID uuid = UUID.randomUUID();
+		
 		public GameConfig config;
 		public GameListener listener;
-		public Location location;
+		
 		public GameState state;
 		/// The FieldPoint of the last marked field, starting as null
 		public FieldPoint lastPlacePosition = null;
-		boolean didCompletePlace = true;
+		private boolean didCompletePlace = true;
 		public boolean opponentPlayersTurn = true;
+		
+		public Location location;
 		public CubicBlockArea gameArea; // the area to protect
+		
+		// The Plugin instance managing this game. Used for registering the listener, running task timers ... 
 		public Plugin plugin;
 		
-		// Repeatedly makes the blocks fall
+		// Repeatedly makes the blocks fall and checks for win
 		public BukkitRunnable gravityRunnable;
 		
+		// Stores all the blocks as they were in the world before this game destroyed them to restore them to their previous state after game end.
 		private HashMap<Location, BlockData> beforeGameBlocks = new HashMap<Location, BlockData>();
 		
 		
 		public Game(GameConfig config, Plugin plugin, boolean isReturnMatch) {
-			Game.queuedGames.put(this.uuid, this);
+			this.registerQueued();
+			
+			this.plugin = plugin;
 			
 			this.config = config;
 			this.location = this.generateGameLocation();
 			
-			this.plugin = plugin;
-			
 			this.listener = new GameListener(this);
 			this.state = new GameState(this.config.size);
 			
-			Location startBlock = new Location(this.location.getWorld(), this.location.getBlockX() - 2, this.location.getBlockY() - 1, this.location.getBlockZ() - 2);
-			Location endBlock = new Location(this.location.getWorld(), this.location.getBlockX() + this.config.size.x * 2, this.location.getBlockY() + this.config.size.y * 2, this.location.getBlockZ() + this.config.size.z * 2);
-			this.gameArea = new CubicBlockArea(startBlock, endBlock);
+			this.gameArea = this.generateGameArea();
 			
 			this.gravityRunnable = new BukkitRunnable() {
 				
@@ -105,6 +112,10 @@ public class Game {
 			};
 			
 			this.inviteOpponent(isReturnMatch);
+		}
+		
+		private void registerQueued() {
+			Game.queuedGames.put(this.uuid, this);
 		}
 		
 		private Location generateGameLocation() {
@@ -138,6 +149,12 @@ public class Game {
 			
 			Location playerLocation = this.config.mainPlayer.getLocation();
 			return new Location(playerLocation.getWorld(), playerLocation.getBlockX() + offsetX, playerLocation.getBlockY(), playerLocation.getBlockZ() + offsetZ);
+		}
+		
+		private CubicBlockArea generateGameArea() {
+			Location startBlock = new Location(this.location.getWorld(), this.location.getBlockX() - 2, this.location.getBlockY() - 1, this.location.getBlockZ() - 2);
+			Location endBlock = new Location(this.location.getWorld(), this.location.getBlockX() + this.config.size.x * 2, this.location.getBlockY() + this.config.size.y * 2, this.location.getBlockZ() + this.config.size.z * 2);
+			return new CubicBlockArea(startBlock, endBlock);
 		}
 		
 		private void inviteOpponent(boolean isReturnMatch) {
