@@ -39,6 +39,8 @@ public class Game {
 		public static Sound LOSE_SOUND = Sound.ENTITY_WITHER_HURT;
 		public static Sound TIE_SOUND = Sound.BLOCK_NOTE_BLOCK_COW_BELL;
 		public static float TIE_SOUND_PITCH = 0.5f;
+		public static Sound FIELD_FALL_SOUND = Sound.BLOCK_STONE_PLACE;
+		public static float FIELD_FALL_SOUND_PITCH = 0.5f;
 	
 		/// Contains all  queued games that still have to be accepted / rejected
 		public static HashMap<UUID, Game> queuedGames = new HashMap<UUID, Game>();
@@ -90,6 +92,7 @@ public class Game {
 					
 					if(didApplyAnyChange) {
 						state.applyVisually(location);
+						playGameSound(Game.FIELD_FALL_SOUND, Game.FIELD_FALL_SOUND_PITCH);
 					}
 					
 					if(!didApplyAnyChange && !didCompletePlace) {

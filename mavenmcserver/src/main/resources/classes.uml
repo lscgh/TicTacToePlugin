@@ -31,6 +31,8 @@ class FieldPoint {
     +{static}Sound LOSE_SOUND
     +{static}Sound TIE_SOUND
     +{static}float TIE_SOUND_PITCH
+    +{static}Sound FIELD_FALL_SOUND
+    +{static}float FIELD_FALL_SOUND_PITCH
     +{static}HashMap<UUID, Game> queuedGames
     +{static}HashMap<Player, Game> runningGames
     +{static}HashMap<Player, GameConfig> lostGames
