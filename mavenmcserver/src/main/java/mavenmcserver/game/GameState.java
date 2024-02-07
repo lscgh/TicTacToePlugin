@@ -3,6 +3,7 @@ package mavenmcserver.game;
 import java.util.ArrayList;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.joml.Vector3i;
 
@@ -35,6 +36,16 @@ class FieldPoint {
 		if(!(obj instanceof FieldPoint)) return false;
 		FieldPoint point = (FieldPoint)obj;
 		return point.x == this.x && point.y == this.y && point.z == this.z;
+	}
+	
+	@Override
+	public int hashCode() {
+		int result = (this.x ^ (this.x >>> 32));
+		
+		result = 31 * result + (this.y ^ (this.y >>> 32));
+		result = 31 * result + (this.z ^ (this.z >>> 32));
+		
+		return result;
 	}
 }
 
@@ -157,8 +168,12 @@ public class GameState {
 		this.setStateAt(new FieldPoint(x, y, z), newState);
 	}
 	
-	
-	public boolean applyGravityTick(Location gameStartBlock, FieldPoint lastPlacePosition) {
+	/**
+	 * Advances the physics of this state by one tick. Every marking in air will fall down by a block.
+	 * @param lastPlacePosition The FieldPoint of the last-changed block.
+	 * @return Whether any changes were made.
+	 */
+	public boolean applyGravityTick(FieldPoint lastPlacePosition) {
 		boolean didApplyAnyChange = false;
 		
 		for(int y = 1; y < this.gameSize.y; y++) {
@@ -168,16 +183,6 @@ public class GameState {
 						if(this.getStateAt(x, y - 1, z) == FieldState.NEUTRAL) {
 							this.setStateAt(x, y - 1, z, this.getStateAt(x, y, z));
 							this.setStateAt(x, y, z, FieldState.NEUTRAL);
-							
-							// Update changes visually
-							World gameWorld = gameStartBlock.getWorld();
-							
-							Location inWorldLocationOfUnderneathBlock = this.fieldPointToBlockLocation(gameStartBlock, new FieldPoint(x, y - 1, z));
-							if(this.getStateAt(x, y - 1, z) == FieldState.MAIN) gameWorld.getBlockAt(inWorldLocationOfUnderneathBlock).setType(Game.MAIN_PLAYER_MATERIAL);
-							else if(this.getStateAt(x, y - 1, z) == FieldState.OPPONENT) gameWorld.getBlockAt(inWorldLocationOfUnderneathBlock).setType(Game.OPPONENT_PLAYER_MATERIAL);
-							
-							Location inWorldLocationOfCurrentBlock = this.fieldPointToBlockLocation(gameStartBlock, new FieldPoint(x, y, z));
-							gameWorld.getBlockAt(inWorldLocationOfCurrentBlock).setType(Game.NEUTRAL_MATERIAL);
 							
 							boolean didModifyBlockAtLastPlacePosition = lastPlacePosition.equals(new FieldPoint(x, y, z));
 							if(didModifyBlockAtLastPlacePosition) {
@@ -192,6 +197,36 @@ public class GameState {
 		}
 		
 		return didApplyAnyChange;
+	}
+	
+	/**
+	 * Updates any changes made to this state visually by placing the blocks (replaces ALL blocks).
+	 * @param gameStartBlock The location of the target game.
+	 */
+	public void applyVisually(Location gameStartBlock) {
+		
+		World gameWorld = gameStartBlock.getWorld();
+		
+		for(int y = 0; y < this.gameSize.y; y++) {
+			for(int x = 0; x < this.gameSize.x; x++) {
+				for(int z = 0; z < this.gameSize.z; z++) {
+					
+					FieldState stateOfCurrentField = this.getStateAt(x, y, z);
+					
+					Material newTypeOfBlock = Game.NEUTRAL_MATERIAL;
+					if(stateOfCurrentField == FieldState.MAIN) {
+						newTypeOfBlock = Game.MAIN_PLAYER_MATERIAL;
+					} else if(stateOfCurrentField == FieldState.OPPONENT) {
+						newTypeOfBlock = Game.OPPONENT_PLAYER_MATERIAL;
+					}
+					
+					Location inWorldLocationOfCurrentBlock = this.fieldPointToBlockLocation(gameStartBlock, new FieldPoint(x, y, z));
+					gameWorld.getBlockAt(inWorldLocationOfCurrentBlock).setType(newTypeOfBlock);
+					
+				}
+			}
+		}
+		
 	}
 	
 	/**

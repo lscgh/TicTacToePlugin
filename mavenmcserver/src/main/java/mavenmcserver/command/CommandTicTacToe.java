@@ -144,11 +144,6 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		
 		if(!(sender instanceof Player)) return new ArrayList<String>();
 		
-		ArrayList<String> a = new ArrayList<String>();
-		for(String arg: args) a.add(arg);
-		
-		sender.sendMessage("Your original list " + a + " (count=" + a.size() + ")");
-		
 		ArrayList<String> argList = new ArrayList<String>();
 		int i = 0;
 		for(String arg: args) {
@@ -158,8 +153,6 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 			
 			i++;
 		}
-		
-		sender.sendMessage("Your list " + argList + " (count=" + argList.size() + ")");
 		
 		ArrayList<String> completions = new ArrayList<String>();
 		
