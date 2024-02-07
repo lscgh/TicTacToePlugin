@@ -349,7 +349,7 @@ public class Game {
 						Location currentBlock = this.blockLocations.get(this.i);
 						Location middleOfCurrentBlock = new Location(currentBlock.getWorld(), currentBlock.getBlockX() + 0.5, currentBlock.getBlockY() + 0.5, currentBlock.getBlockZ() + 0.5);
 						
-						currentBlock.getWorld().spawnParticle(Particle.BLOCK_CRACK, middleOfCurrentBlock, 50, 0.5, 0.5, 0.5, 1.0, currentBlock.getBlock().getBlockData(), true);
+						currentBlock.getWorld().spawnParticle(Particle.BLOCK_CRACK, middleOfCurrentBlock, 150, 0.3, 0.3, 0.3, 1.0, currentBlock.getBlock().getBlockData(), true);
 						
 						float currentPitch = 1.0f + (1.0f / ((float)config.winRequiredAmount - 1.0f)) * (float)this.i;
 						playGameSound(Game.WIN_BEEP_SOUND, currentPitch);
