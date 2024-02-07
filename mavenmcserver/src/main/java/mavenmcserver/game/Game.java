@@ -321,6 +321,8 @@ public class Game {
 			
 			if(this.state.getWinnerIfAny(this.config.winRequiredAmount, this.lastPlacePosition) != FieldState.NEUTRAL) {
 				
+				this.listener.allowMarkingFields = false;
+				
 				new BukkitRunnable() {
 				
 					int i = -1;

@@ -121,6 +121,7 @@ class GameState {
 +class GameListener {
     .. Fields ..
     Game game
+    +boolean allowMarkingFields
     
     .. Methods ..
     +GameListener(Game game)

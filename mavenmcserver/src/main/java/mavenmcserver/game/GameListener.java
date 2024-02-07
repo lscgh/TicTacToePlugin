@@ -21,6 +21,12 @@ public class GameListener implements Listener {
 
 	Game game;
 	
+	/**
+	 * If set to *false*, the game's players cannot mark any fields anymore.
+	 * True to *false* when the game ends.
+	 */
+	public boolean allowMarkingFields = true;
+	
 	public GameListener(Game game) {
 		this.game = game;
 	}
@@ -112,6 +118,11 @@ public class GameListener implements Listener {
 		
 			
 		if(event.getAction() == Action.RIGHT_CLICK_BLOCK && this.game.getPlayerInTurn() == event.getPlayer()) {
+			
+			if(!this.allowMarkingFields) {
+				event.setCancelled(true);
+				return;
+			}
 			
 			if(this.game.gameArea.contains(event.getClickedBlock().getLocation())) {
 				
