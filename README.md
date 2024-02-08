@@ -100,3 +100,8 @@ In development. The game should already be playable, but there might still be so
 ### A game ends with a tie
 
 ![Game ends with a tie](img/vid2.mov)
+
+
+## Sounds
+
+This plugin also makes use of ingame sounds (not audible in the videos).
