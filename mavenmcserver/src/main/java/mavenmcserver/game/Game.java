@@ -2,6 +2,7 @@ package mavenmcserver.game;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
@@ -46,6 +47,18 @@ public class Game {
 	
 		/// Contains all  queued games that still have to be accepted / rejected
 		public static HashMap<UUID, Game> queuedGames = new HashMap<UUID, Game>();
+		
+		public static List<Game> getRequestsTo(Player opponentPlayer) {
+			ArrayList<Game> result = new ArrayList<Game>();
+			
+			for(Game queuedGame: Game.queuedGames.values()) {
+				if(queuedGame.config.opponentPlayer == opponentPlayer) {
+					result.add(queuedGame);
+				}
+			}
+			
+			return result;
+		}
 		
 		/// Contains all games that are currently running in connection to their players (every game is in this map twice!)
 		public static HashMap<Player, Game> runningGames = new HashMap<Player, Game>();

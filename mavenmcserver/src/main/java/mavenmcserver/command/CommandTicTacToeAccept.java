@@ -20,6 +20,7 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 	public static String COMMAND_NAME = "tictactoeaccept";
 	public static int ARG_COUNT = 1;
 	public static int PLAYER_NAME_ARG_INDEX = 0;
+	public static String ERROR_EXECUTION_IS_ONLY_ALLOWED_BY_PLAYERS = ChatColor.RED + "this command may only be executed by players" + ChatColor.RESET;
 	
 	public CommandTicTacToeAccept(Plugin plugin) {
 		plugin.getCommand(CommandTicTacToeAccept.COMMAND_NAME).setExecutor(this);
@@ -30,7 +31,7 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		
 		if(!(sender instanceof Player)) {
-			sender.sendMessage(ChatColor.RED + "this command may only be executed by players" + ChatColor.RESET);
+			sender.sendMessage(CommandTicTacToeAccept.ERROR_EXECUTION_IS_ONLY_ALLOWED_BY_PLAYERS);
 			return true;
 		}
 		
@@ -38,38 +39,43 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 		
 		String playerName = args[CommandTicTacToeAccept.PLAYER_NAME_ARG_INDEX];
 		
-		Game targetGame = null;
+		Game targetGame = this.getQueuedGameWithPlayers(playerName, (Player)sender);
 		
-		for(Game queuedGame: Game.queuedGames.values()) {
-			if(queuedGame.config.opponentPlayer != (Player)sender) continue;
-			if(queuedGame.config.mainPlayer.getName().equals(playerName)) {
-				targetGame = queuedGame;
-				break;
-			}
-		}
-		
-		boolean validUUIDIsGiven = false;
 		
 		if(targetGame == null) {
 			try {
-				UUID gameUUID = UUID.fromString(playerName);
-				validUUIDIsGiven = true;
-				targetGame = Game.queuedGames.get(gameUUID);
-			} catch(IllegalArgumentException e) {}
-		}
-		
-		if(targetGame == null) {
-			if(validUUIDIsGiven) {
-				sender.sendMessage(ChatColor.RED + "This game is not available anymore." + ChatColor.RESET);
-			} else {
+				targetGame = this.getQueuedGameByUUID(args[CommandTicTacToeAccept.PLAYER_NAME_ARG_INDEX]);
+				
+				if(targetGame == null) {
+					sender.sendMessage(ChatColor.RED + "This game is not available anymore." + ChatColor.RESET);
+					return true;
+				}
+				
+			} catch(IllegalArgumentException e) {
 				sender.sendMessage(ChatColor.RED + "'" + playerName + "' hasn't sent any game request to you!" + ChatColor.RESET);
+				return true;
 			}
-			return true;
 		}
 		
 		targetGame.start();
 		
 		return true;
+	}
+	
+	private Game getQueuedGameWithPlayers(String mainPlayerName, Player opponentPlayer) {
+		for(Game queuedGame: Game.queuedGames.values()) {
+			if(queuedGame.config.opponentPlayer != opponentPlayer) continue;
+			if(queuedGame.config.mainPlayer.getName().equals(mainPlayerName)) {
+				return queuedGame;
+			}
+		}
+		
+		return null;
+	}
+	
+	private Game getQueuedGameByUUID(String uuidString) throws IllegalArgumentException {
+		UUID gameUUID = UUID.fromString(uuidString);
+		return Game.queuedGames.get(gameUUID);
 	}
 
 	@Override
@@ -77,17 +83,13 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 		
 		if(!(sender instanceof Player)) return new ArrayList<String>();
 		
-		ArrayList<String> argList = new ArrayList<String>();
-		for(String arg: args) argList.add(arg);
-		argList.removeIf((arg) -> arg.isEmpty() && !CommandTicTacToeAccept.listContainsNonEmptyString(argList.subList(0, Math.max(0, argList.indexOf(arg) - 1))));
+		ArrayList<String> argList = CommandTicTacToeAccept.removeEmptyStringsBeforeStringFromList(args);
 		
 		if(argList.size() >= CommandTicTacToeAccept.ARG_COUNT) return new ArrayList<String>();
 		
 		ArrayList<String> completions = new ArrayList<String>();
-		for(Game queuedGame: Game.queuedGames.values()) {
-			if(queuedGame.config.opponentPlayer == (Player)sender) {
-				completions.add(queuedGame.config.mainPlayer.getName());
-			}
+		for(Game queuedGame: Game.getRequestsTo((Player)sender)) {
+			completions.add(queuedGame.config.mainPlayer.getName());
 		}
 		
 		ArrayList<String> filteredCompletions = new ArrayList<String>();
@@ -96,6 +98,14 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 		return filteredCompletions;
 	}
 	
+	public static ArrayList<String> removeEmptyStringsBeforeStringFromList(String[] list) {
+		ArrayList<String> newList = new ArrayList<String>();
+		for(String arg: list) newList.add(arg);
+		
+		newList.removeIf((item) -> item.isEmpty() && !CommandTicTacToeAccept.listContainsNonEmptyString(newList.subList(0, Math.max(0, newList.indexOf(item) - 1))));
+		
+		return newList;
+	}
 	
 	public static boolean listContainsNonEmptyString(List<String> list) {
 		for(String string: list) {
