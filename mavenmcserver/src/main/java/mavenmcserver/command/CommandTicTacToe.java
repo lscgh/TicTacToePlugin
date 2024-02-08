@@ -144,15 +144,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		
 		if(!(sender instanceof Player)) return new ArrayList<String>();
 		
-		ArrayList<String> argList = new ArrayList<String>();
-		int i = 0;
-		for(String arg: args) {
-			if(!arg.trim().isEmpty() || (i == args.length - 1)) {
-				argList.add(arg);
-			}
-			
-			i++;
-		}
+		ArrayList<String> argList = CommandTicTacToe.removeEmptyElementsExceptForLast(args);
 		
 		ArrayList<String> completions = new ArrayList<String>();
 		
@@ -243,6 +235,20 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		}
 		
 		return integerArguments;
+	}
+	
+	private static ArrayList<String> removeEmptyElementsExceptForLast(String[] list) {
+		ArrayList<String> newList = new ArrayList<String>();
+		int i = 0;
+		for(String element: list) {
+			if(!element.trim().isEmpty() || (i == list.length - 1)) {
+				newList.add(element);
+			}
+			
+			i++;
+		}
+		
+		return newList;
 	}
 	
 	

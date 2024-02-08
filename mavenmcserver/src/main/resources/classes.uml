@@ -35,6 +35,8 @@ class FieldPoint {
     +{static}float FIELD_FALL_SOUND_PITCH
     +{static}HashMap<UUID, Game> queuedGames
     +{static}List<Game> getRequestsTo(Player opponentPlayer)
+    +{static}Game getQueuedGameWithPlayers(String mainPlayerName, Player opponentPlayer) /' For use in CommandTicTacToeAccept.java '/
+    +{static}Game getQueuedGameByUUID(String uuidString) /' For use in CommandTicTacToeAccept.java '/
     +{static}HashMap<Player, Game> runningGames
     +{static}HashMap<Player, GameConfig> lostGames
     

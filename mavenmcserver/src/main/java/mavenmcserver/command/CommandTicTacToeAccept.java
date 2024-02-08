@@ -2,7 +2,6 @@ package mavenmcserver.command;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -39,12 +38,12 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 		
 		String playerName = args[CommandTicTacToeAccept.PLAYER_NAME_ARG_INDEX];
 		
-		Game targetGame = this.getQueuedGameWithPlayers(playerName, (Player)sender);
+		Game targetGame = Game.getQueuedGameWithPlayers(playerName, (Player)sender);
 		
 		
 		if(targetGame == null) {
 			try {
-				targetGame = this.getQueuedGameByUUID(args[CommandTicTacToeAccept.PLAYER_NAME_ARG_INDEX]);
+				targetGame = Game.getQueuedGameByUUID(args[CommandTicTacToeAccept.PLAYER_NAME_ARG_INDEX]);
 				
 				if(targetGame == null) {
 					sender.sendMessage(ChatColor.RED + "This game is not available anymore." + ChatColor.RESET);
@@ -60,22 +59,6 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 		targetGame.start();
 		
 		return true;
-	}
-	
-	private Game getQueuedGameWithPlayers(String mainPlayerName, Player opponentPlayer) {
-		for(Game queuedGame: Game.queuedGames.values()) {
-			if(queuedGame.config.opponentPlayer != opponentPlayer) continue;
-			if(queuedGame.config.mainPlayer.getName().equals(mainPlayerName)) {
-				return queuedGame;
-			}
-		}
-		
-		return null;
-	}
-	
-	private Game getQueuedGameByUUID(String uuidString) throws IllegalArgumentException {
-		UUID gameUUID = UUID.fromString(uuidString);
-		return Game.queuedGames.get(gameUUID);
 	}
 
 	@Override

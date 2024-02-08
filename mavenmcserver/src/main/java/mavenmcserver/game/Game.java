@@ -59,6 +59,22 @@ public class Game {
 			return result;
 		}
 		
+		public static Game getQueuedGameWithPlayers(String mainPlayerName, Player opponentPlayer) {
+			for(Game queuedGame: Game.queuedGames.values()) {
+				if(queuedGame.config.opponentPlayer != opponentPlayer) continue;
+				if(queuedGame.config.mainPlayer.getName().equals(mainPlayerName)) {
+					return queuedGame;
+				}
+			}
+			
+			return null;
+		}
+		
+		public static Game getQueuedGameByUUID(String uuidString) throws IllegalArgumentException {
+			UUID gameUUID = UUID.fromString(uuidString);
+			return Game.queuedGames.get(gameUUID);
+		}
+		
 		/// Contains all games that are currently running in connection to their players (every game is in this map twice!)
 		public static HashMap<Player, Game> runningGames = new HashMap<Player, Game>();
 		
