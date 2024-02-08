@@ -3,7 +3,6 @@ package mavenmcserver.game;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -186,45 +185,8 @@ public class Game {
 		public void start() {
 			this.listener.activate();
 			
-			// Store old blocks
-			this.beforeGameBlocks.clear();
-			this.gameArea.forEach((block) -> this.beforeGameBlocks.put(block.getLocation(), block.getBlockData()));
-			
-			// Fill area with air (except for bottom layer)
-			this.gameArea.forEach((block) -> {
-				if(block.getLocation().getBlockY() != this.gameArea.startBlock.getBlockY()) {
-					block.setType(Material.AIR);
-				}
-			});
-			
-			// Base plate
-			for(int x = 0; x < this.config.size.x * 2 - 1; x++) {
-				for(int z = 0; z < this.config.size.z * 2 - 1; z++) {
-					this.location.getWorld().getBlockAt(this.location.getBlockX() + x, this.location.getBlockY(), this.location.getBlockZ() + z).setType(Game.BASE_PLATE_MATERIAL);
-				}
-			}
-			
-			// Fields
-			for(int x = 0; x < this.config.size.x; x++) {
-				for(int y = 0; y < this.config.size.y; y++) {
-					for(int z = 0; z < this.config.size.z; z++) {
-						this.location.getWorld().getBlockAt(this.location.getBlockX() + x * 2, this.location.getBlockY() + 1 + y * 2, this.location.getBlockZ() + z * 2).setType(Game.NEUTRAL_MATERIAL);
-					}
-				}
-			}
-			
-			// Light blocks (to light up the game when it is night)
-			for(int x = 0; x < this.config.size.x - 1; x++) {
-				for(int y = 0; y < Math.max(1, this.config.size.y - 1); y++) {
-					for(int z = 0; z < this.config.size.z - 1; z++) {
-						Block currentBlock = this.location.getWorld().getBlockAt(this.location.getBlockX() + 1 + x * 2, this.location.getBlockY() + 2 + y * 2, this.location.getBlockZ() + 1 + z * 2);
-						currentBlock.setType(Material.LIGHT);
-						Levelled levelledBlockData = (Levelled)currentBlock.getBlockData();
-						levelledBlockData.setLevel(13);
-						currentBlock.setBlockData(levelledBlockData);
-					}
-				}
-			}
+			this.storeCurrentBlocksInGameArea();
+			this.placeGameIntoWorld();
 			
 			
 			this.gravityRunnable.runTaskTimer(this.plugin, 0, 10);
@@ -242,12 +204,11 @@ public class Game {
 			
 			// Tell players who have requested a game with either mainPlayer or
 			// opponentPlayer that they are not available anymore
-			for (Entry<UUID, Game> queuedGameEntry : Game.queuedGames.entrySet()) {
-				Game queuedGame = queuedGameEntry.getValue();
+			for (Game queuedGame: Game.queuedGames.values()) {
 				if (queuedGame.config.opponentPlayer == this.config.opponentPlayer) {
-					queuedGame.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + this.config.opponentPlayer.getName() + ChatColor.RESET + " has just accepted another game.");
-				} else if (queuedGame.config.opponentPlayer == this.config.mainPlayer) {
-					queuedGame.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + this.config.mainPlayer.getName() + ChatColor.RESET + " has just started their own game of tic-tac-toe.");
+					queuedGame.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + this.config.opponentPlayer.getName() + ChatColor.RESET + " has just accepted another game. They cannot join yours anymore.");
+				} else if(queuedGame.config.opponentPlayer == this.config.mainPlayer) {
+					queuedGame.config.mainPlayer.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + this.config.mainPlayer.getName() + ChatColor.RESET + " has just started their own game of tic-tac-toe. They cannot join yours anymore.");
 				}
 			}
 
@@ -268,8 +229,7 @@ public class Game {
 		public void end(GameEndCause cause) {
 			this.listener.deactivate();
 			
-			// Restore old blocks
-			this.gameArea.forEach((block) -> block.setBlockData(this.beforeGameBlocks.get(block.getLocation())));
+			this.restoreOldBlocksFromBeforeGame();
 			
 			// Send cause-specific message
 			switch(cause) {
@@ -324,6 +284,10 @@ public class Game {
 			Game.runningGames.remove(this.config.opponentPlayer);
 		}
 		
+		private void restoreOldBlocksFromBeforeGame() {
+			this.gameArea.forEach((block) -> block.setBlockData(this.beforeGameBlocks.get(block.getLocation())));
+		}
+		
 		/**
 		 * The current player in turn marks the field at *position*.
 		 * @param position
@@ -348,50 +312,72 @@ public class Game {
 		
 		public void checkForWin() {
 			
-			if(this.state.getWinnerIfAny(this.config.winRequiredAmount) != FieldState.NEUTRAL) {
+			FieldState potentialWinner = this.state.getWinnerIfAny(this.config.winRequiredAmount);
+			if(potentialWinner != FieldState.NEUTRAL) {
 				
 				this.listener.allowMarkingFields = false;
-				
-				new BukkitRunnable() {
-				
-					int i = -1;
-					ArrayList<Location> blockLocations = state.getWinRowBlockLocations(config.winRequiredAmount, location);
-					
-					@Override
-					public void run() {
-						
-						if(this.i < 0) {
-							this.i++;
-							return;
-						}
-						
-						if(this.i >= config.winRequiredAmount) {
-							opponentPlayersTurn = !opponentPlayersTurn; 
-							end(opponentPlayersTurn ? GameEndCause.OPPONENT_WIN : GameEndCause.MAIN_WIN);
-							this.cancel();
-							return;
-						}
-						
-						Location currentBlock = this.blockLocations.get(this.i);
-						Location middleOfCurrentBlock = new Location(currentBlock.getWorld(), currentBlock.getBlockX() + 0.5, currentBlock.getBlockY() + 0.5, currentBlock.getBlockZ() + 0.5);
-						
-						currentBlock.getWorld().spawnParticle(Particle.BLOCK_CRACK, middleOfCurrentBlock, 150, 0.3, 0.3, 0.3, 1.0, currentBlock.getBlock().getBlockData(), true);
-						
-						float currentPitch = 1.0f + (1.0f / ((float)config.winRequiredAmount - 1.0f)) * (float)this.i;
-						playGameSound(Game.WIN_BEEP_SOUND, currentPitch);
-						
-						i++;
-					}
-					
-				}.runTaskTimer(this.plugin, 10, 10);
+				this.playEndAnimation();
 				
 				return;
 			}
 			
 			if(!this.state.winIsPossible()) {
 				this.end(GameEndCause.TIE);
-				return;
 			}
+		}
+		
+		
+		public void playEndAnimation() {
+			new BukkitRunnable() {
+				
+				static final int NUMBER_OF_PARTICLES = 150;
+				static final double PARTICLE_AREA = 0.3;
+				static final double PARTICLE_SPEED = 1.0;
+				static final boolean PARTICLE_IS_FORCE = true;
+				
+				int currentCycle = -1;
+				ArrayList<Location> blockLocations = state.getWinRowBlockLocations(config.winRequiredAmount, location);
+				
+				private boolean isInWaitCycle() {
+					return this.currentCycle < 0;
+				}
+				
+				private boolean didFinishAllCycles() {
+					return this.currentCycle >= config.winRequiredAmount;
+				}
+				
+				private void highlightBlockAt(Location location) {
+					Location middleLocationOfBlock = new Location(location.getWorld(), location.getBlockX() + 0.5, location.getBlockY() + 0.5, location.getBlockZ() + 0.5);
+					
+					location.getWorld().spawnParticle(Particle.BLOCK_CRACK, middleLocationOfBlock, NUMBER_OF_PARTICLES, PARTICLE_AREA, PARTICLE_AREA, PARTICLE_AREA, PARTICLE_SPEED, location.getBlock().getBlockData(), PARTICLE_IS_FORCE);
+					
+					float currentPitch = 1.0f + (1.0f / ((float)config.winRequiredAmount - 1.0f)) * (float)this.currentCycle;
+					playGameSound(Game.WIN_BEEP_SOUND, currentPitch);
+				}
+				
+				@Override
+				public void run() {
+					
+					if(this.isInWaitCycle()) {
+						this.currentCycle++;
+						return;
+					}
+					
+					if(this.didFinishAllCycles()) {
+						opponentPlayersTurn = !opponentPlayersTurn; 
+						end(opponentPlayersTurn ? GameEndCause.OPPONENT_WIN : GameEndCause.MAIN_WIN);
+						
+						this.cancel();
+						return;
+					}
+					
+					Location locationOfCurrentBlock = this.blockLocations.get(this.currentCycle);
+					this.highlightBlockAt(locationOfCurrentBlock);
+					
+					currentCycle++;
+				}
+				
+			}.runTaskTimer(this.plugin, 10, 10);
 		}
 		
 		
@@ -404,4 +390,59 @@ public class Game {
 			this.config.opponentPlayer.playSound(this.config.opponentPlayer.getLocation(), sound, 1.0f, pitch);
 		}
 	
+		
+		
+		////////////////// BUILDING THE GAME //////////////////
+		private void storeCurrentBlocksInGameArea() {
+			this.beforeGameBlocks.clear();
+			this.gameArea.forEach((block) -> this.beforeGameBlocks.put(block.getLocation(), block.getBlockData()));
+		}
+		
+		private void placeGameIntoWorld() {
+			this.fillGameAreaWithAir();
+			this.placeBasePlateIntoWorld();
+			this.placeFieldBlocksIntoWorld();
+			this.placeLightBlocksIntoWorld();
+		}
+		
+		private void fillGameAreaWithAir() {
+			this.gameArea.forEach((block) -> {
+				if(block.getLocation().getBlockY() != this.gameArea.startBlock.getBlockY()) {
+					block.setType(Material.AIR);
+				}
+			});
+		}
+		
+		private void placeBasePlateIntoWorld() {
+			for(int x = 0; x < this.config.size.x * 2 - 1; x++) {
+				for(int z = 0; z < this.config.size.z * 2 - 1; z++) {
+					this.location.getWorld().getBlockAt(this.location.getBlockX() + x, this.location.getBlockY(), this.location.getBlockZ() + z).setType(Game.BASE_PLATE_MATERIAL);
+				}
+			}
+		}
+		
+		private void placeFieldBlocksIntoWorld() {
+			for(int x = 0; x < this.config.size.x; x++) {
+				for(int y = 0; y < this.config.size.y; y++) {
+					for(int z = 0; z < this.config.size.z; z++) {
+						this.location.getWorld().getBlockAt(this.location.getBlockX() + x * 2, this.location.getBlockY() + 1 + y * 2, this.location.getBlockZ() + z * 2).setType(Game.NEUTRAL_MATERIAL);
+					}
+				}
+			}
+		}
+		
+		private void placeLightBlocksIntoWorld() {
+			for(int x = 0; x < this.config.size.x - 1; x++) {
+				for(int y = 0; y < Math.max(1, this.config.size.y - 1); y++) {
+					for(int z = 0; z < this.config.size.z - 1; z++) {
+						Block currentBlock = this.location.getWorld().getBlockAt(this.location.getBlockX() + 1 + x * 2, this.location.getBlockY() + 2 + y * 2, this.location.getBlockZ() + 1 + z * 2);
+						currentBlock.setType(Material.LIGHT);
+						Levelled levelledBlockData = (Levelled)currentBlock.getBlockData();
+						levelledBlockData.setLevel(13);
+						currentBlock.setBlockData(levelledBlockData);
+					}
+				}
+			}
+		}
+		
 }

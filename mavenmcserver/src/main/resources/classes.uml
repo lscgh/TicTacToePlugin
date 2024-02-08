@@ -34,6 +34,7 @@ class FieldPoint {
     +{static}Sound FIELD_FALL_SOUND
     +{static}float FIELD_FALL_SOUND_PITCH
     +{static}HashMap<UUID, Game> queuedGames
+    +{static}List<Game> getRequestsTo(Player opponentPlayer)
     +{static}HashMap<Player, Game> runningGames
     +{static}HashMap<Player, GameConfig> lostGames
     
@@ -62,10 +63,20 @@ class FieldPoint {
     -void registerStarted() /' Configures the static HashMaps! '/
     +void end(GameEndCause cause) /' Ends the game and removes the blocks; deactivates the listener '/
     -void registerEnded() /' Configured the static HashMaps! '/
+    -void restoreOldBlocksFromBeforeGame() /' Restores the blocks to how they were before this game started (as stored in Game::beforeGameBlocks) '/
     +void placeAt(FieldPoint position) /' Called when the current player marks a field; checks for win and changes the turn '/
     +void checkForWin() /' Called when falling is done '/
+    +void playEndAnimation()
     +Player getPlayerInTurn()
     +void playGameSound(Sound sound, float pitch) /' Plays a sound to both config players! '/
+    
+    /' BUILDING THE GAME '/
+    -void storeCurrentBlocksInGameArea()
+    -void placeGameIntoWorld()
+    -void fillGameAreaWithAir()
+    -void placeBasePlateIntoWorld()
+    -void placeFieldBlocksIntoWorld()
+    -void placeLightBlocksIntoWorld()
 }
 
 
