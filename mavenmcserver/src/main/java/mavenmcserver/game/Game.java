@@ -316,8 +316,6 @@ public class Game {
 		 * @param position
 		 */
 		public void placeAt(FieldPoint position) {
-			// Store the position for use in getWinnerIfAny(); and similar
-			this.state.lastPlacePosition = position;
 			this.didCompletePlace = false;
 			
 			if(this.state.getStateAt(position) != FieldState.NEUTRAL) return;
