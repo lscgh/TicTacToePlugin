@@ -47,6 +47,10 @@ class FieldPoint {
 		
 		return result;
 	}
+	
+	public FieldPoint copy() {
+		return new FieldPoint(this.x, this.y, this.z);
+	}
 }
 
 /**
@@ -97,6 +101,9 @@ public class GameState {
 	public Vector3i gameSize;
 	
 	FieldState blockStates[];
+	
+	/// The FieldPoint of the last marked field, starting as null
+	public FieldPoint lastPlacePosition = null;
 	
 	public GameState(Vector3i gameSize) {
 		this.gameSize = gameSize;
@@ -162,6 +169,7 @@ public class GameState {
 		if(!this.fieldPointIsValid(position)) throw new IllegalArgumentException("point " + position + " is invalid for size " + this.gameSize);
 		
 		this.blockStates[position.x * this.gameSize.y * this.gameSize.z + position.y * this.gameSize.z + position.z] = newState;
+		this.lastPlacePosition = position.copy();
 	}
 	
 	public void setStateAt(int x, int y, int z, FieldState newState) {
@@ -170,10 +178,9 @@ public class GameState {
 	
 	/**
 	 * Advances the physics of this state by one tick. Every marking in air will fall down by a block.
-	 * @param lastPlacePosition The FieldPoint of the last-changed block.
 	 * @return Whether any changes were made.
 	 */
-	public boolean applyGravityTick(FieldPoint lastPlacePosition) {
+	public boolean applyGravityTick() {
 		boolean didApplyAnyChange = false;
 		
 		for(int y = 1; y < this.gameSize.y; y++) {
@@ -181,12 +188,16 @@ public class GameState {
 				for(int z = 0; z < this.gameSize.z; z++) {
 					if(this.getStateAt(x, y, z) != FieldState.NEUTRAL) {
 						if(this.getStateAt(x, y - 1, z) == FieldState.NEUTRAL) {
+							FieldPoint lastPlacePosition = this.lastPlacePosition;
+							
 							this.setStateAt(x, y - 1, z, this.getStateAt(x, y, z));
 							this.setStateAt(x, y, z, FieldState.NEUTRAL);
 							
-							boolean didModifyBlockAtLastPlacePosition = lastPlacePosition.equals(new FieldPoint(x, y, z));
+							this.lastPlacePosition = lastPlacePosition;
+							
+							boolean didModifyBlockAtLastPlacePosition = this.lastPlacePosition.equals(new FieldPoint(x, y, z));
 							if(didModifyBlockAtLastPlacePosition) {
-								lastPlacePosition.y -= 1;
+								this.lastPlacePosition.y -= 1;
 							}
 							
 							didApplyAnyChange = true;
@@ -231,24 +242,23 @@ public class GameState {
 	
 	/**
 	 * Checks if a player won the game
-	 * @param lastPlacePosition the field point that was last changed. Checks are done from this point into all possible directions.
 	 * @return NEUTRAL if there is no winner yet. MAIN if the mainPlayer has won, OPPONENT if the opponentPlayer has won!
 	 */
-	public FieldState getWinnerIfAny(int winRequiredAmount, FieldPoint lastPlacePosition) {
+	public FieldState getWinnerIfAny(int winRequiredAmount) {
 		
 		for(Vector3i direction: GameState.DIRECTIONS_TO_CHECK) {
 			
-			int amountOfCorrectFields = this.getFieldsInARowCount(lastPlacePosition, direction);
+			int amountOfCorrectFields = this.getFieldsInARowCount(this.lastPlacePosition, direction);
 			
-			if(amountOfCorrectFields >= winRequiredAmount) return this.getStateAt(lastPlacePosition);
+			if(amountOfCorrectFields >= winRequiredAmount) return this.getStateAt(this.lastPlacePosition);
 			else if(amountOfCorrectFields > 1) {
 				
 				// Check in opposite direction
 				Vector3i oppositeDirection = new Vector3i(-direction.x, -direction.y, -direction.z);
-				amountOfCorrectFields += this.getFieldsInARowCount(lastPlacePosition, oppositeDirection) - 1; // subtract 1 because the lastChanged Block is counted twice.
+				amountOfCorrectFields += this.getFieldsInARowCount(this.lastPlacePosition, oppositeDirection) - 1; // subtract 1 because the lastChanged Block is counted twice.
 				
 				
-				if(amountOfCorrectFields >= winRequiredAmount) return this.getStateAt(lastPlacePosition);
+				if(amountOfCorrectFields >= winRequiredAmount) return this.getStateAt(this.lastPlacePosition);
 			}
 			
 		}
@@ -286,17 +296,17 @@ public class GameState {
 		return false; // TODO: finish
 	}
 	
-	public ArrayList<Location> getWinRowBlockLocations(int winRequiredAmount, Location gameStartBlock, FieldPoint lastPlacePosition) {
+	public ArrayList<Location> getWinRowBlockLocations(int winRequiredAmount, Location gameStartBlock) {
 		
 		for(Vector3i direction : GameState.DIRECTIONS_TO_CHECK) {
 
-			int amountOfCorrectFields = this.getFieldsInARowCount(lastPlacePosition, direction) - 1;
+			int amountOfCorrectFields = this.getFieldsInARowCount(this.lastPlacePosition, direction) - 1;
 			int amountOfCorrectFieldsInOppositeDirection = 0;
 
 			if(amountOfCorrectFields > 0 && amountOfCorrectFields < winRequiredAmount - 1) {
 				// Check in opposite direction
 				Vector3i oppositeDirection = new Vector3i(-direction.x, -direction.y, -direction.z);
-				amountOfCorrectFieldsInOppositeDirection = this.getFieldsInARowCount(lastPlacePosition, oppositeDirection) - 1;
+				amountOfCorrectFieldsInOppositeDirection = this.getFieldsInARowCount(this.lastPlacePosition, oppositeDirection) - 1;
 			}
 			
 			if(amountOfCorrectFields + amountOfCorrectFieldsInOppositeDirection < winRequiredAmount - 1) continue;
@@ -304,7 +314,7 @@ public class GameState {
 			ArrayList<Location> blockLocations = new ArrayList<Location>();
 			
 			for(int i = -amountOfCorrectFieldsInOppositeDirection; i <= amountOfCorrectFields; i++) {
-				FieldPoint currentPoint = lastPlacePosition.offsetBy(i * direction.x, i * direction.y, i * direction.z);
+				FieldPoint currentPoint = this.lastPlacePosition.offsetBy(i * direction.x, i * direction.y, i * direction.z);
 				Location fieldPointAsBlockLocation = this.fieldPointToBlockLocation(gameStartBlock, currentPoint);
 				blockLocations.add(fieldPointAsBlockLocation);
 			}

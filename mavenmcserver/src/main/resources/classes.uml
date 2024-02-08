@@ -42,7 +42,6 @@ class FieldPoint {
 	+GameConfig config
     +GameListener listener
     +GameState state /' Stores the marked fields in a separate positioning system '/
-    +FieldPoint lastPlacePosition
     boolean didCompletePlace
     +boolean opponentPlayersTurn /' Whose turn it is! '/
     +Location location /' Start block location; stores world '/
@@ -101,6 +100,7 @@ class GameState {
     .. Fields ..
     +Vector3i gameSize
     FieldState blockStates[]
+    +FieldPoint lastPlacePosition
     
     .. Methods ..
     +GameState(Vector3i gameSize) /' Sizes the array and fills it with FieldState.NEUTRAL '/
@@ -113,14 +113,14 @@ class GameState {
     +void setStateAt(FieldPoint position, FieldState newState)
     +void setStateAt(int x, int y, int z, FieldState newState)
     
-    +boolean applyGravityTick(FieldPoint lastPlacePosition) /' Makes all blocks in air fall by one '/
+    +boolean applyGravityTick() /' Makes all blocks in air fall by one '/
     +void applyVisually(Location gameStartBlock) /' Updates in-world blocks to match the state '/
     
     // Returns NEUTRAL if there is no winner yet
-    +FieldState getWinnerIfAny(int winRequiredAmount, FieldPoint lastPlacePosition) /' Returns NEUTRAL for no winner yet '/
+    +FieldState getWinnerIfAny(int winRequiredAmount) /' Returns NEUTRAL for no winner yet '/
     -int getFieldsInARowCount(FieldPoint startPoint, Vector3i direction) /' Counts how many fields, starting from *startPoint* and going into *direction*, have the same state. Immediate return if the state at *startPoint* == *FieldState.NEUTRAL* '/
     +boolean winIsPossible() /' Whether (false) or not (true) to cancel the game '/
-    +ArrayList<Location> getWinRowBlockLocations(int winRequiredAmount, Location gameStartBlock, FieldPoint lastPlacePosition) /' Returns the Locations of the Blocks used to win the game '/
+    +ArrayList<Location> getWinRowBlockLocations(int winRequiredAmount, Location gameStartBlock) /' Returns the Locations of the Blocks used to win the game '/
 }
 
 +class GameListener {

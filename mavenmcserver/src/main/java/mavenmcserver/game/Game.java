@@ -60,8 +60,6 @@ public class Game {
 		public GameListener listener;
 		
 		public GameState state;
-		/// The FieldPoint of the last marked field, starting as null
-		public FieldPoint lastPlacePosition = null;
 		private boolean didCompletePlace = true;
 		public boolean opponentPlayersTurn = true;
 		
@@ -95,7 +93,7 @@ public class Game {
 				
 				@Override
 				public void run() {
-					boolean didApplyAnyChange = state.applyGravityTick(lastPlacePosition);
+					boolean didApplyAnyChange = state.applyGravityTick();
 					
 					if(didApplyAnyChange) {
 						state.applyVisually(location);
@@ -318,8 +316,8 @@ public class Game {
 		 * @param position
 		 */
 		public void placeAt(FieldPoint position) {
-			// Store the position for use in checkForWin();
-			this.lastPlacePosition = position;
+			// Store the position for use in getWinnerIfAny(); and similar
+			this.state.lastPlacePosition = position;
 			this.didCompletePlace = false;
 			
 			if(this.state.getStateAt(position) != FieldState.NEUTRAL) return;
@@ -339,14 +337,14 @@ public class Game {
 		
 		public void checkForWin() {
 			
-			if(this.state.getWinnerIfAny(this.config.winRequiredAmount, this.lastPlacePosition) != FieldState.NEUTRAL) {
+			if(this.state.getWinnerIfAny(this.config.winRequiredAmount) != FieldState.NEUTRAL) {
 				
 				this.listener.allowMarkingFields = false;
 				
 				new BukkitRunnable() {
 				
 					int i = -1;
-					ArrayList<Location> blockLocations = state.getWinRowBlockLocations(config.winRequiredAmount, location, lastPlacePosition);
+					ArrayList<Location> blockLocations = state.getWinRowBlockLocations(config.winRequiredAmount, location);
 					
 					@Override
 					public void run() {

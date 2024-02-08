@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import mavenmcserver.game.GameState.FieldState;
 
 public class GameStateTest {
+	
+	public static final int TEST_WIN_REQUIRED_AMOUNT = 3;
 
 	@Test
 	public void testStateAt() {
@@ -69,55 +71,55 @@ public class GameStateTest {
 		GameState state = new GameState(new Vector3i(3, 3, 3));
 		
 		state.setStateAt(0, 0, 0, FieldState.OPPONENT);
-		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(0, 0, 0)));
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(GameStateTest.TEST_WIN_REQUIRED_AMOUNT));
 		
 		state.setStateAt(0, 1, 0, FieldState.MAIN);
-		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(0, 1, 0)));
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(GameStateTest.TEST_WIN_REQUIRED_AMOUNT));
 		
 		state.setStateAt(1, 0, 0, FieldState.OPPONENT);
-		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(1, 0, 0)));
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(GameStateTest.TEST_WIN_REQUIRED_AMOUNT));
 		
 		state.setStateAt(0, 2, 0, FieldState.MAIN);
-		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(0, 2, 0)));
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(GameStateTest.TEST_WIN_REQUIRED_AMOUNT));
 		
 		state.setStateAt(2, 0, 0, FieldState.OPPONENT);
-		assertEquals(FieldState.OPPONENT, state.getWinnerIfAny(3, new FieldPoint(2, 0, 0)));
+		assertEquals(FieldState.OPPONENT, state.getWinnerIfAny(GameStateTest.TEST_WIN_REQUIRED_AMOUNT));
 		
 		
 		state = new GameState(new Vector3i(3, 3, 3));
 		
 		state.setStateAt(0, 0, 0, FieldState.OPPONENT);
-		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(0, 0, 0)));
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(GameStateTest.TEST_WIN_REQUIRED_AMOUNT));
 		
 		state.setStateAt(0, 0, 1, FieldState.OPPONENT);
-		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(0, 0, 1)));
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(GameStateTest.TEST_WIN_REQUIRED_AMOUNT));
 		
 		state.setStateAt(0, 0, 2, FieldState.OPPONENT);
-		assertEquals(FieldState.OPPONENT, state.getWinnerIfAny(3, new FieldPoint(0, 0, 2)));
+		assertEquals(FieldState.OPPONENT, state.getWinnerIfAny(GameStateTest.TEST_WIN_REQUIRED_AMOUNT));
 		
 		
 		state = new GameState(new Vector3i(3, 3, 3));
 		
 		state.setStateAt(0, 0, 0, FieldState.MAIN);
-		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(0, 0, 0)));
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(GameStateTest.TEST_WIN_REQUIRED_AMOUNT));
 		
 		state.setStateAt(1, 1, 1, FieldState.MAIN);
-		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(1, 1, 1)));
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(GameStateTest.TEST_WIN_REQUIRED_AMOUNT));
 		
 		state.setStateAt(2, 2, 2, FieldState.MAIN);
-		assertEquals(FieldState.MAIN, state.getWinnerIfAny(3, new FieldPoint(2, 2, 2)));
+		assertEquals(FieldState.MAIN, state.getWinnerIfAny(GameStateTest.TEST_WIN_REQUIRED_AMOUNT));
 		
 		
 		state = new GameState(new Vector3i(3, 1, 3));
 		
 		state.setStateAt(0, 0, 0, FieldState.MAIN);
-		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(0, 0, 0)));
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(GameStateTest.TEST_WIN_REQUIRED_AMOUNT));
 		
 		state.setStateAt(2, 0, 0, FieldState.MAIN);
-		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(3, new FieldPoint(2, 0, 0)));
+		assertEquals(FieldState.NEUTRAL, state.getWinnerIfAny(GameStateTest.TEST_WIN_REQUIRED_AMOUNT));
 		
 		state.setStateAt(1, 0, 0, FieldState.MAIN);
-		assertEquals(FieldState.MAIN, state.getWinnerIfAny(3, new FieldPoint(1, 0, 0)));
+		assertEquals(FieldState.MAIN, state.getWinnerIfAny(GameStateTest.TEST_WIN_REQUIRED_AMOUNT));
 		
 	}
 	
@@ -176,92 +178,88 @@ public class GameStateTest {
 		
 		// 3 x 3 x 3
 		GameState state = new GameState(new Vector3i(3, 3, 3));
-		FieldPoint lastPlacePosition = new FieldPoint(0, 2, 0);
 		
-		state.setStateAt(lastPlacePosition, FieldState.OPPONENT);
+		state.setStateAt(new FieldPoint(0, 2, 0), FieldState.OPPONENT);
 		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(0, 2, 0), FieldState.OPPONENT))));
 		
-		assertTrue(state.applyGravityTick(lastPlacePosition));
-		assertEquals(new FieldPoint(0, 1, 0), lastPlacePosition);
+		assertTrue(state.applyGravityTick());
+		assertEquals(new FieldPoint(0, 1, 0), state.lastPlacePosition);
 		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(0, 1, 0), FieldState.OPPONENT))));
 		
-		assertTrue(state.applyGravityTick(lastPlacePosition));
-		assertEquals(new FieldPoint(0, 0, 0), lastPlacePosition);
+		assertTrue(state.applyGravityTick());
+		assertEquals(new FieldPoint(0, 0, 0), state.lastPlacePosition);
 		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(0, 0, 0), FieldState.OPPONENT))));
 		
-		assertFalse(state.applyGravityTick(lastPlacePosition));
-		assertFalse(state.applyGravityTick(lastPlacePosition));
-		assertFalse(state.applyGravityTick(lastPlacePosition));
+		assertFalse(state.applyGravityTick());
+		assertFalse(state.applyGravityTick());
+		assertFalse(state.applyGravityTick());
 		
 		
 		// 4 x 4 x 4
 		state = new GameState(new Vector3i(4, 4, 4));
-		lastPlacePosition = new FieldPoint(0, 3, 0);
 		
 		
-		state.setStateAt(lastPlacePosition, FieldState.MAIN);
+		state.setStateAt(new FieldPoint(0, 3, 0), FieldState.MAIN);
 		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(0, 3, 0), FieldState.MAIN))));
 		
-		assertTrue(state.applyGravityTick(lastPlacePosition));
-		assertEquals(new FieldPoint(0, 2, 0), lastPlacePosition);
+		assertTrue(state.applyGravityTick());
+		assertEquals(new FieldPoint(0, 2, 0), state.lastPlacePosition);
 		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(0, 2, 0), FieldState.MAIN))));
 		
-		assertTrue(state.applyGravityTick(lastPlacePosition));
-		assertEquals(new FieldPoint(0, 1, 0), lastPlacePosition);
+		assertTrue(state.applyGravityTick());
+		assertEquals(new FieldPoint(0, 1, 0), state.lastPlacePosition);
 		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(0, 1, 0), FieldState.MAIN))));
 		
 		
-		assertTrue(state.applyGravityTick(lastPlacePosition));
-		assertEquals(new FieldPoint(0, 0, 0), lastPlacePosition);
+		assertTrue(state.applyGravityTick());
+		assertEquals(new FieldPoint(0, 0, 0), state.lastPlacePosition);
 		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(0, 0, 0), FieldState.MAIN))));
 		
-		assertFalse(state.applyGravityTick(lastPlacePosition));
-		assertFalse(state.applyGravityTick(lastPlacePosition));
-		assertFalse(state.applyGravityTick(lastPlacePosition));
+		assertFalse(state.applyGravityTick());
+		assertFalse(state.applyGravityTick());
+		assertFalse(state.applyGravityTick());
 		
-		lastPlacePosition = new FieldPoint(1, 3, 3);
-		state.setStateAt(lastPlacePosition, FieldState.OPPONENT);
+		state.setStateAt(new FieldPoint(1, 3, 3), FieldState.OPPONENT);
 		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(0, 0, 0), FieldState.MAIN), entry(new FieldPoint(1, 3, 3), FieldState.OPPONENT))));
 		
-		assertTrue(state.applyGravityTick(lastPlacePosition));
-		assertEquals(new FieldPoint(1, 2, 3), lastPlacePosition);
+		assertTrue(state.applyGravityTick());
+		assertEquals(new FieldPoint(1, 2, 3), state.lastPlacePosition);
 		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(0, 0, 0), FieldState.MAIN), entry(new FieldPoint(1, 2, 3), FieldState.OPPONENT))));
 		
-		assertTrue(state.applyGravityTick(lastPlacePosition));
-		assertEquals(new FieldPoint(1, 1, 3), lastPlacePosition);
+		assertTrue(state.applyGravityTick());
+		assertEquals(new FieldPoint(1, 1, 3), state.lastPlacePosition);
 		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(0, 0, 0), FieldState.MAIN), entry(new FieldPoint(1, 1, 3), FieldState.OPPONENT))));
 		
-		assertTrue(state.applyGravityTick(lastPlacePosition));
-		assertEquals(new FieldPoint(1, 0, 3), lastPlacePosition);
+		assertTrue(state.applyGravityTick());
+		assertEquals(new FieldPoint(1, 0, 3), state.lastPlacePosition);
 		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(0, 0, 0), FieldState.MAIN), entry(new FieldPoint(1, 0, 3), FieldState.OPPONENT))));
 		
-		assertFalse(state.applyGravityTick(lastPlacePosition));
-		assertFalse(state.applyGravityTick(lastPlacePosition));
-		assertFalse(state.applyGravityTick(lastPlacePosition));
+		assertFalse(state.applyGravityTick());
+		assertFalse(state.applyGravityTick());
+		assertFalse(state.applyGravityTick());
 		
 		
 		// 5 x 4 x 5
 		state = new GameState(new Vector3i(5, 4, 5));
-		lastPlacePosition = new FieldPoint(4, 3, 0);
 		
-		state.setStateAt(lastPlacePosition, FieldState.OPPONENT);
+		state.setStateAt(new FieldPoint(4, 3, 0), FieldState.OPPONENT);
 		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(4, 3, 0), FieldState.OPPONENT))));
 		
-		assertTrue(state.applyGravityTick(lastPlacePosition));
-		assertEquals(new FieldPoint(4, 2, 0), lastPlacePosition);
+		assertTrue(state.applyGravityTick());
+		assertEquals(new FieldPoint(4, 2, 0), state.lastPlacePosition);
 		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(4, 2, 0), FieldState.OPPONENT))));
 		
-		assertTrue(state.applyGravityTick(lastPlacePosition));
-		assertEquals(new FieldPoint(4, 1, 0), lastPlacePosition);
+		assertTrue(state.applyGravityTick());
+		assertEquals(new FieldPoint(4, 1, 0), state.lastPlacePosition);
 		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(4, 1, 0), FieldState.OPPONENT))));
 		
-		assertTrue(state.applyGravityTick(lastPlacePosition));
-		assertEquals(new FieldPoint(4, 0, 0), lastPlacePosition);
+		assertTrue(state.applyGravityTick());
+		assertEquals(new FieldPoint(4, 0, 0), state.lastPlacePosition);
 		assertTrue(this.stateIsNeutralExceptFor(state, Map.ofEntries(entry(new FieldPoint(4, 0, 0), FieldState.OPPONENT))));
 		
-		assertFalse(state.applyGravityTick(lastPlacePosition));
-		assertFalse(state.applyGravityTick(lastPlacePosition));
-		assertFalse(state.applyGravityTick(lastPlacePosition));
+		assertFalse(state.applyGravityTick());
+		assertFalse(state.applyGravityTick());
+		assertFalse(state.applyGravityTick());
 		
 	}
 	
