@@ -102,8 +102,8 @@ class FieldPoint {
     
     .. Methods ..
     +GameConfig(Player mainPlayer, Player opponentPlayer, Vector3i size, int winRequiredAmount)
-    +List<String> validateReturningErrors() /' Returns a list of errors in the config! Empty means OK '/
-    List<String> validateNumbersReturningErrors() /' sub-part of validateReturningErrors() '/
+    +List<String> validateReturningErrors(int maxXZSize) /' Returns a list of errors in the config! Empty means OK '/
+    List<String> validateNumbersReturningErrors(int maxXZSize) /' sub-part of validateReturningErrors() '/
     +int getSmallestDimenson()
     +int getLargestDimension()
 }

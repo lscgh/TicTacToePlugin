@@ -9,15 +9,15 @@ import mavenmcserver.game.Game;
 
 public class Plugin extends JavaPlugin {
 	
-	private static String MAX_X_Z_SIZE_KEY_NAME = "max_xz_size";
+	private static String MAX_DIMENSION_SIZE_KEY_NAME = "max_dimension_size";
 	
-	public int getMaxXZSize() {
-		return this.getConfig().getInt(Plugin.MAX_X_Z_SIZE_KEY_NAME);
+	public int getMaxDimensionSize() {
+		return this.getConfig().getInt(Plugin.MAX_DIMENSION_SIZE_KEY_NAME);
 	}
 	
 	private void addConfigDefaults() {
 		FileConfiguration config = this.getConfig();
-		config.addDefault(Plugin.MAX_X_Z_SIZE_KEY_NAME, 15);
+		config.addDefault(Plugin.MAX_DIMENSION_SIZE_KEY_NAME, 15);
 		config.options().copyDefaults(true);
 		this.saveConfig();
 	}
