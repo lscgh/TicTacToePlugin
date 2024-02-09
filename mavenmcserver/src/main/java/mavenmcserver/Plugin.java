@@ -1,5 +1,6 @@
 package mavenmcserver;
 
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import mavenmcserver.command.CommandTicTacToe;
@@ -7,6 +8,12 @@ import mavenmcserver.command.CommandTicTacToeAccept;
 import mavenmcserver.game.Game;
 
 public class Plugin extends JavaPlugin {
+	
+	private static String MAX_X_Z_SIZE_KEY_NAME = "max_xz_size";
+	
+	public int getMaxXZSize() {
+		return this.getConfig().getInt(Plugin.MAX_X_Z_SIZE_KEY_NAME);
+	}
 
 	@Override
 	public void onLoad() {
@@ -15,6 +22,12 @@ public class Plugin extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
+		
+		FileConfiguration config = this.getConfig();
+		config.addDefault(Plugin.MAX_X_Z_SIZE_KEY_NAME, 15);
+		config.options().copyDefaults(true);
+		this.saveConfig();
+		
 		// Register command /tictactoe
 		new CommandTicTacToe(this).registerToPlugin();
 		// Register command /tictactoeaccept
