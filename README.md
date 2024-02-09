@@ -55,7 +55,7 @@ Incase the plugin destroyed part of the world by placing the game, all blocks ar
  
 ## Installation
 
-Download the latest (older releases are very buggy) **JAR**-file from the releases of this repository (or build the plugin yourself using **maven**) and move it to the `plugins` directory of your server. If your server is not hosted locally, you might need to use the **FTP** to transfer the file. 
+Download the latest (older releases are very buggy) **JAR**-file from the releases of this repository (or build the plugin yourself using **maven**) and move it to the `plugins` directory of your Minecraft-server (which has to support spigot plugins). If your server is not hosted locally, you might need to use the **FTP** to transfer the file. 
 
 ## Configuration
 
