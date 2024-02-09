@@ -57,6 +57,14 @@ Incase the plugin destroyed part of the world by placing the game, all blocks ar
 
 Download the latest (older releases are very buggy) **JAR**-file from the releases of this repository (or build the plugin yourself using **maven**) and move it to the `plugins` directory of your server. If your server is not hosted locally, you might need to use the **FTP** to transfer the file. 
 
+## Configuration
+
+This plugin uses the default config provided by spigot, located in `plugins/Tic-Tac-Toe/config.yml`.
+
+The configuration contains one key, `max_dimension_size`, with an integer value (default `15`) specifying how large the games on the server are allowed to be.
+
+This can be used to prevent server crashing.
+
 ## State
 
 In development. The game should already be playable, but there might still be some bugs!
