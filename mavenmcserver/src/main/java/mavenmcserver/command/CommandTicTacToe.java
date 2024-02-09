@@ -267,7 +267,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		return integerArguments;
 	}
 	
-	private static ArrayList<String> removeEmptyElementsExceptForLast(String[] list) {
+	static ArrayList<String> removeEmptyElementsExceptForLast(String[] list) {
 		ArrayList<String> newList = new ArrayList<String>();
 		int i = 0;
 		for(String element: list) {
