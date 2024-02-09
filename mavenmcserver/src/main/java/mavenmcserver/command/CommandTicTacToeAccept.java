@@ -72,11 +72,12 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 		
 		if(!(sender instanceof Player)) return new ArrayList<String>();
 		
-		ArrayList<String> argList = CommandTicTacToeAccept.removeEmptyStringsBeforeStringFromList(args);
+		ArrayList<String> argList = CommandTicTacToeAccept.removeMeaninglessElements(args);
 		
-		if(argList.size() >= CommandTicTacToeAccept.ARG_COUNT) return new ArrayList<String>();
+		if(argList.size() > CommandTicTacToeAccept.ARG_COUNT) return new ArrayList<String>();
 		
 		ArrayList<String> completions = new ArrayList<String>();
+		
 		for(Game queuedGame: Game.getRequestsTo((Player)sender)) {
 			completions.add(queuedGame.config.mainPlayer.getName());
 		}
@@ -87,11 +88,17 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 		return filteredCompletions;
 	}
 	
-	public static ArrayList<String> removeEmptyStringsBeforeStringFromList(String[] list) {
+	public static ArrayList<String> removeMeaninglessElements(String[] list) {
 		ArrayList<String> newList = new ArrayList<String>();
-		for(String arg: list) newList.add(arg);
 		
-		newList.removeIf((item) -> item.isEmpty() && !CommandTicTacToeAccept.listContainsNonEmptyString(newList.subList(0, Math.max(0, newList.indexOf(item) - 1))));
+		int i = 0;
+		for(String element: list) {
+			if(!element.isEmpty() || (i == list.length - 1)) {
+				newList.add(element);
+			}
+			
+			i++;
+		}
 		
 		return newList;
 	}
