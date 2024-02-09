@@ -33,6 +33,8 @@ class FieldPoint {
     +{static}float TIE_SOUND_PITCH
     +{static}Sound FIELD_FALL_SOUND
     +{static}float FIELD_FALL_SOUND_PITCH
+    +{static}Sound GAME_ACCEPT_SOUND
+    +{static}float GAME_ACCEPT_SOUND_PITCH
     +{static}HashMap<UUID, Game> queuedGames
     +{static}List<Game> getRequestsTo(Player opponentPlayer)
     +{static}Game getQueuedGameWithPlayers(String mainPlayerName, Player opponentPlayer) /' For use in CommandTicTacToeAccept.java '/

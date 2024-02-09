@@ -44,6 +44,9 @@ public class Game {
 		public static float TIE_SOUND_PITCH = 0.5f;
 		public static Sound FIELD_FALL_SOUND = Sound.BLOCK_STONE_PLACE;
 		public static float FIELD_FALL_SOUND_PITCH = 0.5f;
+		
+		public static Sound GAME_ACCEPT_SOUND = Sound.BLOCK_NOTE_BLOCK_BANJO;
+		public static float GAME_ACCEPT_SOUND_PITCH = 0.5f;
 	
 		/// Contains all  queued games that still have to be accepted / rejected
 		public static HashMap<UUID, Game> queuedGames = new HashMap<UUID, Game>();

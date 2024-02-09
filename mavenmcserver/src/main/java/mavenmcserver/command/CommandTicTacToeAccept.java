@@ -64,6 +64,9 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 		
 		targetGame.start();
 		
+		Player player = (Player)sender;
+		player.playSound(player.getLocation(), Game.GAME_ACCEPT_SOUND, 1.0f, Game.GAME_ACCEPT_SOUND_PITCH);
+		
 		return true;
 	}
 
