@@ -32,11 +32,19 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 	public static int SIZE_Z_INDEX = 2;
 	public static int WIN_REQUIRED_AMOUNT_INDEX = 3;
 	
+	public static String CANCEL_KEYWORD = "cancel";
+	public static String REQUEST_RETURN_MATCH_KEYWORD = "requestReturnMatch";
+	
+	public static int NO_AVAILABLE_PLAYERS_MIN_ARG_COUNT = 3;
+	public static String NO_AVAILABLE_PLAYERS_ARGS[] = {"(no", "available", "players)"};  
+	
 	private Plugin plugin;
 	
 	public CommandTicTacToe(Plugin plugin) {
 		this.plugin = plugin;
-		
+	}
+	
+	public void registerToPlugin() {
 		this.plugin.getCommand(CommandTicTacToe.COMMAND_NAME).setExecutor(this);
 		this.plugin.getCommand(CommandTicTacToe.COMMAND_NAME).setTabCompleter(this);
 	}
@@ -49,94 +57,113 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 			return true;
 		}
 		
-		if(args.length > 0) {
+		if(args.length < CommandTicTacToe.MIN_VALID_ARG_COUNT) {
+			return false;
+		}
 			
-			boolean playerIsCurrentlyInAGame = Game.runningGames.containsKey((Player)sender);
-			if(playerIsCurrentlyInAGame && args[0].equals("cancel")) {
-				Game.runningGames.get((Player)sender).end(GameEndCause.CANCEL);
-				return true;
-			}
-			
-			if(args.length > CommandTicTacToe.MAX_VALID_ARG_COUNT) {
-				sender.sendMessage(ChatColor.RED + "Too many arguments for command '/" + label + "'!" + ChatColor.RESET);
-				return false;
-			}
-			
-			int noAvailablePlayersMinArgCount = 3;
-			if(args.length >= noAvailablePlayersMinArgCount) {
-				String noAvailablePlayersPlaceholder[] = {"(no", "available", "players)"};
-				if(args[0].equals(noAvailablePlayersPlaceholder[0]) && args[1].equals(noAvailablePlayersPlaceholder[1]) && args[2].equals(noAvailablePlayersPlaceholder[2])) return true;
-			}
-			
-			if(args[0].equals("requestReturnMatch")) {
-				
-				GameConfig returnConfig = Game.lostGames.get((Player)sender);
-				
-				if(returnConfig != null) {
-					
-					// Show the confirmation to the player
-					sender.sendMessage("You've just asked " + ChatColor.AQUA + ChatColor.BOLD + returnConfig.opponentPlayer.getName() + ChatColor.RESET + " to play a return match with you!");
-					
-					// Remove config from list!
-					Game.lostGames.remove((Player)sender);
-					Game.lostGames.remove(returnConfig.opponentPlayer);
-					
-					new Game(returnConfig, this.plugin, true);
-					return true;
-				}
-			}
-			
-			// Create the game's config from the command's args
-			GameConfig config;
-			
-			try {
-				config = this.createGameConfigFromCommand((Player)sender, args);
-			} catch(InvalidArgCountException | OpponentPlayerNotFoundException | OpponentIsMainPlayerException e) {
-				sender.sendMessage(ChatColor.RED + e.getMessage() + ChatColor.RESET);
-				return true;
-			} catch(NumberFormatException e) {
-				String nonNumberString = e.getMessage().substring(19, e.getMessage().length() - 1);
-				sender.sendMessage(ChatColor.RED + "Error: expected number at '" + nonNumberString + "'." + ChatColor.RESET);
-				return true;
-			}
-			
-			// Check for errors in the game's config
-			List<String> configErrors = config.validate();
-			if(!configErrors.isEmpty()) {
-				for(String error: configErrors) {
-					sender.sendMessage(ChatColor.RED + error + ChatColor.RESET);
-				}
-				
-				// Don't continue on error
-				return true;
-			}
-			
-			ArrayList<Game> queuedGames = new ArrayList<Game>();
-			queuedGames.addAll(Game.queuedGames.values());
-			
-			for(Game queuedGame: queuedGames) {
-				if(queuedGame.config.mainPlayer == config.mainPlayer) {
-					Game.queuedGames.remove(queuedGame.uuid);
-					
-					String revokeMessage;
-					if(queuedGame.config.opponentPlayer == config.opponentPlayer) {
-						revokeMessage = ChatColor.AQUA + "" + ChatColor.BOLD + config.mainPlayer.getName() + ChatColor.RESET + " has updated their tic-tac-toe-game request. See below.";
-					} else {
-						revokeMessage = ChatColor.AQUA + "" + ChatColor.BOLD + config.mainPlayer.getName() + ChatColor.RESET + " has revoked their tic-tac-toe-game request to you.";
-					}
-					
-					queuedGame.config.opponentPlayer.sendMessage(revokeMessage);
-				}
-			}
-			
-			// Show the confirmation to the player
-			sender.sendMessage("You've just asked " + ChatColor.AQUA + ChatColor.BOLD + config.opponentPlayer.getName() + ChatColor.RESET + " to play a game of tic-tac-toe with you!");
-			
-			new Game(config, this.plugin, false);
+		boolean playerIsCurrentlyInAGame = Game.runningGames.containsKey((Player)sender);
+		boolean playerProvidedCancelKeyword = args[CommandTicTacToe.OPPONENT_ARG_INDEX].equals(CommandTicTacToe.CANCEL_KEYWORD); 
+		if(playerIsCurrentlyInAGame && playerProvidedCancelKeyword) {
+			Game gameToCancel = Game.runningGames.get((Player)sender); 
+			gameToCancel.end(GameEndCause.CANCEL);
+			return true;
 		}
 		
-		boolean shouldShowUsage = args.length <= 0;
-		return !shouldShowUsage;
+		if(args.length > CommandTicTacToe.MAX_VALID_ARG_COUNT) {
+			sender.sendMessage(ChatColor.RED + "Too many arguments for command '/" + label + "'!" + ChatColor.RESET);
+			return false;
+		}
+		
+		if(CommandTicTacToe.isNoAvailablePlayersPlaceholder(args)) {
+			return true;
+		}
+		
+		if(args[CommandTicTacToe.OPPONENT_ARG_INDEX].equals(CommandTicTacToe.REQUEST_RETURN_MATCH_KEYWORD)) {
+			
+			GameConfig configOfReturnMatch = Game.lostGames.get((Player)sender);
+			
+			if(configOfReturnMatch != null) {
+				
+				// Show the confirmation to the player
+				sender.sendMessage("You've just asked " + ChatColor.AQUA + ChatColor.BOLD + configOfReturnMatch.opponentPlayer.getName() + ChatColor.RESET + " to play a return match with you!");
+				
+				// Remove config from list!
+				Game.lostGames.remove((Player)sender);
+				Game.lostGames.remove(configOfReturnMatch.opponentPlayer);
+				
+				new Game(configOfReturnMatch, this.plugin, true);
+				return true;
+			}
+		}
+		
+		// Create the game's config from the command's args
+		GameConfig config;
+		
+		try {
+			
+			config = this.createGameConfigFromCommand((Player)sender, args);
+			
+		} catch(InvalidArgCountException | OpponentPlayerNotFoundException | OpponentIsMainPlayerException e) {
+			sender.sendMessage(ChatColor.RED + e.getMessage() + ChatColor.RESET);
+			return true;
+		} catch(NumberFormatException e) {
+			String nonNumberString = e.getMessage().substring(19, e.getMessage().length() - 1);
+			sender.sendMessage(ChatColor.RED + "Error: expected number at '" + nonNumberString + "'." + ChatColor.RESET);
+			return true;
+		}
+		
+		// Check for errors in the game's config
+		List<String> configErrors = config.validateReturningErrors();
+		if(!configErrors.isEmpty()) {
+			for(String error: configErrors) {
+				sender.sendMessage(ChatColor.RED + error + ChatColor.RESET);
+			}
+			
+			// Don't continue on error
+			return true;
+		}
+		
+		this.tellAffectedPlayersThatPlayerChangedTheirRequest(config);
+		
+		// Show the confirmation to the player
+		sender.sendMessage("You've just asked " + ChatColor.AQUA + ChatColor.BOLD + config.opponentPlayer.getName() + ChatColor.RESET + " to play a game of tic-tac-toe with you!");
+		
+		new Game(config, this.plugin, false);
+	
+		return false;
+	}
+	
+	private static boolean isNoAvailablePlayersPlaceholder(String[] args) {
+		if(args.length < CommandTicTacToe.NO_AVAILABLE_PLAYERS_MIN_ARG_COUNT) {
+			return false;
+		}
+		
+		boolean firstArgumentIsPlaceholder = args[0].equals(CommandTicTacToe.NO_AVAILABLE_PLAYERS_ARGS[0]);
+		boolean secondArgumentIsPlaceholder = args[1].equals(CommandTicTacToe.NO_AVAILABLE_PLAYERS_ARGS[1]);
+		boolean thirdArgumentIsPlaceholder = args[2].equals(CommandTicTacToe.NO_AVAILABLE_PLAYERS_ARGS[2]);
+		boolean argumentsArePlaceholder = firstArgumentIsPlaceholder && secondArgumentIsPlaceholder && thirdArgumentIsPlaceholder;
+		
+		return argumentsArePlaceholder;
+	}
+	
+	private void tellAffectedPlayersThatPlayerChangedTheirRequest(GameConfig config) {
+		ArrayList<Game> queuedGames = new ArrayList<Game>();
+		queuedGames.addAll(Game.queuedGames.values());
+		
+		for(Game queuedGame: queuedGames) {
+			if(queuedGame.config.mainPlayer == config.mainPlayer) {
+				Game.queuedGames.remove(queuedGame.uuid);
+				
+				String revokeMessage;
+				if(queuedGame.config.opponentPlayer == config.opponentPlayer) {
+					revokeMessage = ChatColor.AQUA + "" + ChatColor.BOLD + config.mainPlayer.getName() + ChatColor.RESET + " has updated their tic-tac-toe-game request. See below.";
+				} else {
+					revokeMessage = ChatColor.AQUA + "" + ChatColor.BOLD + config.mainPlayer.getName() + ChatColor.RESET + " has revoked their tic-tac-toe-game request to you.";
+				}
+				
+				queuedGame.config.opponentPlayer.sendMessage(revokeMessage);
+			}
+		}
 	}
 
 	@Override
@@ -151,7 +178,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		boolean playerIsCurrentlyInAGame = Game.runningGames.containsKey((Player)sender);
 		if(playerIsCurrentlyInAGame) {
 			if(argList.size() == CommandTicTacToe.OPPONENT_ARG_INDEX + 1) {
-				completions.add("cancel");
+				completions.add(CommandTicTacToe.CANCEL_KEYWORD);
 			}
 		} else {
 			if(argList.size() == CommandTicTacToe.OPPONENT_ARG_INDEX + 1) {
@@ -162,7 +189,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				}
 				
 				if(Game.lostGames.containsKey((Player)sender)) {
-					completions.add("requestReturnMatch");
+					completions.add(CommandTicTacToe.REQUEST_RETURN_MATCH_KEYWORD);
 				}
 				
 				if(completions.isEmpty()) completions.add("(no available players)");

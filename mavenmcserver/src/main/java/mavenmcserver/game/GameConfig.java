@@ -8,6 +8,8 @@ import org.joml.Vector3i;
 
 public class GameConfig {
 	
+	public static int MIN_DIMENSION_SIZE = 1;
+	
 	/**
 	 *  The minimum X and Z size of a game
 	 */
@@ -55,7 +57,7 @@ public class GameConfig {
 	 * Checks the config for errors.
 	 * @return a list with all errors found on this config. If no errors are found, an empty list is returned.
 	 */
-	public List<String> validate() {
+	public List<String> validateReturningErrors() {
 		ArrayList<String> errors = new ArrayList<String>();
 		
 		if(this.mainPlayer == null) {
@@ -78,7 +80,7 @@ public class GameConfig {
 			return errors;
 		}
 		
-		errors.addAll(this.validateNumbers());
+		errors.addAll(this.validateNumbersReturningErrors());
 		
 		return errors;
 	}
@@ -87,22 +89,30 @@ public class GameConfig {
 	 * Checks the config for errors with the size and winRequiredAmount (part of validate()).
 	 * @return a list with all errors found on this config regarding the number values. If no errors are found, an empty list is returned.
 	 */
-	List<String> validateNumbers() {
+	List<String> validateNumbersReturningErrors() {
 		ArrayList<String> errors = new ArrayList<String>();
 		
-		if(Math.min(this.size.x, Math.min(this.size.y, this.size.z)) <= 0) {
-			errors.add("No dimension of the game can be smaller than 1. The smallest possible game is (" + GameConfig.MIN_X_Z_SIZE + ", " + GameConfig.MIN_HEIGHT + ", " + GameConfig.MIN_X_Z_SIZE + ").");
+		if(this.getSmallestDimension() < GameConfig.MIN_DIMENSION_SIZE) {
+			errors.add("No dimension of the game can be smaller than " + GameConfig.MIN_DIMENSION_SIZE + ". The smallest possible game is (" + GameConfig.MIN_X_Z_SIZE + ", " + GameConfig.MIN_HEIGHT + ", " + GameConfig.MIN_X_Z_SIZE + ").");
 		}
 		
 		if(Math.min(this.size.x, this.size.z) < GameConfig.MIN_X_Z_SIZE) {
 			errors.add("The X and Z size of the game must not be smaller than " + GameConfig.MIN_X_Z_SIZE + ".");
 		}
 		
-		if(this.winRequiredAmount > Math.max(this.size.x, Math.max(this.size.y, this.size.z))) {
+		if(this.winRequiredAmount > this.getLargestDimension()) {
 			errors.add(GameConfig.ERROR_WIN_REQUIRED_AMOUNT_TOO_LARGE);
 		}
 		
 		return errors;
+	}
+	
+	public int getSmallestDimension() {
+		return Math.min(this.size.x, Math.min(this.size.y, this.size.z));
+	}
+	
+	public int getLargestDimension() {
+		return Math.max(this.size.x, Math.max(this.size.y, this.size.z));
 	}
 	
 	

@@ -2,6 +2,7 @@ package mavenmcserver.game;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -77,6 +78,15 @@ public class Game {
 		
 		/// Contains all games that are currently running in connection to their players (every game is in this map twice!)
 		public static HashMap<Player, Game> runningGames = new HashMap<Player, Game>();
+		
+		public static void cancelAllGames() {
+			HashSet<Game> runningGames = new HashSet<Game>();
+			runningGames.addAll(Game.runningGames.values());
+			
+			for(Game runningGame: runningGames) {
+				runningGame.end(GameEndCause.CANCEL);
+			}
+		}
 		
 		/// Contains a list of game setups (value) that were lost by player (key) (ties count as well).
 		public static HashMap<Player, GameConfig> lostGames = new HashMap<Player, GameConfig>();

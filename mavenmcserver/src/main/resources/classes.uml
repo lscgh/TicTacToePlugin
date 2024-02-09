@@ -87,17 +87,22 @@ class FieldPoint {
     +{static}int MIN_X_Z_SIZE
     +{static}int MIN_HEIGHT
     {static}String ERROR_MAIN_PLAYER_NULL
+    {static}String ERROR_OPPONENT_PLAYER_NULL
+    {static}String ERROR_PLAYER_ALREADY_IN_GAME
+    {static}String ERROR_WIN_REQUIRED_AMOUNT_TOO_LARGE
     
     .. Fields ..
-    +{final}Player mainPlayer
+    +Player mainPlayer
     +Player opponentPlayer
     +Vector3i size
     +int winRequiredAmount
     
     .. Methods ..
     +GameConfig(Player mainPlayer, Player opponentPlayer, Vector3i size, int winRequiredAmount)
-    +List<String> validate() /' Returns a list of errors in the config! Empty means OK '/
-    List<String> validateNumbers() /' sub-part of validate() '/
+    +List<String> validateReturningErrors() /' Returns a list of errors in the config! Empty means OK '/
+    List<String> validateNumbersReturningErrors() /' sub-part of validateReturningErrors() '/
+    +int getSmallestDimenson()
+    +int getLargestDimension()
 }
 
 

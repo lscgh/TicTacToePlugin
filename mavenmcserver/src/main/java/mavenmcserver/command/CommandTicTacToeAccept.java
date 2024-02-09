@@ -21,9 +21,15 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 	public static int PLAYER_NAME_ARG_INDEX = 0;
 	public static String ERROR_EXECUTION_IS_ONLY_ALLOWED_BY_PLAYERS = ChatColor.RED + "this command may only be executed by players" + ChatColor.RESET;
 	
+	private Plugin plugin;
+	
 	public CommandTicTacToeAccept(Plugin plugin) {
-		plugin.getCommand(CommandTicTacToeAccept.COMMAND_NAME).setExecutor(this);
-		plugin.getCommand(CommandTicTacToeAccept.COMMAND_NAME).setTabCompleter(this);
+		this.plugin = plugin;
+	}
+	
+	public void registerToPlugin() {
+		this.plugin.getCommand(CommandTicTacToeAccept.COMMAND_NAME).setExecutor(this);
+		this.plugin.getCommand(CommandTicTacToeAccept.COMMAND_NAME).setTabCompleter(this);
 	}
 
 	@Override
