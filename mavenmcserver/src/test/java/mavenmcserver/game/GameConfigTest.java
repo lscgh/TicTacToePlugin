@@ -24,7 +24,7 @@ public class GameConfigTest {
 		List<String> errors = config.validateNumbersReturningErrors(100);
 		assertTrue(errors.contains("No dimension of the game can be smaller than 1. The smallest possible game is (" + GameConfig.MIN_X_Z_SIZE + ", " + GameConfig.MIN_HEIGHT + ", " + GameConfig.MIN_X_Z_SIZE + ")."));
 		assertTrue(errors.contains("The X and Z size of the game must not be smaller than " + GameConfig.MIN_X_Z_SIZE + "."));
-		assertTrue(errors.contains("The required win amount must not be larger than the size's largest dimension."));
+		assertTrue(errors.contains(String.format(GameConfig.ERROR_WIN_REQUIRED_AMOUNT_TOO_LARGE, config.getLargestDimension())));
 		
 		config = new GameConfig(null, null, new Vector3i(0, 1, 2), 2);
 		errors = config.validateNumbersReturningErrors(100);
@@ -32,7 +32,7 @@ public class GameConfigTest {
 
 		config = new GameConfig(null, null, new Vector3i(3, 1, 2), 4);
 		errors = config.validateNumbersReturningErrors(100);
-		assertTrue(errors.contains(GameConfig.ERROR_WIN_REQUIRED_AMOUNT_TOO_LARGE));
+		assertTrue(errors.contains(String.format(GameConfig.ERROR_WIN_REQUIRED_AMOUNT_TOO_LARGE, config.getLargestDimension())));
 		
 		config = new GameConfig(null, null, new Vector3i(1, 1, 2), 3);
 		errors = config.validateNumbersReturningErrors(100);
