@@ -60,14 +60,6 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		if(args.length < CommandTicTacToe.MIN_VALID_ARG_COUNT) {
 			return false;
 		}
-			
-		boolean playerIsCurrentlyInAGame = Game.runningGames.containsKey((Player)sender);
-		boolean playerProvidedCancelKeyword = args[CommandTicTacToe.OPPONENT_ARG_INDEX].equals(CommandTicTacToe.CANCEL_KEYWORD); 
-		if(playerIsCurrentlyInAGame && playerProvidedCancelKeyword) {
-			Game gameToCancel = Game.runningGames.get((Player)sender); 
-			gameToCancel.end(GameEndCause.CANCEL);
-			return true;
-		}
 		
 		if(args.length > CommandTicTacToe.MAX_VALID_ARG_COUNT) {
 			sender.sendMessage(ChatColor.RED + "Too many arguments for command '/" + label + "'!" + ChatColor.RESET);
@@ -75,6 +67,14 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		}
 		
 		if(CommandTicTacToe.isNoAvailablePlayersPlaceholder(args)) {
+			return true;
+		}
+			
+		boolean playerIsCurrentlyInAGame = Game.runningGames.containsKey((Player)sender);
+		boolean playerProvidedCancelKeyword = args[CommandTicTacToe.OPPONENT_ARG_INDEX].equals(CommandTicTacToe.CANCEL_KEYWORD); 
+		if(playerIsCurrentlyInAGame && playerProvidedCancelKeyword) {
+			Game gameToCancel = Game.runningGames.get((Player)sender); 
+			gameToCancel.end(GameEndCause.CANCEL);
 			return true;
 		}
 		
@@ -130,7 +130,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		
 		new Game(config, this.plugin, false);
 	
-		return false;
+		return true;
 	}
 	
 	private static boolean isNoAvailablePlayersPlaceholder(String[] args) {
