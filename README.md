@@ -97,6 +97,10 @@ In development. The game should already be playable, but there might still be so
 
 ![Opponent player wins](img/vid1.mov)
 
+### The main player wins a game (view of the main player)
+
+![Main player wins](img/vid3.mov)
+
 ### A game ends with a tie
 
 ![Game ends with a tie](img/vid2.mov)
