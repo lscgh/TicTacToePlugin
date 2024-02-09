@@ -10,6 +10,7 @@ import mavenmcserver.game.Game;
 public class Plugin extends JavaPlugin {
 	
 	private static String MAX_DIMENSION_SIZE_KEY_NAME = "max_dimension_size";
+	private static int MAX_DIMENSION_SIZE_DEFAULT_VALUE = 15;
 	
 	public int getMaxDimensionSize() {
 		return this.getConfig().getInt(Plugin.MAX_DIMENSION_SIZE_KEY_NAME);
@@ -17,7 +18,7 @@ public class Plugin extends JavaPlugin {
 	
 	private void addConfigDefaults() {
 		FileConfiguration config = this.getConfig();
-		config.addDefault(Plugin.MAX_DIMENSION_SIZE_KEY_NAME, 15);
+		config.addDefault(Plugin.MAX_DIMENSION_SIZE_KEY_NAME, Plugin.MAX_DIMENSION_SIZE_DEFAULT_VALUE);
 		config.options().copyDefaults(true);
 		this.saveConfig();
 	}
