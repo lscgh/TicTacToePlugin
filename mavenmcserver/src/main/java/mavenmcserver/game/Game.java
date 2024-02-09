@@ -2,8 +2,8 @@ package mavenmcserver.game;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -80,10 +80,7 @@ public class Game {
 		public static HashMap<Player, Game> runningGames = new HashMap<Player, Game>();
 		
 		public static void cancelAllGames() {
-			HashSet<Game> runningGames = new HashSet<Game>();
-			runningGames.addAll(Game.runningGames.values());
-			
-			for(Game runningGame: runningGames) {
+			for(Game runningGame: Set.copyOf(Game.runningGames.values())) {
 				runningGame.end(GameEndCause.CANCEL);
 			}
 		}
