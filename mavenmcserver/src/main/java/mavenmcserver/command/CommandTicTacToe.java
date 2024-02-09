@@ -91,7 +91,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				Game.lostGames.remove((Player)sender);
 				Game.lostGames.remove(configOfReturnMatch.opponentPlayer);
 				
-				new Game(configOfReturnMatch, this.plugin, true);
+				new Game(configOfReturnMatch, this.plugin).queue(true);
 				return true;
 			}
 		}
@@ -128,7 +128,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		// Show the confirmation to the player
 		sender.sendMessage("You've just asked " + ChatColor.AQUA + ChatColor.BOLD + config.opponentPlayer.getName() + ChatColor.RESET + " to play a game of tic-tac-toe with you!");
 		
-		new Game(config, this.plugin, false);
+		new Game(config, this.plugin).queue(false);
 	
 		return true;
 	}
