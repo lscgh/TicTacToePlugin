@@ -95,9 +95,9 @@ In development. The game should already be playable, but there might still be so
 
 ### The opponent player wins the game (view of the main player)
 
-<video autoplay looped>
-    <source src="img/vid1.mov" type="video/quicktime" />
-</video>
+
+https://github.com/lscgh/TicTacToePlugin/assets/157597991/f9f98390-5761-439e-a50b-03fe227ab41f
+
 
 ### The main player wins a game (view of the main player)
 
