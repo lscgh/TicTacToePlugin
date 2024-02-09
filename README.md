@@ -101,11 +101,15 @@ https://github.com/lscgh/TicTacToePlugin/assets/157597991/f9f98390-5761-439e-a50
 
 ### The main player wins a game (view of the main player)
 
-![Main player wins](img/vid3.mov)
+
+https://github.com/lscgh/TicTacToePlugin/assets/157597991/32fbe9e0-29c5-4957-86cc-2dd219a2ed70
+
 
 ### A game ends with a tie
 
-![Game ends with a tie](img/vid2.mov)
+
+https://github.com/lscgh/TicTacToePlugin/assets/157597991/bb488688-8eb1-48b0-b920-354ee8c20335
+
 
 
 ## Sounds
