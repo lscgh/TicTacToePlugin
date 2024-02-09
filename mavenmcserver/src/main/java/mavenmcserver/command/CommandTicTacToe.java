@@ -271,7 +271,8 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		ArrayList<String> newList = new ArrayList<String>();
 		int i = 0;
 		for(String element: list) {
-			if(!element.trim().isEmpty() || (i == list.length - 1)) {
+			boolean elementIsLast = i == list.length - 1;
+			if(!element.trim().isEmpty() || elementIsLast) {
 				newList.add(element);
 			}
 			
