@@ -1,5 +1,6 @@
 package mavenmcserver.game;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -38,6 +39,23 @@ public class GameConfigTest {
 		errors = config.validateNumbersReturningErrors(100);
 		assertTrue(errors.contains("The X and Z size of the game must not be smaller than " + GameConfig.MIN_X_Z_SIZE + "."));
 		
+	}
+	
+	
+	@Test
+	public void testGetLargestDimension() {
+		assertEquals(5, new GameConfig(null, null, new Vector3i(1, 4, 5), 0).getLargestDimension());
+		assertEquals(3, new GameConfig(null, null, new Vector3i(3, 2, 1), 0).getLargestDimension());
+		assertEquals(10, new GameConfig(null, null, new Vector3i(10, 4, 8), 0).getLargestDimension());
+		assertEquals(0, new GameConfig(null, null, new Vector3i(0, 0, 0), 0).getLargestDimension());
+	}
+	
+	@Test
+	public void testGetSmallestDimension() {
+		assertEquals(1, new GameConfig(null, null, new Vector3i(1, 4, 5), 0).getSmallestDimension());
+		assertEquals(1, new GameConfig(null, null, new Vector3i(3, 2, 1), 0).getSmallestDimension());
+		assertEquals(4, new GameConfig(null, null, new Vector3i(10, 4, 8), 0).getSmallestDimension());
+		assertEquals(0, new GameConfig(null, null, new Vector3i(0, 0, 0), 0).getSmallestDimension());
 	}
 	
 }
