@@ -316,6 +316,8 @@ public class Game {
 		 * @param position
 		 */
 		public void placeAt(FieldPoint position) {
+			if(!this.didCompletePlace) return;
+			
 			this.didCompletePlace = false;
 			
 			if(this.state.getStateAt(position) != FieldState.NEUTRAL) return;
