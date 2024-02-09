@@ -20,9 +20,12 @@ public class GameConfig {
 	 */
 	public static int MIN_HEIGHT = 1;
 	
+	public static int MIN_WIN_REQUIRED_AMOUNT = 2; 
+	
 	static String ERROR_MAIN_PLAYER_NULL = "Couldn't add you to the game. Please retry!";
 	static String ERROR_OPPONENT_PLAYER_NULL = "Couldn't add the opponent player to the game.";
 	static String ERROR_PLAYER_ALREADY_IN_GAME = "You are currently playing a game of tic-tac-toe and, thus, cannot start another one.";
+	static String ERROR_WIN_REQUIRED_AMOUNT_TOO_SMALL = "The required win amount must not be smaller than " + GameConfig.MIN_WIN_REQUIRED_AMOUNT;
 	static String ERROR_WIN_REQUIRED_AMOUNT_TOO_LARGE = "The required win amount must not be larger than the size's largest dimension.";
 	
 	/**
@@ -106,6 +109,10 @@ public class GameConfig {
 		
 		if(this.winRequiredAmount > this.getLargestDimension()) {
 			errors.add(GameConfig.ERROR_WIN_REQUIRED_AMOUNT_TOO_LARGE);
+		}
+		
+		if(this.winRequiredAmount < GameConfig.MIN_WIN_REQUIRED_AMOUNT) {
+			errors.add(GameConfig.ERROR_WIN_REQUIRED_AMOUNT_TOO_SMALL);
 		}
 		
 		return errors;
