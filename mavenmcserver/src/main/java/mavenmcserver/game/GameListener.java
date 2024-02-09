@@ -1,6 +1,7 @@
 package mavenmcserver.game;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -43,39 +44,43 @@ public class GameListener implements Listener {
 		return player == this.game.config.mainPlayer || player == this.game.config.opponentPlayer;
 	}
 	
+	private boolean isProtectedLocation(Location location) {
+		return this.game.gameArea.contains(location);
+	}
+	
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
-		if(this.game.gameArea.contains(event.getBlock().getLocation())) {
+		if(this.isProtectedLocation(event.getBlock().getLocation())) {
 			event.setCancelled(true);
 		}
 	}
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		if(this.game.gameArea.contains(event.getBlock().getLocation())) {
+		if(this.isProtectedLocation(event.getBlock().getLocation())) {
 			event.setCancelled(true);
 		}
 	}
 	
 	@EventHandler
 	public void onEntitySummon(EntitySpawnEvent event) {
-		if(this.game.gameArea.contains(event.getLocation())) {
+		if(this.isProtectedLocation(event.getLocation())) {
 			event.setCancelled(true);
 		}
 	}
 	
 	@EventHandler
 	public void onEntityExplode(EntityExplodeEvent event) {
-		if(this.game.gameArea.contains(event.getLocation())) {
+		if(this.isProtectedLocation(event.getLocation())) {
 			event.setCancelled(true);
 		}
 		
-		event.blockList().removeIf((block) -> this.game.gameArea.contains(block.getLocation()));
+		event.blockList().removeIf((block) -> this.isProtectedLocation(block.getLocation()));
 	}
 	
 	@EventHandler
 	public void onBlockExplode(BlockExplodeEvent event) {
-		if(this.game.gameArea.contains(event.getBlock().getLocation())) {
+		if(this.isProtectedLocation(event.getBlock().getLocation())) {
 			event.setCancelled(true);
 		}
 		
@@ -84,14 +89,14 @@ public class GameListener implements Listener {
 	
 	@EventHandler
 	public void onLightningStrike(LightningStrikeEvent event) {
-		if(this.game.gameArea.contains(event.getLightning().getLocation())) {
+		if(this.isProtectedLocation(event.getLightning().getLocation())) {
 			event.setCancelled(true);
 		}
 	}
 	
 	@EventHandler
 	public void onMove(PlayerMoveEvent event) {
-		if(this.game.gameArea.contains(event.getTo())) {
+		if(this.isProtectedLocation(event.getTo())) {
 			event.setCancelled(!this.isAuthorizedPlayer(event.getPlayer()));
 		}
 	}
@@ -100,14 +105,14 @@ public class GameListener implements Listener {
 	public void onPlayerDamaged(EntityDamageByEntityEvent event) {
 		if(!(event.getEntity() instanceof Player)) return;
 		Player player = (Player)event.getEntity();
-		if(this.game.gameArea.contains(player.getLocation())) {
+		if(this.isProtectedLocation(player.getLocation())) {
 			event.setCancelled(this.isAuthorizedPlayer(player));
 		}
 	}
 	
 	@EventHandler
 	public void onBlockMove(BlockFromToEvent event) {
-		if(this.game.gameArea.contains(event.getToBlock().getLocation())) {
+		if(this.isProtectedLocation(event.getToBlock().getLocation())) {
 			event.setCancelled(true);
 		}
 	}
@@ -124,15 +129,13 @@ public class GameListener implements Listener {
 				return;
 			}
 			
-			if(this.game.gameArea.contains(event.getClickedBlock().getLocation())) {
+			if(this.isProtectedLocation(event.getClickedBlock().getLocation())) {
 				
-				try {
-					FieldPoint position = this.game.state.blockLocationToFieldPoint(this.game.location, event.getClickedBlock().getLocation());
+				FieldPoint locationAsFieldPoint = this.game.state.blockLocationToFieldPoint(this.game.location, event.getClickedBlock().getLocation());
 
-					if(this.game.state.fieldPointIsValid(position)) {
-						this.game.placeAt(position);
-					}
-				} catch (IllegalArgumentException e) {}
+				if(this.game.state.fieldPointIsValid(locationAsFieldPoint)) {
+					this.game.placeAt(locationAsFieldPoint);
+				}
 				
 			}
 			

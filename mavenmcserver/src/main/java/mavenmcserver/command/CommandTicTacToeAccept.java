@@ -75,7 +75,7 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 		
 		if(!(sender instanceof Player)) return new ArrayList<String>();
 		
-		ArrayList<String> argList = CommandTicTacToeAccept.removeMeaninglessElements(args);
+		ArrayList<String> argList = CommandTicTacToe.removeEmptyElementsExceptForLast(args);
 		
 		if(argList.size() > CommandTicTacToeAccept.ARG_COUNT) return new ArrayList<String>();
 		
@@ -89,21 +89,6 @@ public class CommandTicTacToeAccept implements CommandExecutor, TabCompleter {
 		StringUtil.copyPartialMatches(args[args.length - 1], completions, filteredCompletions);
 		
 		return filteredCompletions;
-	}
-	
-	public static ArrayList<String> removeMeaninglessElements(String[] list) {
-		ArrayList<String> newList = new ArrayList<String>();
-		
-		int i = 0;
-		for(String element: list) {
-			if(!element.isEmpty() || (i == list.length - 1)) {
-				newList.add(element);
-			}
-			
-			i++;
-		}
-		
-		return newList;
 	}
 	
 	public static boolean listContainsNonEmptyString(List<String> list) {

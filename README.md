@@ -20,7 +20,7 @@ You can customize how many fields a player needs to mark in a row in order to wi
 
 Use the `/tictactoe` command and provide an opponent player (and *optionally* the game's size and *winRequiredAmount*) to start a new game.
 
-Usage: `/tictactoe <opponent: Player> \[sizeX = 3\] \[sizeY = 1\] \[sizeZ = 3\] \[winRequiredAmount = 3\]`
+Usage: `/tictactoe <opponent: Player> [sizeX = 3] [sizeY = 1] [sizeZ = 3] [winRequiredAmount = 3]`
 
 
 The smallest possible game has a size of `(2, 1, 2)`.
@@ -55,7 +55,7 @@ In case the plugin destroys part of the world by placing the game, all blocks ar
  
 ## Installation
 
-Download the latest (older releases are very buggy) **JAR**-file from the releases of this repository (or build the plugin yourself using **maven**) and move it to the `plugins` directory of your server. If your server is not hosted locally, you might need to use the **FTP** to transfer the file. 
+Download the latest (older releases are very buggy) **JAR**-file from the releases of this repository (or build the plugin yourself using **maven**) and move it to the `plugins` directory of your Minecraft-server (which has to support spigot plugins). If your server is not hosted locally, you might need to use the **FTP** to transfer the file. 
 
 ## Configuration
 

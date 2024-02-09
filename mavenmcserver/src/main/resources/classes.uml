@@ -59,7 +59,8 @@ class FieldPoint {
     -HashMap<Location, BlockData> beforeGameBlocks
     
     .. Methods ..
-    +Game(GameConfig config, Plugin plugin, boolean isReturnMatch)
+    +Game(GameConfig config, Plugin plugin)
+    +void queue(boolean isReturnMatch)
     -void registerQueued()
     -Location generateGameLocation() /' Based on the main player's facing '/
     -CubicBlockArea generateGameArea() /' Based on the game's size and the main player's location '/

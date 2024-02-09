@@ -114,9 +114,7 @@ public class Game {
 		private HashMap<Location, BlockData> beforeGameBlocks = new HashMap<Location, BlockData>();
 		
 		
-		public Game(GameConfig config, Plugin plugin, boolean isReturnMatch) {
-			this.registerQueued();
-			
+		public Game(GameConfig config, Plugin plugin) {
 			this.plugin = plugin;
 			
 			this.config = config;
@@ -147,6 +145,10 @@ public class Game {
 				
 			};
 			
+		}
+		
+		public void queue(boolean isReturnMatch) {
+			this.registerQueued();
 			this.inviteOpponent(isReturnMatch);
 		}
 		

@@ -1,12 +1,12 @@
 package mavenmcserver.game;
 
+import static java.util.Map.entry;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
-import static java.util.Map.entry; 
 
 import org.joml.Vector3i;
 import org.junit.jupiter.api.Test;
@@ -62,6 +62,37 @@ public class GameStateTest {
 			assertTrue(false, "Expected getStateAt with 1, 0, 2 to throw IllegalArgumentException");
 		} catch(IllegalArgumentException e) {}
 		
+	}
+	
+	@Test
+	public void testFieldPointIsValid() {
+		
+		GameState state = new GameState(new Vector3i(3, 3, 3));
+		assertTrue(state.fieldPointIsValid(new FieldPoint(0, 0, 0)));
+		assertTrue(state.fieldPointIsValid(new FieldPoint(1, 0, 0)));
+		assertTrue(state.fieldPointIsValid(new FieldPoint(0, 1, 0)));
+		assertTrue(state.fieldPointIsValid(new FieldPoint(0, 0, 1)));
+		assertTrue(state.fieldPointIsValid(new FieldPoint(1, 1, 0)));
+		assertTrue(state.fieldPointIsValid(new FieldPoint(0, 1, 1)));
+		assertTrue(state.fieldPointIsValid(new FieldPoint(1, 0, 1)));
+		assertTrue(state.fieldPointIsValid(new FieldPoint(1, 1, 1)));
+		
+		assertTrue(state.fieldPointIsValid(new FieldPoint(2, 0, 0)));
+		assertTrue(state.fieldPointIsValid(new FieldPoint(1, 2, 0)));
+		assertTrue(state.fieldPointIsValid(new FieldPoint(0, 1, 2)));
+		assertTrue(state.fieldPointIsValid(new FieldPoint(2, 2, 0)));
+		assertTrue(state.fieldPointIsValid(new FieldPoint(0, 2, 2)));
+		assertTrue(state.fieldPointIsValid(new FieldPoint(2, 0, 2)));
+		assertTrue(state.fieldPointIsValid(new FieldPoint(2, 2, 2)));
+		assertTrue(state.fieldPointIsValid(new FieldPoint(2, 1, 2)));
+		
+		assertFalse(state.fieldPointIsValid(new FieldPoint(-1, 0, 0)));
+		assertFalse(state.fieldPointIsValid(new FieldPoint(0, -1, 0)));
+		assertFalse(state.fieldPointIsValid(new FieldPoint(0, 0, -1)));
+		assertFalse(state.fieldPointIsValid(new FieldPoint(3, 0, 0)));
+		assertFalse(state.fieldPointIsValid(new FieldPoint(0, 0, 5)));
+		assertFalse(state.fieldPointIsValid(new FieldPoint(-2, 6, 0)));
+		assertFalse(state.fieldPointIsValid(new FieldPoint(1, 6, 1)));
 	}
 	
 	

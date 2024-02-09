@@ -91,7 +91,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				Game.lostGames.remove((Player)sender);
 				Game.lostGames.remove(configOfReturnMatch.opponentPlayer);
 				
-				new Game(configOfReturnMatch, this.plugin, true);
+				new Game(configOfReturnMatch, this.plugin).queue(true);
 				return true;
 			}
 		}
@@ -128,7 +128,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		// Show the confirmation to the player
 		sender.sendMessage("You've just asked " + ChatColor.AQUA + ChatColor.BOLD + config.opponentPlayer.getName() + ChatColor.RESET + " to play a game of tic-tac-toe with you!");
 		
-		new Game(config, this.plugin, false);
+		new Game(config, this.plugin).queue(false);
 	
 		return true;
 	}
@@ -198,9 +198,12 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				for(String arg: args) listWithNoEmptyArgsAtAll.add(arg);
 				listWithNoEmptyArgsAtAll.removeIf((arg) -> arg.isEmpty());
 				
-				int integerArgs[] = CommandTicTacToe.extractIntegerArgs(Arrays.copyOf(listWithNoEmptyArgsAtAll.toArray(), listWithNoEmptyArgsAtAll.size(), String[].class));
-				int maxDimension = Math.max(integerArgs[0], Math.max(integerArgs[1], integerArgs[2]));
-				completions.add("" + maxDimension);
+				try {
+					int integerArgs[] = CommandTicTacToe.extractIntegerArgs(Arrays.copyOf(listWithNoEmptyArgsAtAll.toArray(), listWithNoEmptyArgsAtAll.size(), String[].class));
+					int maxDimension = Math.max(integerArgs[0], Math.max(integerArgs[1], integerArgs[2]));
+					completions.add("" + maxDimension);
+				} catch(NumberFormatException e) {}
+				
 			} else if(argList.size() < CommandTicTacToe.MAX_VALID_ARG_COUNT + 1) {
 				completions.add(argList.size() == (CommandTicTacToe.Y_SIZE_ARG_INDEX + 1) ? "1" : "3");
 			}
@@ -264,11 +267,12 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		return integerArguments;
 	}
 	
-	private static ArrayList<String> removeEmptyElementsExceptForLast(String[] list) {
+	static ArrayList<String> removeEmptyElementsExceptForLast(String[] list) {
 		ArrayList<String> newList = new ArrayList<String>();
 		int i = 0;
 		for(String element: list) {
-			if(!element.trim().isEmpty() || (i == list.length - 1)) {
+			boolean elementIsLast = i == list.length - 1;
+			if(!element.trim().isEmpty() || elementIsLast) {
 				newList.add(element);
 			}
 			
