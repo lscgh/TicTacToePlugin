@@ -20,7 +20,7 @@ You can customize how many fields a player needs to mark in a row in order to wi
 
 Use the `/tictactoe` command and provide an opponent player (and *optionally* the game's size and *winRequiredAmount*) to start a new game.
 
-Usage: `/tictactoe <opponent: Player> \[sizeX = 3\] \[sizeY = 1\] \[sizeZ = 3\] \[winRequiredAmount = 3\]`
+Usage: `/tictactoe <opponent: Player> [sizeX = 3] [sizeY = 1] [sizeZ = 3] [winRequiredAmount = 3]`
 
 
 The smallest possible game has a size of `(2, 1, 2)`.
