@@ -95,7 +95,9 @@ In development. The game should already be playable, but there might still be so
 
 ### The opponent player wins the game (view of the main player)
 
-![Opponent player wins](img/vid1.mov)
+<video autoplay looped>
+    <source src="img/vid1.mov" type="video/quicktime" />
+</video>
 
 ### The main player wins a game (view of the main player)
 
