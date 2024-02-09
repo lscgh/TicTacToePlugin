@@ -198,9 +198,12 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 				for(String arg: args) listWithNoEmptyArgsAtAll.add(arg);
 				listWithNoEmptyArgsAtAll.removeIf((arg) -> arg.isEmpty());
 				
-				int integerArgs[] = CommandTicTacToe.extractIntegerArgs(Arrays.copyOf(listWithNoEmptyArgsAtAll.toArray(), listWithNoEmptyArgsAtAll.size(), String[].class));
-				int maxDimension = Math.max(integerArgs[0], Math.max(integerArgs[1], integerArgs[2]));
-				completions.add("" + maxDimension);
+				try {
+					int integerArgs[] = CommandTicTacToe.extractIntegerArgs(Arrays.copyOf(listWithNoEmptyArgsAtAll.toArray(), listWithNoEmptyArgsAtAll.size(), String[].class));
+					int maxDimension = Math.max(integerArgs[0], Math.max(integerArgs[1], integerArgs[2]));
+					completions.add("" + maxDimension);
+				} catch(NumberFormatException e) {}
+				
 			} else if(argList.size() < CommandTicTacToe.MAX_VALID_ARG_COUNT + 1) {
 				completions.add(argList.size() == (CommandTicTacToe.Y_SIZE_ARG_INDEX + 1) ? "1" : "3");
 			}
