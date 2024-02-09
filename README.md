@@ -2,8 +2,8 @@
 
 
 ## Description
-A minecraft spigot plugin for playing "tic tac toe" against other players.
-Games can be both *two-dimensional* and *three-dimensional*.
+A Minecraft [Spigot](https://www.spigotmc.org/) plugin for playing "Tic-Tac-Toe 2D/3D" against other players.
+Games can be both *two-dimensional* (2D) and *three-dimensional* (3D).
 You can customize how many fields a player needs to mark in a row in order to win.
 
 ## Keywords
@@ -12,7 +12,7 @@ You can customize how many fields a player needs to mark in a row in order to wi
 
 **Opponent player**: The player who was invited to the game.
 
-**Field**: A single field in a game of tic-tac-toe that is either marked by one of the two players or neutral. 
+**Field**: A single field in a game of Tic-Tac-Toe that is either marked by one of the two players or neutral. 
 
 ## Usage
 
@@ -25,23 +25,23 @@ Usage: `/tictactoe <opponent: Player> \[sizeX = 3\] \[sizeY = 1\] \[sizeZ = 3\] 
 
 The smallest possible game has a size of `(2, 1, 2)`.
 
-`winRequiredAmount` is the amount of fields that have to be marked by one player (in a row or diagonally) for that player to win. This number must not be larger than the biggest dimension of the game and defaults to exactly that.
+`winRequiredAmount` is the number of fields that have to be marked by one player (in a row or diagonally) for that player to win. This number must not be larger than the biggest dimension of the game and defaults to exactly that.
 
-After this command has been executed, the opponent player reveives a chat invitation message containing the game's size and *winRequiredAmount*. Using that message (or using the `/tictactoeaccept` command and providing the main player's name) they can join the game.
+After this command has been executed, the opponent player receives a chat invitation message containing the game's size and *winRequiredAmount*. Using that message (or using the `/tictactoeaccept` command and providing the main player's name), they can join the game.
 
 ### Starting the game
 
-After the opponent player accepted the game, the plugin places the game into the world (in front of where the player was when first executing the `/tictactoe` command). See [Images](#images) for images of such games.
+After the opponent player accepts the game, the plugin places the game into the world (in front of where the player was when first executing the `/tictactoe` command). See [Images](#images) for images of such games.
 
 ### Playing the game
 
-The opponent player begins. Taking turns, both players can mark one field at a time by right-clicking the neutral (white) blocks. The main player has the color **red** and the opponent player has the color **light blue**. The in-world Minecraft blocks are colored according to their state.
+The opponent player begins. Taking turns, both players can mark one field at a time by right-clicking the neutral (white) blocks. The main player has the color **red**, and the opponent player has the color **light blue**. The in-world Minecraft blocks are colored according to their state.
 
 Markings that are *"in the air"*, meaning that there are still neutral fields below them, will fall until they *"hit"* a non-neutral block or the bottom of the game.
 
 ### Winning the game
 
-As soon as one player marked `winRequiredAmount` fields in a row or diagonally, the game stops, shows the fields that are in a row and tells both players whether they won or whether they lost. In case of a tie, no player wins and a tie-message appears.
+As soon as one player marked `winRequiredAmount` fields in a row or diagonally, the game stops, shows the fields that are in a row and tells both players whether they won or whether they lost. In case of a tie, no player wins, and a tie-message appears.
 
 The player who lost (or, in case of a tie, both players) can immediately request a return match using a chat message they received (or the command `/tictactoe requestReturnMatch`).
 
@@ -49,9 +49,9 @@ The player who lost (or, in case of a tie, both players) can immediately request
 
 During a game, both players can cancel it anytime by executing `/tictactoe cancel`.
 
-When a game is cancelled, it is removed from the world and both players receive a chat message stating that the game is over.
+When a game is canceled, it is removed from the world, and both players receive a chat message stating that the game is over.
 
-Incase the plugin destroyed part of the world by placing the game, all blocks are restored after the game is finished (mostly).
+In case the plugin destroys part of the world by placing the game, all blocks are restored after the game is finished (mostly).
  
 ## Installation
 
