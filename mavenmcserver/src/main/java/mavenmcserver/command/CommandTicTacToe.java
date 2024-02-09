@@ -113,7 +113,7 @@ public class CommandTicTacToe implements CommandExecutor, TabCompleter {
 		}
 		
 		// Check for errors in the game's config
-		List<String> configErrors = config.validateReturningErrors();
+		List<String> configErrors = config.validateReturningErrors(this.plugin.getMaxXZSize());
 		if(!configErrors.isEmpty()) {
 			for(String error: configErrors) {
 				sender.sendMessage(ChatColor.RED + error + ChatColor.RESET);

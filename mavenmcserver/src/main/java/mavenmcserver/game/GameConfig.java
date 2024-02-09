@@ -57,7 +57,7 @@ public class GameConfig {
 	 * Checks the config for errors.
 	 * @return a list with all errors found on this config. If no errors are found, an empty list is returned.
 	 */
-	public List<String> validateReturningErrors() {
+	public List<String> validateReturningErrors(int maxXZSize) {
 		ArrayList<String> errors = new ArrayList<String>();
 		
 		if(this.mainPlayer == null) {
@@ -80,7 +80,7 @@ public class GameConfig {
 			return errors;
 		}
 		
-		errors.addAll(this.validateNumbersReturningErrors());
+		errors.addAll(this.validateNumbersReturningErrors(maxXZSize));
 		
 		return errors;
 	}
@@ -89,7 +89,7 @@ public class GameConfig {
 	 * Checks the config for errors with the size and winRequiredAmount (part of validate()).
 	 * @return a list with all errors found on this config regarding the number values. If no errors are found, an empty list is returned.
 	 */
-	List<String> validateNumbersReturningErrors() {
+	List<String> validateNumbersReturningErrors(int maxXZSize) {
 		ArrayList<String> errors = new ArrayList<String>();
 		
 		if(this.getSmallestDimension() < GameConfig.MIN_DIMENSION_SIZE) {
@@ -98,6 +98,10 @@ public class GameConfig {
 		
 		if(Math.min(this.size.x, this.size.z) < GameConfig.MIN_X_Z_SIZE) {
 			errors.add("The X and Z size of the game must not be smaller than " + GameConfig.MIN_X_Z_SIZE + ".");
+		}
+		
+		if(Math.min(this.size.x, this.size.z) > maxXZSize) {
+			errors.add("The X and Z size of the game must not be larger than " + maxXZSize + ".");
 		}
 		
 		if(this.winRequiredAmount > this.getLargestDimension()) {

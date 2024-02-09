@@ -14,6 +14,13 @@ public class Plugin extends JavaPlugin {
 	public int getMaxXZSize() {
 		return this.getConfig().getInt(Plugin.MAX_X_Z_SIZE_KEY_NAME);
 	}
+	
+	private void addConfigDefaults() {
+		FileConfiguration config = this.getConfig();
+		config.addDefault(Plugin.MAX_X_Z_SIZE_KEY_NAME, 15);
+		config.options().copyDefaults(true);
+		this.saveConfig();
+	}
 
 	@Override
 	public void onLoad() {
@@ -23,10 +30,7 @@ public class Plugin extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		
-		FileConfiguration config = this.getConfig();
-		config.addDefault(Plugin.MAX_X_Z_SIZE_KEY_NAME, 15);
-		config.options().copyDefaults(true);
-		this.saveConfig();
+		this.addConfigDefaults();
 		
 		// Register command /tictactoe
 		new CommandTicTacToe(this).registerToPlugin();
